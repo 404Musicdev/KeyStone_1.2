@@ -293,7 +293,7 @@ const AssignmentView = () => {
       )}
 
       {/* Questions */}
-      <Card className="glass-effect border-slate-700 slide-up">
+      <Card className="assignment-content slide-up">
         <CardHeader>
           <CardTitle className="text-white flex items-center justify-between">
             <div className="flex items-center">
@@ -301,7 +301,7 @@ const AssignmentView = () => {
               Questions
             </div>
             {!assignment.completed && (
-              <span className="text-sm text-slate-400">
+              <span className="text-sm text-slate-300">
                 {Object.keys(answers).length} of {assignment.assignment.questions.length} answered
               </span>
             )}
@@ -315,7 +315,7 @@ const AssignmentView = () => {
             return (
               <div 
                 key={questionIndex}
-                className="p-6 rounded-lg border border-slate-700 bg-slate-800/30"
+                className="assignment-question p-6 rounded-lg"
                 data-testid={`question-${questionIndex}`}
               >
                 <div className="flex items-start space-x-4 mb-4">
