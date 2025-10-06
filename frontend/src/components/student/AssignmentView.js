@@ -263,20 +263,27 @@ const AssignmentView = () => {
 
       {/* Reading Passage */}
       {assignment.assignment.reading_passage && (
-        <Card className="glass-effect border-slate-700 slide-up">
+        <Card className="assignment-content slide-up">
           <CardHeader>
             <CardTitle className="text-white flex items-center">
               <BookOpen className="w-5 h-5 mr-2" />
-              Reading Passage
+              {assignment.assignment.subject === 'Learning to Read' ? 'Practice Reading' : 'Reading Passage'}
             </CardTitle>
-            <CardDescription className="text-slate-400">
-              Read the passage carefully before answering the questions
+            <CardDescription className="text-slate-300">
+              {assignment.assignment.subject === 'Learning to Read' 
+                ? 'Sound out the words and read slowly'
+                : 'Read the passage carefully before answering the questions'
+              }
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="prose prose-invert max-w-none">
-              <div className="bg-slate-800/50 p-6 rounded-lg border border-slate-700">
-                <div className="text-slate-200 leading-relaxed whitespace-pre-wrap">
+              <div className="assignment-question p-8 rounded-lg">
+                <div className={`text-white leading-relaxed whitespace-pre-wrap ${
+                  assignment.assignment.subject === 'Learning to Read' 
+                    ? 'text-2xl font-medium text-center' 
+                    : 'text-lg'
+                }`}>
                   {assignment.assignment.reading_passage}
                 </div>
               </div>
