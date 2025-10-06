@@ -215,6 +215,20 @@ const AssignmentGenerator = () => {
                   />
                 </div>
                 
+                <div className="space-y-2">
+                  <Label className="text-slate-300">YouTube Video URL (Optional)</Label>
+                  <Input
+                    placeholder="https://www.youtube.com/watch?v=..."
+                    value={formData.youtube_url}
+                    onChange={(e) => setFormData({...formData, youtube_url: e.target.value})}
+                    className="bg-slate-800 border-slate-600 text-white placeholder-slate-400"
+                    data-testid="youtube-url-input"
+                  />
+                  <p className="text-xs text-slate-400">
+                    Add a YouTube video for students to watch as part of this assignment
+                  </p>
+                </div>
+                
                 <Button 
                   type="submit" 
                   className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium"
