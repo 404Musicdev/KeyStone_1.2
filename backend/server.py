@@ -508,6 +508,7 @@ async def generate_assignment(assignment_data: AssignmentGenerate, current_user=
         topic=assignment_data.topic,
         questions=[Question(**q) for q in ai_result["questions"]],
         reading_passage=ai_result.get("reading_passage"),
+        youtube_url=assignment_data.youtube_url,
         teacher_id=current_user["data"]["id"]
     )
     
