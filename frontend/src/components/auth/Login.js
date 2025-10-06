@@ -97,7 +97,7 @@ const Login = () => {
           <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center">
             <GraduationCap className="w-10 h-10 text-white" />
           </div>
-          <h1 className="text-4xl font-bold text-white mb-2">Homeschool Hub</h1>
+          <h1 className="text-4xl font-bold text-white mb-2">Keystone Homeschool</h1>
           <p className="text-slate-400">Empowering education, one student at a time</p>
         </div>
 
