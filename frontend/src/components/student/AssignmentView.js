@@ -173,8 +173,34 @@ const AssignmentView = () => {
         )}
       </div>
 
+      {/* YouTube Video Section */}
+      {assignment.assignment.youtube_url && (
+        <Card className="assignment-content slide-up">
+          <CardHeader>
+            <CardTitle className="text-white flex items-center">
+              <BookOpen className="w-5 h-5 mr-2" />
+              Watch This Video First
+            </CardTitle>
+            <CardDescription className="text-slate-300">
+              Watch the video below, then complete the assignment questions
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="aspect-video w-full max-w-4xl mx-auto">
+              <iframe
+                src={assignment.assignment.youtube_url.replace('watch?v=', 'embed/')}
+                title="Assignment Video"
+                className="w-full h-full rounded-lg"
+                frameBorder="0"
+                allowFullScreen
+              />
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Assignment Info */}
-      <Card className="glass-effect border-slate-700 slide-up">
+      <Card className="assignment-content slide-up">
         <CardHeader>
           <CardTitle className="text-white flex items-center">
             <Target className="w-5 h-5 mr-2" />
