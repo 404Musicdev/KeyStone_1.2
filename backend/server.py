@@ -496,7 +496,8 @@ async def generate_assignment(assignment_data: AssignmentGenerate, current_user=
     ai_result = await generate_assignment_with_ai(
         assignment_data.subject,
         assignment_data.grade_level,
-        assignment_data.topic
+        assignment_data.topic,
+        assignment_data.youtube_url
     )
     
     # Create assignment object
