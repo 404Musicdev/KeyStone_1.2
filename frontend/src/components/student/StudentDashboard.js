@@ -11,7 +11,7 @@ const StudentDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-slate-900 flex" data-testid="student-dashboard">
+    <div className="min-h-screen bg-black flex" data-testid="student-dashboard">
       <StudentSidebar isOpen={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} />
       
       <main className="flex-1 lg:ml-64 transition-all duration-300">
