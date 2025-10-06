@@ -127,11 +127,11 @@ body {
   transform: translateY(-1px);
 }
 
-/* Card Styles */
+/* Card Styles - Darker Theme */
 .card-modern {
-  background: rgba(45, 55, 72, 0.6);
+  background: rgba(15, 15, 15, 0.9);
   backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 16px;
   padding: 24px;
   transition: all 0.3s ease;
@@ -139,8 +139,8 @@ body {
 
 .card-modern:hover {
   transform: translateY(-4px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-  border-color: rgba(66, 153, 225, 0.3);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  border-color: rgba(66, 153, 225, 0.4);
 }
 
 /* Form Styles */
