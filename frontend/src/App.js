@@ -26,7 +26,7 @@ const AppContent = () => {
   const { isAuthenticated, user } = useAuth();
   
   return (
-    <div className="min-h-screen bg-slate-900">
+    <div className="min-h-screen bg-black">
       <Routes>
         <Route 
           path="/login" 
