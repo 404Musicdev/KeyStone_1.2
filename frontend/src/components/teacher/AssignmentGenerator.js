@@ -353,18 +353,30 @@ const AssignmentGenerator = () => {
                           {assignment.reading_passage && ' • Includes reading passage'}
                         </div>
                         
-                        <Button
-                          size="sm"
-                          onClick={() => {
-                            setGeneratedAssignment(assignment);
-                            setShowAssignDialog(true);
-                          }}
-                          className="bg-blue-600 hover:bg-blue-700 text-white"
-                          data-testid={`assign-to-students-${assignment.id}`}
-                        >
-                          <Users className="w-4 h-4 mr-1" />
-                          Assign to Students
-                        </Button>
+                        <div className="flex space-x-2">
+                          <Button
+                            size="sm"
+                            onClick={() => {
+                              setGeneratedAssignment(assignment);
+                              setShowAssignDialog(true);
+                            }}
+                            className="bg-blue-600 hover:bg-blue-700 text-white"
+                            data-testid={`assign-to-students-${assignment.id}`}
+                          >
+                            <Users className="w-4 h-4 mr-1" />
+                            Assign to Students
+                          </Button>
+                          
+                          <Button
+                            size="sm"
+                            onClick={() => handleDeleteAssignment(assignment.id)}
+                            variant="outline"
+                            className="border-red-500/50 text-red-400 hover:bg-red-500/10 hover:border-red-500"
+                            data-testid={`delete-assignment-${assignment.id}`}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
                       </div>
                     </div>
                   ))}
