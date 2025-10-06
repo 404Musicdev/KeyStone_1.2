@@ -333,7 +333,11 @@ const AssignmentView = () => {
                     {questionIndex + 1}
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-white font-medium text-lg mb-4">{question.question}</h3>
+                    <h3 className={`text-white font-medium mb-4 ${
+                      assignment.assignment.subject === 'Learning to Read' ? 'text-xl' : 'text-lg'
+                    }`}>
+                      {question.question}
+                    </h3>
                     
                     <RadioGroup
                       value={selectedAnswer?.toString()}
