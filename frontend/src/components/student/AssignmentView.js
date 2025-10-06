@@ -411,12 +411,12 @@ const AssignmentView = () => {
 
       {/* Submit Button */}
       {!assignment.completed && (
-        <Card className="glass-effect border-slate-700 slide-up">
+        <Card className="assignment-content slide-up">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-white font-medium">Ready to submit?</p>
-                <p className="text-slate-400 text-sm">
+                <p className="text-slate-300 text-sm">
                   Make sure you've answered all questions. You won't be able to change your answers after submitting.
                 </p>
               </div>
