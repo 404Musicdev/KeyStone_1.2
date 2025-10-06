@@ -195,7 +195,7 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
     raise credentials_exception
 
 # AI Helper Function
-async def generate_assignment_with_ai(subject: str, grade_level: str, topic: str):
+async def generate_assignment_with_ai(subject: str, grade_level: str, topic: str, youtube_url: Optional[str] = None):
     try:
         # Initialize Gemini chat
         chat = LlmChat(
@@ -204,7 +204,42 @@ async def generate_assignment_with_ai(subject: str, grade_level: str, topic: str
             system_message="You are an expert educational content creator for homeschool teachers."
         ).with_model("gemini", "gemini-2.5-pro")
         
-        if subject.lower() == "reading":
+        if subject.lower() == "learning to read":
+            prompt = f"""
+            Create a "Learning to Read" assignment for {grade_level} students on the topic: {topic}
+            
+            This is for young students who are still learning to read. Please generate:
+            1. A very simple reading passage using only 10-14 words total, focusing on basic phonics and sight words
+            2. 2 simple multiple-choice questions about the passage (very basic comprehension)
+            
+            The reading passage should:
+            - Use simple, common words that young children can sound out
+            - Be about something familiar (animals, family, toys, etc.)
+            - Have short, simple sentences
+            - Be encouraging and fun
+            
+            Example words to use: cat, dog, run, play, mom, dad, big, red, go, see, like, has, is, the, a
+            
+            Return your response in this EXACT JSON format:
+            {{
+                "reading_passage": "The simple passage here using only 10-14 words...",
+                "questions": [
+                    {{
+                        "question": "Simple question about the passage?",
+                        "options": ["Yes", "No", "Maybe", "I don't know"],
+                        "correct_answer": 0
+                    }},
+                    {{
+                        "question": "Another simple question?",
+                        "options": ["Option A", "Option B", "Option C", "Option D"],
+                        "correct_answer": 1
+                    }}
+                ]
+            }}
+            
+            Make sure everything is appropriate for beginning readers in {grade_level}.
+            """
+        elif subject.lower() == "reading":
             prompt = f"""
             Create a reading assignment for {grade_level} students on the topic: {topic}
             
@@ -227,8 +262,12 @@ async def generate_assignment_with_ai(subject: str, grade_level: str, topic: str
             Make sure the story is engaging and age-appropriate for {grade_level}.
             """
         else:
+            youtube_context = ""
+            if youtube_url:
+                youtube_context = f"\n\nNote: This assignment is meant to accompany a YouTube video: {youtube_url}\nCreate questions that could relate to or extend the video content."
+            
             prompt = f"""
-            Create an educational assignment for {grade_level} students in {subject} on the topic: {topic}
+            Create an educational assignment for {grade_level} students in {subject} on the topic: {topic}{youtube_context}
             
             Generate 5-8 multiple-choice questions with 4 options each. Questions should be:
             - Appropriate for {grade_level} difficulty level
