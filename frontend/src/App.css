@@ -35,17 +35,29 @@ body {
   background: #3182ce;
 }
 
-/* Glass Effect Utility Classes */
+/* Glass Effect Utility Classes - Darker Theme */
 .glass-effect {
-  background: rgba(45, 55, 72, 0.6);
+  background: rgba(15, 15, 15, 0.8);
   backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .glass-light {
-  background: rgba(45, 55, 72, 0.4);
+  background: rgba(15, 15, 15, 0.6);
   backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Assignment specific styles - Black background for readability */
+.assignment-content {
+  background: #000000 !important;
+  color: #e5e7eb !important;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.assignment-question {
+  background: #111111 !important;
+  border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 /* Animation Classes */
