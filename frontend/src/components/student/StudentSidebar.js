@@ -73,7 +73,7 @@ const StudentSidebar = ({ isOpen, onToggle }) => {
                 <GraduationCap className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h2 className="text-lg font-semibold text-white">Homeschool Hub</h2>
+                <h2 className="text-lg font-semibold text-white">Keystone Homeschool</h2>
                 <p className="text-sm text-slate-400">Student Portal</p>
               </div>
             </div>
