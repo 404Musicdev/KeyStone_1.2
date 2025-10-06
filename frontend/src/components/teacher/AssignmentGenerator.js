@@ -36,7 +36,8 @@ const AssignmentGenerator = () => {
   const [formData, setFormData] = useState({
     subject: '',
     grade_level: '',
-    topic: ''
+    topic: '',
+    youtube_url: ''
   });
 
   const subjects = [
