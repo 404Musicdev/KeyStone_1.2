@@ -158,6 +158,21 @@ const AssignmentGenerator = () => {
     }
   };
 
+  const handleDeleteAssignment = async (assignmentId) => {
+    if (!window.confirm('Are you sure you want to delete this assignment? This action cannot be undone.')) {
+      return;
+    }
+    
+    try {
+      await axios.delete(`${API_BASE}/assignments/${assignmentId}`);
+      setAssignments(prev => prev.filter(assignment => assignment.id !== assignmentId));
+      toast.success('Assignment deleted successfully');
+    } catch (error) {
+      console.error('Error deleting assignment:', error);
+      toast.error('Failed to delete assignment');
+    }
+  };
+
   return (
     <div className="space-y-6" data-testid="assignment-generator">
       {/* Header */}
