@@ -112,7 +112,7 @@ const Login = () => {
           
           <CardContent>
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid grid-cols-3 mb-6 bg-slate-800 border border-slate-700">
+              <TabsList className="grid grid-cols-3 mb-6 bg-gray-800 border border-gray-600">
                 <TabsTrigger 
                   value="teacher-login" 
                   className="data-[state=active]:bg-blue-600 data-[state=active]:text-white text-slate-300"
