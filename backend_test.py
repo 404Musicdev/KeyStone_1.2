@@ -492,14 +492,184 @@ class BackendTester:
         except Exception as e:
             self.log_test("Other Subjects Normal", False, f"Exception: {str(e)}")
             
+    def create_test_accounts_for_student_login(self):
+        """Create specific test accounts to resolve student login black screen issue"""
+        print("\n=== Creating Test Accounts for Student Login Fix ===")
+        
+        # 1. Create Teacher Account
+        teacher_data = {
+            "email": "testteacher@example.com",
+            "password": "TestPass123!",
+            "first_name": "Test",
+            "last_name": "Teacher",
+            "role": "teacher"
+        }
+        
+        teacher_token = None
+        try:
+            response = requests.post(f"{BACKEND_URL}/auth/teacher/register", json=teacher_data)
+            if response.status_code == 200:
+                data = response.json()
+                teacher_token = data["access_token"]
+                teacher_id = data["user"]["id"]
+                self.log_test("Test Teacher Account Creation", True, f"Teacher ID: {teacher_id}")
+            elif response.status_code == 400 and "already registered" in response.text:
+                # Try login instead
+                login_data = {"email": teacher_data["email"], "password": teacher_data["password"]}
+                response = requests.post(f"{BACKEND_URL}/auth/teacher/login", json=login_data)
+                if response.status_code == 200:
+                    data = response.json()
+                    teacher_token = data["access_token"]
+                    teacher_id = data["user"]["id"]
+                    self.log_test("Test Teacher Account Login", True, f"Teacher ID: {teacher_id}")
+                else:
+                    self.log_test("Test Teacher Account", False, f"Login failed: {response.text}")
+                    return False
+            else:
+                self.log_test("Test Teacher Account Creation", False, f"Status: {response.status_code}, Response: {response.text}")
+                return False
+        except Exception as e:
+            self.log_test("Test Teacher Account", False, f"Exception: {str(e)}")
+            return False
+            
+        # 2. Create Student Accounts via Teacher
+        students_data = [
+            {
+                "first_name": "John",
+                "last_name": "Student", 
+                "username": "johnstudent",
+                "password": "student123"
+            },
+            {
+                "first_name": "Jane",
+                "last_name": "Student",
+                "username": "janestudent", 
+                "password": "student123"
+            },
+            {
+                "first_name": "Test",
+                "last_name": "Student",
+                "username": "teststudent",
+                "password": "testpass"
+            }
+        ]
+        
+        headers = {"Authorization": f"Bearer {teacher_token}"}
+        created_students = []
+        
+        for student_data in students_data:
+            try:
+                response = requests.post(f"{BACKEND_URL}/students", json=student_data, headers=headers)
+                if response.status_code == 200:
+                    data = response.json()
+                    created_students.append({
+                        "id": data["id"],
+                        "username": student_data["username"],
+                        "password": student_data["password"]
+                    })
+                    self.log_test(f"Student Creation - {student_data['username']}", True, f"Student ID: {data['id']}")
+                elif response.status_code == 400 and "already exists" in response.text:
+                    # Student already exists, get their ID
+                    response = requests.get(f"{BACKEND_URL}/students", headers=headers)
+                    if response.status_code == 200:
+                        students = response.json()
+                        for student in students:
+                            if student["username"] == student_data["username"]:
+                                created_students.append({
+                                    "id": student["id"],
+                                    "username": student_data["username"],
+                                    "password": student_data["password"]
+                                })
+                                self.log_test(f"Student Found - {student_data['username']}", True, f"Student ID: {student['id']}")
+                                break
+                else:
+                    self.log_test(f"Student Creation - {student_data['username']}", False, f"Status: {response.status_code}, Response: {response.text}")
+            except Exception as e:
+                self.log_test(f"Student Creation - {student_data['username']}", False, f"Exception: {str(e)}")
+                
+        # 3. Verify Student Login for each created student
+        for student in created_students:
+            try:
+                login_data = {
+                    "username": student["username"],
+                    "password": student["password"]
+                }
+                response = requests.post(f"{BACKEND_URL}/auth/student/login", json=login_data)
+                if response.status_code == 200:
+                    data = response.json()
+                    self.log_test(f"Student Login - {student['username']}", True, f"Login successful, token received")
+                    
+                    # Verify student data is returned correctly
+                    user_data = data.get("user", {})
+                    if user_data.get("username") == student["username"]:
+                        self.log_test(f"Student Data Verification - {student['username']}", True, "Student data returned correctly")
+                    else:
+                        self.log_test(f"Student Data Verification - {student['username']}", False, "Student data mismatch")
+                        
+                else:
+                    self.log_test(f"Student Login - {student['username']}", False, f"Status: {response.status_code}, Response: {response.text}")
+            except Exception as e:
+                self.log_test(f"Student Login - {student['username']}", False, f"Exception: {str(e)}")
+                
+        return len(created_students) > 0
+        
+    def test_student_authentication_workflow(self):
+        """Test complete student authentication workflow to prevent black screen"""
+        print("\n=== Testing Student Authentication Workflow ===")
+        
+        # Test with the created test student
+        test_credentials = {
+            "username": "johnstudent",
+            "password": "student123"
+        }
+        
+        try:
+            # 1. Test student login
+            response = requests.post(f"{BACKEND_URL}/auth/student/login", json=test_credentials)
+            if response.status_code == 200:
+                data = response.json()
+                student_token = data["access_token"]
+                student_data = data["user"]
+                self.log_test("Student Authentication Workflow - Login", True, f"Student: {student_data.get('first_name')} {student_data.get('last_name')}")
+                
+                # 2. Test accessing student assignments (this is what causes black screen if auth fails)
+                headers = {"Authorization": f"Bearer {student_token}"}
+                response = requests.get(f"{BACKEND_URL}/student/assignments", headers=headers)
+                if response.status_code == 200:
+                    assignments = response.json()
+                    self.log_test("Student Authentication Workflow - Assignments Access", True, f"Retrieved {len(assignments)} assignments")
+                else:
+                    self.log_test("Student Authentication Workflow - Assignments Access", False, f"Status: {response.status_code}, Response: {response.text}")
+                    
+                # 3. Test token validation by making another authenticated request
+                response = requests.get(f"{BACKEND_URL}/health", headers=headers)
+                if response.status_code == 200:
+                    self.log_test("Student Authentication Workflow - Token Validation", True, "Token remains valid for subsequent requests")
+                else:
+                    self.log_test("Student Authentication Workflow - Token Validation", False, f"Token validation failed: {response.text}")
+                    
+            else:
+                self.log_test("Student Authentication Workflow - Login", False, f"Status: {response.status_code}, Response: {response.text}")
+                
+        except Exception as e:
+            self.log_test("Student Authentication Workflow", False, f"Exception: {str(e)}")
+
     def run_all_tests(self):
         """Run all tests"""
-        print("🚀 Starting Learn to Code Backend Tests")
+        print("🚀 Starting Backend Tests - Focus on Student Login Issue")
         print(f"Backend URL: {BACKEND_URL}")
         
-        # Setup
+        # PRIORITY: Create test accounts to fix student login black screen
+        if not self.create_test_accounts_for_student_login():
+            print("❌ Failed to create test accounts. This may cause continued login issues.")
+        
+        # Test student authentication workflow
+        self.test_student_authentication_workflow()
+        
+        # Setup original authentication for other tests
         if not self.setup_authentication():
-            print("❌ Authentication setup failed. Cannot continue with tests.")
+            print("❌ Authentication setup failed. Cannot continue with Learn to Code tests.")
+            self.print_summary()
             return
             
         # Test each coding level
