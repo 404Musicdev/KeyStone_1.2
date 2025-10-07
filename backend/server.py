@@ -717,15 +717,31 @@ async def submit_assignment(submission: SubmissionRequest, current_user=Depends(
     if not assignment:
         raise HTTPException(status_code=404, detail="Assignment details not found")
     
-    # Calculate score
-    correct_answers = 0
-    total_questions = len(assignment["questions"])
+    # Calculate score for MCQ questions
+    mcq_correct = 0
+    total_mcq = len(assignment["questions"])
     
-    for i, answer in enumerate(submission.answers):
-        if i < total_questions and answer == assignment["questions"][i]["correct_answer"]:
-            correct_answers += 1
+    if submission.answers:
+        for i, answer in enumerate(submission.answers):
+            if i < total_mcq and answer == assignment["questions"][i]["correct_answer"]:
+                mcq_correct += 1
     
-    score = (correct_answers / total_questions) * 100 if total_questions > 0 else 0
+    # Calculate score for coding exercises (simple string matching for now)
+    coding_correct = 0
+    total_coding = len(assignment.get("coding_exercises", []))
+    
+    if submission.coding_answers and total_coding > 0:
+        for i, code_answer in enumerate(submission.coding_answers):
+            if i < total_coding:
+                correct_code = assignment["coding_exercises"][i]["correct_answer"]
+                # Simple string matching (normalize whitespace)
+                if code_answer.strip().replace(" ", "").replace("\n", "") == correct_code.strip().replace(" ", "").replace("\n", ""):
+                    coding_correct += 1
+    
+    # Calculate overall score
+    total_questions = total_mcq + total_coding
+    total_correct = mcq_correct + coding_correct
+    score = (total_correct / total_questions) * 100 if total_questions > 0 else 0
     
     # Update student assignment
     await db.student_assignments.update_one(
@@ -733,6 +749,7 @@ async def submit_assignment(submission: SubmissionRequest, current_user=Depends(
         {
             "$set": {
                 "answers": submission.answers,
+                "coding_answers": submission.coding_answers,
                 "score": score,
                 "completed": True,
                 "submitted_at": datetime.now(timezone.utc).isoformat()
