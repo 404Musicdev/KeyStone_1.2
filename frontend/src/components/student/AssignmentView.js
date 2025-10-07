@@ -307,8 +307,8 @@ const AssignmentView = () => {
             <div className="prose prose-invert max-w-none">
               <div className="assignment-question p-8 rounded-lg">
                 <div className={`text-white leading-relaxed whitespace-pre-wrap ${
-                  assignment.assignment.subject === 'Learning to Read' 
-                    ? 'text-2xl font-medium text-center' 
+                  assignment.assignment.subject === 'Learn to Code' 
+                    ? 'text-lg font-medium' 
                     : 'text-lg'
                 }`}>
                   {assignment.assignment.reading_passage}
