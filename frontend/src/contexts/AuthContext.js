@@ -27,7 +27,7 @@ export const AuthProvider = ({ children }) => {
     setLoading(false);
   }, []);
 
-  const login = async (credentials, userType = 'teacher') => {
+  const login = useCallback(async (credentials, userType = 'teacher') => {
     try {
       const endpoint = userType === 'teacher' 
         ? '/auth/teacher/login' 
@@ -54,9 +54,9 @@ export const AuthProvider = ({ children }) => {
         error: error.response?.data?.detail || 'Login failed'
       };
     }
-  };
+  }, []);
 
-  const register = async (userData) => {
+  const register = useCallback(async (userData) => {
     try {
       const response = await axios.post(`${API_BASE}/auth/teacher/register`, userData);
       const { access_token, user: newUser } = response.data;
@@ -69,7 +69,7 @@ export const AuthProvider = ({ children }) => {
       axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
       
       setUser(newUser);
-      setIsAuthenticated(true);
+      setIsAuthentected(true);
       
       return { success: true, user: newUser };
     } catch (error) {
@@ -79,15 +79,15 @@ export const AuthProvider = ({ children }) => {
         error: error.response?.data?.detail || 'Registration failed'
       };
     }
-  };
+  }, []);
 
-  const logout = () => {
+  const logout = useCallback(() => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     delete axios.defaults.headers.common['Authorization'];
     setUser(null);
     setIsAuthenticated(false);
-  };
+  }, []);
 
   // Check if user is already logged in on app start
   useEffect(() => {
