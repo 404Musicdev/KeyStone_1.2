@@ -536,7 +536,7 @@ const AssignmentView = () => {
               <div>
                 <p className="text-white font-medium">Ready to submit?</p>
                 <p className="text-slate-300 text-sm">
-                  Make sure you've answered all questions. You won't be able to change your answers after submitting.
+                  Make sure you've answered all questions{assignment.assignment.coding_exercises?.length > 0 ? ' and completed all coding exercises' : ''}. You won't be able to change your answers after submitting.
                 </p>
               </div>
               
