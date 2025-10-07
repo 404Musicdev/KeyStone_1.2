@@ -542,7 +542,12 @@ const AssignmentView = () => {
               
               <Button
                 onClick={handleSubmit}
-                disabled={submitting || Object.keys(answers).length < assignment.assignment.questions.length}
+                disabled={
+                  submitting || 
+                  Object.keys(answers).length < assignment.assignment.questions.length ||
+                  (assignment.assignment.coding_exercises?.length > 0 && 
+                   Object.keys(codingAnswers).length < assignment.assignment.coding_exercises.length)
+                }
                 className="bg-green-600 hover:bg-green-700 text-white px-8 py-3"
                 data-testid="submit-assignment-button"
               >
