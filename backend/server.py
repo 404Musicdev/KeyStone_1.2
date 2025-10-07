@@ -80,11 +80,20 @@ class AssignmentGenerate(BaseModel):
     subject: str
     grade_level: str
     topic: str
+    coding_level: Optional[int] = None  # 1-4 for Learn to Code assignments
+    youtube_url: Optional[str] = None
 
 class Question(BaseModel):
     question: str
     options: List[str]
     correct_answer: int  # Index of correct answer (0-3)
+
+class CodingExercise(BaseModel):
+    prompt: str
+    language: str  # "html", "javascript", "python"
+    starter_code: Optional[str] = None
+    correct_answer: str
+    explanation: Optional[str] = None
 
 class Assignment(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
