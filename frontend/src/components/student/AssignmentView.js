@@ -361,7 +361,7 @@ const AssignmentView = () => {
                   </div>
                   <div className="flex-1">
                     <h3 className={`text-white font-medium mb-4 ${
-                      assignment.assignment.subject === 'Learning to Read' ? 'text-xl' : 'text-lg'
+                      assignment.assignment.subject === 'Learn to Code' ? 'text-xl' : 'text-lg'
                     }`}>
                       {question.question}
                     </h3>
