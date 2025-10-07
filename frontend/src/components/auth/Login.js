@@ -102,7 +102,7 @@ const Login = () => {
         </div>
 
         {/* Main Card */}
-        <Card className="glass-effect border-slate-700 slide-up" data-testid="login-card">
+        <Card className="bg-gray-900 border-gray-600 slide-up" data-testid="login-card">
           <CardHeader className="space-y-1">
             <CardTitle className="text-2xl text-center text-white">Welcome</CardTitle>
             <CardDescription className="text-center text-slate-300">
