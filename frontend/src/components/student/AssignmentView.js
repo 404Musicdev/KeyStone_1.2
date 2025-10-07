@@ -433,6 +433,95 @@ const AssignmentView = () => {
               </div>
             );
           })}
+          
+          {/* Coding Exercises */}
+          {assignment.assignment.coding_exercises && assignment.assignment.coding_exercises.length > 0 && (
+            <div className="mt-8">
+              <h2 className="text-xl font-semibold text-white mb-4 flex items-center">
+                <Target className="w-5 h-5 mr-2" />
+                Coding Exercises
+              </h2>
+              
+              {assignment.assignment.coding_exercises.map((exercise, exerciseIndex) => (
+                <div 
+                  key={exerciseIndex}
+                  className="assignment-question p-6 rounded-lg mb-6"
+                  data-testid={`coding-exercise-${exerciseIndex}`}
+                >
+                  <div className="flex items-start space-x-4 mb-4">
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                      assignment.completed
+                        ? 'bg-blue-500 text-white'
+                        : (codingAnswers[exerciseIndex] && codingAnswers[exerciseIndex].trim()
+                            ? 'bg-blue-500 text-white'
+                            : 'bg-slate-600 text-slate-300'
+                          )
+                    }`}>
+                      {exerciseIndex + 1}
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-white font-medium mb-4 text-lg">
+                        {exercise.prompt}
+                      </h3>
+                      
+                      {/* Language Badge */}
+                      <div className="mb-4">
+                        <Badge variant="outline" className="text-xs">
+                          {exercise.language.toUpperCase()}
+                        </Badge>
+                      </div>
+                      
+                      {/* Starter Code Display */}
+                      {exercise.starter_code && (
+                        <div className="mb-4">
+                          <Label className="text-slate-300 text-sm mb-2 block">Starter Code:</Label>
+                          <SyntaxHighlighter
+                            language={exercise.language}
+                            style={vscDarkPlus}
+                            className="rounded-lg text-sm"
+                          >
+                            {exercise.starter_code}
+                          </SyntaxHighlighter>
+                        </div>
+                      )}
+                      
+                      {/* Code Input */}
+                      <div className="space-y-2">
+                        <Label className="text-slate-300 text-sm">Your Code:</Label>
+                        <Textarea
+                          value={codingAnswers[exerciseIndex] || exercise.starter_code || ''}
+                          onChange={(e) => handleCodingAnswerChange(exerciseIndex, e.target.value)}
+                          disabled={assignment.completed}
+                          placeholder={`Write your ${exercise.language} code here...`}
+                          className="bg-slate-900 border-slate-600 text-white font-mono text-sm min-h-[120px]"
+                          style={{ fontFamily: 'Monaco, "Lucida Console", monospace' }}
+                        />
+                      </div>
+                      
+                      {/* Show correct answer after completion */}
+                      {assignment.completed && exercise.correct_answer && (
+                        <div className="mt-4">
+                          <Label className="text-green-400 text-sm mb-2 block">Correct Answer:</Label>
+                          <SyntaxHighlighter
+                            language={exercise.language}
+                            style={vscDarkPlus}
+                            className="rounded-lg text-sm"
+                          >
+                            {exercise.correct_answer}
+                          </SyntaxHighlighter>
+                          {exercise.explanation && (
+                            <p className="text-slate-300 text-sm mt-2 italic">
+                              {exercise.explanation}
+                            </p>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
 
