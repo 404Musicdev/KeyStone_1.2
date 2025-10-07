@@ -133,15 +133,18 @@ backend:
 
   - task: "Add level selection (1-4) for Learn to Code assignments"
     implemented: true
-    working: "NA" 
+    working: true
     file: "server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Added coding_level parameter to AssignmentGenerate model and level-specific prompt generation"
+      - working: true
+        agent: "testing"
+        comment: "✅ Level selection (1-4) works correctly. API accepts coding_level parameter and stores it properly in assignments. Tested all levels 1-4 successfully. Edge cases handled: missing coding_level and invalid levels both work with fallback."
 
   - task: "Update AI prompt generation for coding curriculum"
     implemented: true
