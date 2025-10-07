@@ -218,41 +218,138 @@ async def generate_assignment_with_ai(subject: str, grade_level: str, topic: str
             system_message="You are an expert educational content creator for homeschool teachers."
         ).with_model("gemini", "gemini-2.5-pro")
         
-        if subject.lower() == "learning to read":
-            prompt = f"""
-            Create a "Learning to Read" assignment for {grade_level} students on the topic: {topic}
-            
-            This is for young students who are still learning to read. Please generate:
-            1. A very simple reading passage using only 10-14 words total, focusing on basic phonics and sight words
-            2. 2 simple multiple-choice questions about the passage (very basic comprehension)
-            
-            The reading passage should:
-            - Use simple, common words that young children can sound out
-            - Be about something familiar (animals, family, toys, etc.)
-            - Have short, simple sentences
-            - Be encouraging and fun
-            
-            Example words to use: cat, dog, run, play, mom, dad, big, red, go, see, like, has, is, the, a
-            
-            Return your response in this EXACT JSON format:
-            {{
-                "reading_passage": "The simple passage here using only 10-14 words...",
-                "questions": [
-                    {{
-                        "question": "Simple question about the passage?",
-                        "options": ["Yes", "No", "Maybe", "I don't know"],
-                        "correct_answer": 0
-                    }},
-                    {{
-                        "question": "Another simple question?",
-                        "options": ["Option A", "Option B", "Option C", "Option D"],
-                        "correct_answer": 1
-                    }}
-                ]
-            }}
-            
-            Make sure everything is appropriate for beginning readers in {grade_level}.
-            """
+        if subject.lower() == "learn to code" and coding_level:
+            if coding_level == 1:
+                # Level 1: Programming Concepts (MCQ only)
+                prompt = f"""
+                Create a "Learn to Code - Level 1" assignment for {grade_level} students on programming concepts.
+                Topic: {topic}
+                
+                This is for complete beginners who have never coded before. Generate 4-6 multiple-choice questions about:
+                - What is programming/coding
+                - Different programming languages (Python, JavaScript, HTML, etc.) and what they're used for
+                - Basic concepts like websites, apps, games being made with code
+                - How computers understand instructions
+                
+                Make it very beginner-friendly and engaging. Use simple language.
+                
+                Return your response in this EXACT JSON format:
+                {{
+                    "questions": [
+                        {{
+                            "question": "What is programming?",
+                            "options": ["Writing instructions for computers", "Drawing pictures", "Playing games", "Reading books"],
+                            "correct_answer": 0
+                        }}
+                    ]
+                }}
+                """
+            elif coding_level == 2:
+                # Level 2: HTML Fundamentals (code + MCQ)
+                prompt = f"""
+                Create a "Learn to Code - Level 2" HTML assignment for {grade_level} students.
+                Topic: {topic}
+                
+                Generate:
+                1. 2-3 multiple-choice questions about HTML basics
+                2. 1-2 simple HTML coding exercises (building small HTML pages)
+                
+                Return your response in this EXACT JSON format:
+                {{
+                    "questions": [
+                        {{
+                            "question": "What does HTML stand for?",
+                            "options": ["HyperText Markup Language", "High Tech Modern Language", "Home Tool Making Language", "Happy Time Making Language"],
+                            "correct_answer": 0
+                        }}
+                    ],
+                    "coding_exercises": [
+                        {{
+                            "prompt": "Create a simple HTML page with a title and paragraph about your favorite animal",
+                            "language": "html",
+                            "starter_code": "<!DOCTYPE html>\\n<html>\\n<head>\\n    <title></title>\\n</head>\\n<body>\\n\\n</body>\\n</html>",
+                            "correct_answer": "<!DOCTYPE html>\\n<html>\\n<head>\\n    <title>My Favorite Animal</title>\\n</head>\\n<body>\\n    <h1>My Favorite Animal</h1>\\n    <p>Dogs are my favorite animals because they are loyal and friendly.</p>\\n</body>\\n</html>",
+                            "explanation": "This shows proper HTML structure with title, heading, and paragraph tags."
+                        }}
+                    ]
+                }}
+                """
+            elif coding_level == 3:
+                # Level 3: JavaScript Basics
+                prompt = f"""
+                Create a "Learn to Code - Level 3" JavaScript assignment for {grade_level} students.
+                Topic: {topic}
+                
+                Generate:
+                1. 2-3 multiple-choice questions about JavaScript basics
+                2. 1-2 simple JavaScript coding exercises
+                
+                Return your response in this EXACT JSON format:
+                {{
+                    "questions": [
+                        {{
+                            "question": "What is JavaScript mainly used for?",
+                            "options": ["Making websites interactive", "Only for games", "Only for mobile apps", "Only for robots"],
+                            "correct_answer": 0
+                        }}
+                    ],
+                    "coding_exercises": [
+                        {{
+                            "prompt": "Write JavaScript code to show an alert with the message 'Hello World!'",
+                            "language": "javascript",
+                            "starter_code": "// Write your code here\\n",
+                            "correct_answer": "alert('Hello World!');",
+                            "explanation": "The alert() function displays a popup message to the user."
+                        }}
+                    ]
+                }}
+                """
+            elif coding_level == 4:
+                # Level 4: Python Backend
+                prompt = f"""
+                Create a "Learn to Code - Level 4" Python backend assignment for {grade_level} students.
+                Topic: {topic}
+                
+                Generate:
+                1. 2-3 multiple-choice questions about Python and backend development
+                2. 1-2 simple Python coding exercises for backend concepts
+                
+                Return your response in this EXACT JSON format:
+                {{
+                    "questions": [
+                        {{
+                            "question": "What is Python commonly used for?",
+                            "options": ["Web backends, data science, automation", "Only games", "Only websites", "Only mobile apps"],
+                            "correct_answer": 0
+                        }}
+                    ],
+                    "coding_exercises": [
+                        {{
+                            "prompt": "Write Python code to create a simple function that returns a greeting message",
+                            "language": "python",
+                            "starter_code": "# Define a function called greet\\ndef greet(name):\\n    # Your code here\\n    pass\\n\\n# Test the function\\nprint(greet('World'))",
+                            "correct_answer": "def greet(name):\\n    return f'Hello, {name}!'\\n\\nprint(greet('World'))",
+                            "explanation": "This function takes a name parameter and returns a formatted greeting string."
+                        }}
+                    ]
+                }}
+                """
+            else:
+                # Fallback for invalid levels
+                prompt = f"""
+                Create a basic programming concepts assignment for {grade_level} students.
+                
+                Return your response in this EXACT JSON format:
+                {{
+                    "questions": [
+                        {{
+                            "question": "What is programming?",
+                            "options": ["Writing instructions for computers", "Drawing pictures", "Playing games", "Reading books"],
+                            "correct_answer": 0
+                        }}
+                    ]
+                }}
+                """
         elif subject.lower() == "reading":
             prompt = f"""
             Create a reading assignment for {grade_level} students on the topic: {topic}
