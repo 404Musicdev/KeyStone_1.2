@@ -271,10 +271,12 @@ const StudentDashboard = () => {
       
       <main className="flex-1 lg:ml-64 transition-all duration-300">
         <div className="p-6 min-h-screen bg-slate-900">
-          <Routes>
-            <Route index element={<SimpleStudentOverview />} />
-            <Route path="*" element={<SimpleStudentOverview />} />
-          </Routes>
+          <ErrorBoundary>
+            <Routes>
+              <Route index element={<SimpleStudentOverview />} />
+              <Route path="*" element={<SimpleStudentOverview />} />
+            </Routes>
+          </ErrorBoundary>
         </div>
       </main>
     </div>
