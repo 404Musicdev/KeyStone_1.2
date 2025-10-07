@@ -7,6 +7,12 @@ import os
 import uuid
 from emergentintegrations.llm.chat import LlmChat, UserMessage
 import json
+from dotenv import load_dotenv
+from pathlib import Path
+
+# Load environment variables
+ROOT_DIR = Path(__file__).parent / "backend"
+load_dotenv(ROOT_DIR / '.env')
 
 # Test the AI generation function directly
 async def test_ai_generation():
