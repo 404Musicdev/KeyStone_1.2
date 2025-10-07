@@ -148,15 +148,18 @@ backend:
 
   - task: "Update AI prompt generation for coding curriculum"
     implemented: true
-    working: "NA"
+    working: false
     file: "server.py" 
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Created level-specific AI prompts for Level 1-4 coding curriculum with appropriate content and difficulty"
+      - working: false
+        agent: "testing"
+        comment: "❌ AI prompt generation fails due to expired Gemini API key. Level-specific prompts are correctly implemented in code but AI service returns 400 error. Only fallback single question is generated instead of proper level-specific content (4-6 questions for Level 1, coding exercises for Levels 2-4)."
 
   - task: "Add support for code exercises with correct answers"
     implemented: true
