@@ -227,11 +227,10 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Replace Learning to Read with Learn to Code subject"
-    - "Update AI prompt generation for coding curriculum"
-  stuck_tasks: 
-    - "Replace Learning to Read with Learn to Code subject"
-    - "Update AI prompt generation for coding curriculum"
+    - "Update Assignment Generator with Learn to Code and level selection"
+    - "Add syntax highlighting to assignment view for code inputs"
+    - "Update assignment styling to deep blue background with soft white text"
+  stuck_tasks: []
   test_all: false
   test_priority: "high_first"
 
