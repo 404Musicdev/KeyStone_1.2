@@ -108,14 +108,15 @@ export const AuthProvider = ({ children }) => {
     setLoading(false);
   }, []);
 
-  const value = {
+  // FIX: Memoize the value to prevent unnecessary re-renders
+  const value = React.useMemo(() => ({
     user,
     isAuthenticated,
     loading,
     login,
     register,
     logout
-  };
+  }), [user, isAuthenticated, loading]); // Only depend on state variables, not functions
 
   if (loading) {
     return (
