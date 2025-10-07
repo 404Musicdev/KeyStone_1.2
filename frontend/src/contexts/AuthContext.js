@@ -106,7 +106,7 @@ export const AuthProvider = ({ children }) => {
       }
     }
     setLoading(false);
-  }, []);
+  }, [logout]);
 
   // FIX: Memoize the value to prevent unnecessary re-renders
   const value = React.useMemo(() => ({
