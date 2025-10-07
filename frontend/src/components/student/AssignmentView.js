@@ -80,10 +80,25 @@ const AssignmentView = () => {
       return;
     }
 
+    // Check if all coding exercises are completed (if any)
+    const totalCodingExercises = assignment.assignment.coding_exercises?.length || 0;
+    const answeredCoding = Object.keys(codingAnswers).length;
+    
+    if (totalCodingExercises > 0 && answeredCoding < totalCodingExercises) {
+      toast.error(`Please complete all ${totalCodingExercises} coding exercises before submitting.`);
+      return;
+    }
+
     // Convert answers object to array in correct order
     const answersArray = [];
     for (let i = 0; i < totalQuestions; i++) {
       answersArray[i] = answers[i] !== undefined ? answers[i] : -1;
+    }
+
+    // Convert coding answers to array
+    const codingAnswersArray = [];
+    for (let i = 0; i < totalCodingExercises; i++) {
+      codingAnswersArray[i] = codingAnswers[i] || '';
     }
 
     setSubmitting(true);
@@ -91,7 +106,8 @@ const AssignmentView = () => {
     try {
       const response = await axios.post(`${API_BASE}/student/assignments/submit`, {
         student_assignment_id: assignmentId,
-        answers: answersArray
+        answers: answersArray.length > 0 ? answersArray : null,
+        coding_answers: codingAnswersArray.length > 0 ? codingAnswersArray : null
       });
       
       toast.success(`Assignment submitted! Score: ${Math.round(response.data.score)}%`);
