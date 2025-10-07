@@ -120,13 +120,15 @@ class StudentAssignment(BaseModel):
     teacher_id: str
     assigned_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     submitted_at: Optional[datetime] = None
-    answers: Optional[List[int]] = None  # Student's answers (indices)
+    answers: Optional[List[int]] = None  # Student's MCQ answers (indices)
+    coding_answers: Optional[List[str]] = None  # Student's code submissions
     score: Optional[float] = None
     completed: bool = False
 
 class SubmissionRequest(BaseModel):
     student_assignment_id: str
-    answers: List[int]
+    answers: Optional[List[int]] = None  # MCQ answers
+    coding_answers: Optional[List[str]] = None  # Code answers
 
 # Lesson Plan Models
 class LessonPlanGenerate(BaseModel):
