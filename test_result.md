@@ -118,7 +118,7 @@ user_problem_statement: |
 backend:
   - task: "Replace Learning to Read with Learn to Code subject"
     implemented: true
-    working: false
+    working: true
     file: "server.py"
     stuck_count: 1
     priority: "high"
@@ -130,6 +130,9 @@ backend:
       - working: false
         agent: "testing"
         comment: "CRITICAL: Gemini API key expired (AIzaSyBv95QhYYBUj9NnDt4XRLlsDgdu73mPkmI). Backend endpoints work but AI generation falls back to single default question instead of proper Learn to Code content. API returns 400 error: 'API key expired. Please renew the API key.'"
+      - working: true
+        agent: "testing"
+        comment: "✅ FIXED: New Emergent LLM API key (sk-emergent-cF72fFe95Aa20129b1) is working perfectly. Fixed Python f-string bug in Level 4 prompt. All 4 Learn to Code levels now generate proper AI content: Level 1 (4-6 MCQ questions), Level 2 (MCQ + HTML exercises), Level 3 (MCQ + JavaScript exercises), Level 4 (MCQ + Python exercises). Subject replacement from 'Learning to Read' to 'Learn to Code' working correctly."
 
   - task: "Add level selection (1-4) for Learn to Code assignments"
     implemented: true
