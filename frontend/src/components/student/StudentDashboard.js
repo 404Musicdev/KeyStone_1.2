@@ -19,10 +19,26 @@ import {
 const SimpleStudentOverview = () => {
   const { user } = useAuth();
   
+  // Debug logging
+  React.useEffect(() => {
+    console.log('SimpleStudentOverview mounted with user:', user);
+  }, [user]);
+  
+  // Fallback if user data is not available
+  if (!user) {
+    return (
+      <div className="space-y-6">
+        <div className="p-6 bg-red-500/10 border border-red-500/30 rounded-lg">
+          <p className="text-red-400 font-medium">Loading user data...</p>
+        </div>
+      </div>
+    );
+  }
+  
   return (
     <div className="space-y-6">
       <div className="fade-in">
-        <h1 className="text-3xl font-bold text-white mb-2">Welcome back, {user?.first_name}!</h1>
+        <h1 className="text-3xl font-bold text-white mb-2">Welcome back, {user?.first_name || 'Student'}!</h1>
         <p className="text-gray-300">Here's your learning dashboard</p>
       </div>
 
