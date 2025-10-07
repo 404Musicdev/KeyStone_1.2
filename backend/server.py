@@ -760,7 +760,10 @@ async def submit_assignment(submission: SubmissionRequest, current_user=Depends(
     return {
         "message": "Assignment submitted successfully",
         "score": score,
-        "correct_answers": correct_answers,
+        "mcq_correct": mcq_correct,
+        "coding_correct": coding_correct,
+        "total_mcq": total_mcq,
+        "total_coding": total_coding,
         "total_questions": total_questions
     }
 
