@@ -63,11 +63,11 @@ body {
 
 /* High contrast text classes */
 .text-readable {
-  color: #ffffff !important;
+  color: #f8fafc !important; /* Soft white */
 }
 
 .text-readable-secondary {
-  color: #d1d5db !important;
+  color: #e2e8f0 !important; /* Softer secondary white */
 }
 
 .text-readable-muted {
