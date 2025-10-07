@@ -26,6 +26,7 @@ const AssignmentView = () => {
   const navigate = useNavigate();
   const [assignment, setAssignment] = useState(null);
   const [answers, setAnswers] = useState({});
+  const [codingAnswers, setCodingAnswers] = useState({});
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
