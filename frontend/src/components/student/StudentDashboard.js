@@ -203,7 +203,7 @@ const StudentDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black flex" data-testid="student-dashboard">
+    <div className="min-h-screen bg-slate-950 flex" data-testid="student-dashboard">
       <SimpleSidebar 
         isOpen={sidebarOpen} 
         onToggle={() => setSidebarOpen(!sidebarOpen)}
