@@ -163,15 +163,18 @@ backend:
 
   - task: "Add support for code exercises with correct answers"
     implemented: true
-    working: "NA"
+    working: true
     file: "server.py"
     stuck_count: 0
     priority: "high" 
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Added CodingExercise model, updated Assignment model to include coding_exercises, updated submission handling for coding answers"
+      - working: true
+        agent: "testing"
+        comment: "✅ Code exercise support works correctly. CodingExercise model properly defined with prompt, language, starter_code, correct_answer fields. Assignment submission endpoint handles both answers and coding_answers arrays. Scoring logic works for both MCQ and coding exercises."
 
 frontend:
   - task: "Update Assignment Generator with Learn to Code and level selection"
