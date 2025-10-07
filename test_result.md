@@ -151,7 +151,7 @@ backend:
 
   - task: "Update AI prompt generation for coding curriculum"
     implemented: true
-    working: false
+    working: true
     file: "server.py" 
     stuck_count: 1
     priority: "high"
@@ -163,6 +163,9 @@ backend:
       - working: false
         agent: "testing"
         comment: "❌ AI prompt generation fails due to expired Gemini API key. Level-specific prompts are correctly implemented in code but AI service returns 400 error. Only fallback single question is generated instead of proper level-specific content (4-6 questions for Level 1, coding exercises for Levels 2-4)."
+      - working: true
+        agent: "testing"
+        comment: "✅ FIXED: AI prompt generation now working perfectly with new API key. All level-specific prompts generate appropriate content: Level 1 (Programming concepts, 4-6 MCQ), Level 2 (HTML fundamentals with coding exercises), Level 3 (JavaScript basics with coding exercises), Level 4 (Python backend with coding exercises). Fixed f-string syntax error in Level 4 prompt. Content quality is excellent and level-appropriate."
 
   - task: "Add support for code exercises with correct answers"
     implemented: true
