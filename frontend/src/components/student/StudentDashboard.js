@@ -139,6 +139,21 @@ const SimpleStudentOverview = () => {
               <p><strong>Name:</strong> {user?.first_name} {user?.last_name}</p>
               <p><strong>Username:</strong> @{user?.username}</p>
               <p><strong>Role:</strong> {user?.role}</p>
+              
+              {/* Emergency logout button */}
+              <div className="mt-4 pt-4 border-t border-gray-700">
+                <button 
+                  onClick={() => {
+                    localStorage.clear();
+                    sessionStorage.clear();
+                    window.location.href = '/';
+                  }}
+                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm"
+                >
+                  Emergency Logout
+                </button>
+                <p className="text-gray-400 text-xs mt-1">Use this if you get stuck on this page</p>
+              </div>
             </div>
           </div>
         </CardContent>
