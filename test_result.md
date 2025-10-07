@@ -117,40 +117,52 @@ user_problem_statement: |
 
 backend:
   - task: "Replace Learning to Read with Learn to Code subject"
-    implemented: false
+    implemented: true
     working: "NA"
     file: "server.py"
     stuck_count: 0
     priority: "high"
     needs_retesting: true
-    status_history: []
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Updated backend models and AI generation logic to support Learn to Code with 4 levels instead of Learning to Read"
 
   - task: "Add level selection (1-4) for Learn to Code assignments"
-    implemented: false
+    implemented: true
     working: "NA" 
     file: "server.py"
     stuck_count: 0
     priority: "high"
     needs_retesting: true
-    status_history: []
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Added coding_level parameter to AssignmentGenerate model and level-specific prompt generation"
 
   - task: "Update AI prompt generation for coding curriculum"
-    implemented: false
+    implemented: true
     working: "NA"
     file: "server.py" 
     stuck_count: 0
     priority: "high"
     needs_retesting: true
-    status_history: []
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Created level-specific AI prompts for Level 1-4 coding curriculum with appropriate content and difficulty"
 
   - task: "Add support for code exercises with correct answers"
-    implemented: false
+    implemented: true
     working: "NA"
     file: "server.py"
     stuck_count: 0
     priority: "high" 
     needs_retesting: true
-    status_history: []
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Added CodingExercise model, updated Assignment model to include coding_exercises, updated submission handling for coding answers"
 
 frontend:
   - task: "Update Assignment Generator with Learn to Code and level selection"
