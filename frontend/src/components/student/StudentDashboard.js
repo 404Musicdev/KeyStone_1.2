@@ -197,6 +197,11 @@ const StudentDashboard = () => {
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  // Debug logging
+  React.useEffect(() => {
+    console.log('StudentDashboard mounted successfully');
+  }, []);
+
   const handleLogout = () => {
     logout();
     navigate('/login');
