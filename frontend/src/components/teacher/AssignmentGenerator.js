@@ -104,6 +104,11 @@ const AssignmentGenerator = () => {
       toast.error('Please fill in all fields');
       return;
     }
+
+    if (formData.subject === 'Learn to Code' && !formData.coding_level) {
+      toast.error('Please select a coding level');
+      return;
+    }
     
     setGenerating(true);
     
