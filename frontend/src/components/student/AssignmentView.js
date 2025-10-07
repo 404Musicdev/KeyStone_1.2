@@ -294,7 +294,7 @@ const AssignmentView = () => {
           <CardHeader>
             <CardTitle className="text-white flex items-center">
               <BookOpen className="w-5 h-5 mr-2" />
-              {assignment.assignment.subject === 'Learning to Read' ? 'Practice Reading' : 'Reading Passage'}
+              {assignment.assignment.subject === 'Learn to Code' ? 'Study Material' : 'Reading Passage'}
             </CardTitle>
             <CardDescription className="text-slate-300">
               {assignment.assignment.subject === 'Learning to Read' 
