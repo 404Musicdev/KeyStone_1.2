@@ -38,16 +38,24 @@ const AssignmentGenerator = () => {
     subject: '',
     grade_level: '',
     topic: '',
+    coding_level: null,
     youtube_url: ''
   });
 
   const subjects = [
     'Math',
     'Reading',
-    'Learning to Read',
+    'Learn to Code',
     'Science',
     'History',
     'English'
+  ];
+
+  const codingLevels = [
+    { value: 1, label: 'Level 1: Programming Concepts' },
+    { value: 2, label: 'Level 2: HTML Fundamentals' },
+    { value: 3, label: 'Level 3: JavaScript Basics' },
+    { value: 4, label: 'Level 4: Python Backend' }
   ];
 
   const gradeLevels = [
