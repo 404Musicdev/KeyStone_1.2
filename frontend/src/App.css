@@ -48,17 +48,17 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.1) !important;
 }
 
-/* Assignment specific styles - High contrast for maximum readability */
+/* Assignment specific styles - Deep blue background with soft white text */
 .assignment-content {
-  background: #000000 !important;
-  color: #ffffff !important;
-  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  background: #1e3a8a !important; /* Deep blue background */
+  color: #f8fafc !important; /* Soft white text */
+  border: 1px solid rgba(248, 250, 252, 0.3) !important;
 }
 
 .assignment-question {
-  background: #111827 !important;
-  color: #ffffff !important;
-  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  background: #1e40af !important; /* Slightly lighter deep blue */
+  color: #f8fafc !important; /* Soft white text */
+  border: 1px solid rgba(248, 250, 252, 0.25) !important;
 }
 
 /* High contrast text classes */
