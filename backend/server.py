@@ -328,7 +328,7 @@ async def generate_assignment_with_ai(subject: str, grade_level: str, topic: str
                             "prompt": "Write Python code to create a simple function that returns a greeting message",
                             "language": "python",
                             "starter_code": "# Define a function called greet\\ndef greet(name):\\n    # Your code here\\n    pass\\n\\n# Test the function\\nprint(greet('World'))",
-                            "correct_answer": "def greet(name):\\n    return f'Hello, {name}!'\\n\\nprint(greet('World'))",
+                            "correct_answer": "def greet(name):\\n    return f'Hello, {{name}}!'\\n\\nprint(greet('World'))",
                             "explanation": "This function takes a name parameter and returns a formatted greeting string."
                         }}
                     ]
