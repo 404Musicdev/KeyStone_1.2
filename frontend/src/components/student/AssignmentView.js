@@ -66,6 +66,13 @@ const AssignmentView = () => {
     }));
   };
 
+  const handleCodingAnswerChange = (exerciseIndex, code) => {
+    setCodingAnswers(prevAnswers => ({
+      ...prevAnswers,
+      [exerciseIndex]: code
+    }));
+  };
+
   const handleSubmit = async () => {
     if (!assignment || assignment.completed) {
       return;
