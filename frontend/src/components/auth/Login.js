@@ -149,7 +149,7 @@ const Login = () => {
                       placeholder="Enter your email"
                       value={teacherLogin.email}
                       onChange={(e) => setTeacherLogin({...teacherLogin, email: e.target.value})}
-                      className="bg-slate-800 border-slate-600 text-white placeholder-slate-400 focus:border-blue-500"
+                      className="bg-gray-800 border-gray-500 text-white placeholder-gray-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-400"
                       required
                       data-testid="teacher-email-input"
                     />
@@ -207,7 +207,7 @@ const Login = () => {
                       placeholder="Enter your username"
                       value={studentLogin.username}
                       onChange={(e) => setStudentLogin({...studentLogin, username: e.target.value})}
-                      className="bg-slate-800 border-slate-600 text-white placeholder-slate-400 focus:border-blue-500"
+                      className="bg-gray-800 border-gray-500 text-white placeholder-gray-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-400"
                       required
                       data-testid="student-username-input"
                     />
@@ -266,7 +266,7 @@ const Login = () => {
                         placeholder="First name"
                         value={teacherRegister.first_name}
                         onChange={(e) => setTeacherRegister({...teacherRegister, first_name: e.target.value})}
-                        className="bg-slate-800 border-slate-600 text-white placeholder-slate-400 focus:border-blue-500"
+                        className="bg-gray-800 border-gray-500 text-white placeholder-gray-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-400"
                         required
                         data-testid="register-firstname-input"
                       />
@@ -280,7 +280,7 @@ const Login = () => {
                         placeholder="Last name"
                         value={teacherRegister.last_name}
                         onChange={(e) => setTeacherRegister({...teacherRegister, last_name: e.target.value})}
-                        className="bg-slate-800 border-slate-600 text-white placeholder-slate-400 focus:border-blue-500"
+                        className="bg-gray-800 border-gray-500 text-white placeholder-gray-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-400"
                         required
                         data-testid="register-lastname-input"
                       />
@@ -295,7 +295,7 @@ const Login = () => {
                       placeholder="Enter your email"
                       value={teacherRegister.email}
                       onChange={(e) => setTeacherRegister({...teacherRegister, email: e.target.value})}
-                      className="bg-slate-800 border-slate-600 text-white placeholder-slate-400 focus:border-blue-500"
+                      className="bg-gray-800 border-gray-500 text-white placeholder-gray-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-400"
                       required
                       data-testid="register-email-input"
                     />
