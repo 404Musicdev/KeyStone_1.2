@@ -69,7 +69,7 @@ export const AuthProvider = ({ children }) => {
       axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
       
       setUser(newUser);
-      setIsAuthentected(true);
+      setIsAuthenticated(true);
       
       return { success: true, user: newUser };
     } catch (error) {
