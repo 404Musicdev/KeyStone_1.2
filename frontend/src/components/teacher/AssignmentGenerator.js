@@ -214,6 +214,27 @@ const AssignmentGenerator = () => {
                   </Select>
                 </div>
                 
+                {formData.subject === 'Learn to Code' && (
+                  <div className="space-y-2">
+                    <Label className="text-slate-300">Coding Level</Label>
+                    <Select 
+                      value={formData.coding_level?.toString() || ''} 
+                      onValueChange={(value) => setFormData({...formData, coding_level: parseInt(value)})}
+                    >
+                      <SelectTrigger className="bg-slate-800 border-slate-600 text-white">
+                        <SelectValue placeholder="Select coding level" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-slate-800 border-slate-700">
+                        {codingLevels.map(level => (
+                          <SelectItem key={level.value} value={level.value.toString()} className="text-white hover:bg-slate-700">
+                            {level.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+                
                 <div className="space-y-2">
                   <Label className="text-slate-300">Grade Level</Label>
                   <Select 
