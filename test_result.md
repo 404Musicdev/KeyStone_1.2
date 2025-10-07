@@ -222,9 +222,10 @@ metadata:
 test_plan:
   current_focus:
     - "Replace Learning to Read with Learn to Code subject"
-    - "Add level selection (1-4) for Learn to Code assignments"
     - "Update AI prompt generation for coding curriculum"
-  stuck_tasks: []
+  stuck_tasks: 
+    - "Replace Learning to Read with Learn to Code subject"
+    - "Update AI prompt generation for coding curriculum"
   test_all: false
   test_priority: "high_first"
 
