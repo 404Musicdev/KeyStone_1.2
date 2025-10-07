@@ -209,7 +209,7 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
     raise credentials_exception
 
 # AI Helper Function
-async def generate_assignment_with_ai(subject: str, grade_level: str, topic: str, youtube_url: Optional[str] = None):
+async def generate_assignment_with_ai(subject: str, grade_level: str, topic: str, coding_level: Optional[int] = None, youtube_url: Optional[str] = None):
     try:
         # Initialize Gemini chat
         chat = LlmChat(
