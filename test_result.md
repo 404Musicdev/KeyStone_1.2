@@ -166,31 +166,40 @@ backend:
 
 frontend:
   - task: "Update Assignment Generator with Learn to Code and level selection"
-    implemented: false
+    implemented: true
     working: "NA"
     file: "AssignmentGenerator.js"
     stuck_count: 0
     priority: "high"
     needs_retesting: true
-    status_history: []
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Updated subject list to replace 'Learning to Read' with 'Learn to Code', added coding level selection dropdown with 4 levels"
 
   - task: "Add syntax highlighting to assignment view for code inputs"
-    implemented: false
+    implemented: true
     working: "NA"
     file: "AssignmentView.js"
     stuck_count: 0
     priority: "high"
     needs_retesting: true
-    status_history: []
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Added react-syntax-highlighter for code display, created coding exercises UI with syntax highlighting and code input areas"
 
   - task: "Update assignment styling to deep blue background with soft white text"
-    implemented: false
+    implemented: true
     working: "NA"
-    file: "AssignmentView.js"
+    file: "App.css"
     stuck_count: 0
     priority: "high"
     needs_retesting: true
-    status_history: []
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Updated assignment CSS classes to use deep blue backgrounds (#1e3a8a, #1e40af) with soft white text (#f8fafc)"
 
 metadata:
   created_by: "main_agent"
