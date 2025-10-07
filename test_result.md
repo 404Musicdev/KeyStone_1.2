@@ -101,3 +101,100 @@
 #====================================================================================================
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
+
+user_problem_statement: |
+  Add a "Learn to Code" section to replace "Learning to Read" with 4 levels:
+  - Level 1: Programming concepts (MCQ only) - what is code, programming languages, uses
+  - Level 2: HTML fundamentals (code input + MCQ) - building small HTML pages 
+  - Level 3: JavaScript basics (code input + MCQ) - adding JS functionality to HTML
+  - Level 4: Python backend (code input + MCQ) - building backends with Python
+  
+  Requirements:
+  - Remove "Learning to Read" subject
+  - Add syntax highlighting for code input areas
+  - Add correct answer validation for code exercises
+  - Assignment backgrounds: deep blue with soft white text
+
+backend:
+  - task: "Replace Learning to Read with Learn to Code subject"
+    implemented: false
+    working: "NA"
+    file: "server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history: []
+
+  - task: "Add level selection (1-4) for Learn to Code assignments"
+    implemented: false
+    working: "NA" 
+    file: "server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history: []
+
+  - task: "Update AI prompt generation for coding curriculum"
+    implemented: false
+    working: "NA"
+    file: "server.py" 
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history: []
+
+  - task: "Add support for code exercises with correct answers"
+    implemented: false
+    working: "NA"
+    file: "server.py"
+    stuck_count: 0
+    priority: "high" 
+    needs_retesting: true
+    status_history: []
+
+frontend:
+  - task: "Update Assignment Generator with Learn to Code and level selection"
+    implemented: false
+    working: "NA"
+    file: "AssignmentGenerator.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history: []
+
+  - task: "Add syntax highlighting to assignment view for code inputs"
+    implemented: false
+    working: "NA"
+    file: "AssignmentView.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history: []
+
+  - task: "Update assignment styling to deep blue background with soft white text"
+    implemented: false
+    working: "NA"
+    file: "AssignmentView.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history: []
+
+metadata:
+  created_by: "main_agent"
+  version: "1.0"
+  test_sequence: 0
+  run_ui: false
+
+test_plan:
+  current_focus:
+    - "Replace Learning to Read with Learn to Code subject"
+    - "Add level selection (1-4) for Learn to Code assignments"
+    - "Update AI prompt generation for coding curriculum"
+  stuck_tasks: []
+  test_all: false
+  test_priority: "high_first"
+
+agent_communication:
+  - agent: "main"
+    message: "Starting implementation of Learn to Code feature to replace Learning to Read. Will implement backend changes first, then frontend updates."
