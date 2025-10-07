@@ -371,7 +371,7 @@ const AssignmentView = () => {
                     
                     <RadioGroup
                       value={selectedAnswer?.toString()}
-                      onValueChange={(value) => handleAnswerSelect(questionIndex, parseInt(value))}
+                      onValueChange={(value) => handleAnswerChange(questionIndex, parseInt(value))}
                       disabled={assignment.completed}
                       className="space-y-3"
                     >
