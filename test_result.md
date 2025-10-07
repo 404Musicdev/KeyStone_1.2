@@ -118,15 +118,18 @@ user_problem_statement: |
 backend:
   - task: "Replace Learning to Read with Learn to Code subject"
     implemented: true
-    working: "NA"
+    working: false
     file: "server.py"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Updated backend models and AI generation logic to support Learn to Code with 4 levels instead of Learning to Read"
+      - working: false
+        agent: "testing"
+        comment: "CRITICAL: Gemini API key expired (AIzaSyBv95QhYYBUj9NnDt4XRLlsDgdu73mPkmI). Backend endpoints work but AI generation falls back to single default question instead of proper Learn to Code content. API returns 400 error: 'API key expired. Please renew the API key.'"
 
   - task: "Add level selection (1-4) for Learn to Code assignments"
     implemented: true
