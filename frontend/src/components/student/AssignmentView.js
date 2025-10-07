@@ -330,6 +330,9 @@ const AssignmentView = () => {
             {!assignment.completed && (
               <span className="text-sm text-slate-300">
                 {Object.keys(answers).length} of {assignment.assignment.questions.length} answered
+                {assignment.assignment.coding_exercises && assignment.assignment.coding_exercises.length > 0 && (
+                  <span> • {Object.keys(codingAnswers).length} of {assignment.assignment.coding_exercises.length} coding exercises completed</span>
+                )}
               </span>
             )}
           </CardTitle>
