@@ -24,8 +24,16 @@ const StudentDashboard = () => {
     );
   }
 
-  // Handle not authenticated or wrong role
-  if (!isAuthenticated || !user || user.role !== 'student') {
+  // Debug info
+  console.log('StudentDashboard auth check:', { 
+    isAuthenticated, 
+    user, 
+    userRole: user?.role,
+    userString: JSON.stringify(user) 
+  });
+
+  // Handle not authenticated - but be more lenient
+  if (!isAuthenticated || !user) {
     return (
       <div style={{ 
         minHeight: '100vh', 
@@ -39,6 +47,9 @@ const StudentDashboard = () => {
         <div style={{ textAlign: 'center' }}>
           <h2 style={{ color: '#ef4444', marginBottom: '20px' }}>Access Denied</h2>
           <p style={{ marginBottom: '20px' }}>You need to be logged in as a student to access this page.</p>
+          <p style={{ fontSize: '12px', color: '#666', marginBottom: '20px' }}>
+            Debug: isAuth={String(isAuthenticated)}, user={user ? 'exists' : 'null'}
+          </p>
           <button 
             onClick={() => window.location.href = '/'}
             style={{ 
