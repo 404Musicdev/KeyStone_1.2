@@ -695,6 +695,36 @@ async def get_student_assignments(current_user=Depends(get_current_user)):
     
     return result
 
+@api_router.get("/student/assignments/{student_assignment_id}", response_model=dict)
+async def get_student_assignment_by_id(student_assignment_id: str, current_user=Depends(get_current_user)):
+    if current_user["type"] != "student":
+        raise HTTPException(status_code=403, detail="Only students can view their assignments")
+    
+    # Get student assignment
+    student_assignment = await db.student_assignments.find_one({
+        "id": student_assignment_id,
+        "student_id": current_user["data"]["id"]
+    })
+    
+    if not student_assignment:
+        raise HTTPException(status_code=404, detail="Assignment not found")
+    
+    # Get assignment details
+    assignment = await db.assignments.find_one({"id": student_assignment["assignment_id"]})
+    if not assignment:
+        raise HTTPException(status_code=404, detail="Assignment details not found")
+    
+    return {
+        "student_assignment_id": student_assignment["id"],
+        "assignment": Assignment(**assignment).dict(),
+        "completed": student_assignment["completed"],
+        "score": student_assignment.get("score"),
+        "submitted_at": student_assignment.get("submitted_at"),
+        "assigned_at": student_assignment["assigned_at"],
+        "answers": student_assignment.get("answers", []),
+        "coding_answers": student_assignment.get("coding_answers", [])
+    }
+
 @api_router.post("/student/assignments/submit")
 async def submit_assignment(submission: SubmissionRequest, current_user=Depends(get_current_user)):
     if current_user["type"] != "student":
