@@ -231,70 +231,150 @@ const StudentAssignments = ({ user }) => {
   );
 };
 
-// Dashboard Home Component
+// Modern Dashboard Home Component
 const StudentHome = ({ user, navigate }) => (
   <div>
-    <h2 style={{ color: '#10b981', marginBottom: '15px' }}>
-      ✅ SUCCESS: Student Login Working!
-    </h2>
-    
-    <p style={{ marginBottom: '10px' }}>
-      <strong>Welcome:</strong> {user.first_name} {user.last_name}
-    </p>
-    <p style={{ marginBottom: '10px' }}>
-      <strong>Username:</strong> {user.username}
-    </p>
-    <p style={{ marginBottom: '20px' }}>
-      <strong>Role:</strong> Student
-    </p>
-    
-    <div style={{ 
-      backgroundColor: '#065f46', 
-      padding: '15px', 
-      borderRadius: '8px',
-      marginBottom: '20px'
+    <div style={{
+      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+      padding: '30px',
+      borderRadius: '20px',
+      marginBottom: '30px',
+      color: 'white',
+      textAlign: 'center'
     }}>
-      <h3 style={{ color: '#10b981', marginBottom: '15px' }}>Quick Actions:</h3>
-      <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+      <div style={{ fontSize: '48px', marginBottom: '15px' }}>🎉</div>
+      <h2 style={{ 
+        fontSize: '32px', 
+        margin: '0 0 10px 0',
+        fontWeight: 'bold'
+      }}>
+        Welcome back, {user.first_name}!
+      </h2>
+      <p style={{ fontSize: '18px', opacity: 0.9, margin: 0 }}>
+        Ready to learn something amazing today?
+      </p>
+    </div>
+
+    <div style={{
+      display: 'grid',
+      gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+      gap: '20px',
+      marginBottom: '30px'
+    }}>
+      {/* Quick Stats */}
+      <div style={{
+        background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+        padding: '24px',
+        borderRadius: '16px',
+        color: 'white',
+        textAlign: 'center'
+      }}>
+        <div style={{ fontSize: '36px', marginBottom: '10px' }}>📊</div>
+        <h3 style={{ margin: '0 0 8px 0', fontSize: '18px' }}>Progress</h3>
+        <p style={{ margin: 0, fontSize: '24px', fontWeight: 'bold' }}>Keep Going!</p>
+      </div>
+
+      <div style={{
+        background: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
+        padding: '24px',
+        borderRadius: '16px',
+        color: 'white',
+        textAlign: 'center'
+      }}>
+        <div style={{ fontSize: '36px', marginBottom: '10px' }}>🎯</div>
+        <h3 style={{ margin: '0 0 8px 0', fontSize: '18px' }}>Goals</h3>
+        <p style={{ margin: 0, fontSize: '24px', fontWeight: 'bold' }}>Stay Focused!</p>
+      </div>
+
+      <div style={{
+        background: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
+        padding: '24px',
+        borderRadius: '16px',
+        color: 'white',
+        textAlign: 'center'
+      }}>
+        <div style={{ fontSize: '36px', marginBottom: '10px' }}>⭐</div>
+        <h3 style={{ margin: '0 0 8px 0', fontSize: '18px' }}>Achievements</h3>
+        <p style={{ margin: 0, fontSize: '24px', fontWeight: 'bold' }}>You Rock!</p>
+      </div>
+    </div>
+    
+    <div style={{
+      backgroundColor: 'rgba(255,255,255,0.05)',
+      padding: '25px',
+      borderRadius: '16px',
+      border: '1px solid rgba(255,255,255,0.1)'
+    }}>
+      <h3 style={{ 
+        fontSize: '24px', 
+        marginBottom: '20px',
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        backgroundClip: 'text',
+        WebkitBackgroundClip: 'text',
+        color: 'transparent',
+        fontWeight: 'bold'
+      }}>
+        🚀 Quick Actions
+      </h3>
+      <div style={{ 
+        display: 'grid', 
+        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
+        gap: '15px' 
+      }}>
         <button
           onClick={() => navigate('/student/assignments')}
           style={{
-            backgroundColor: '#3b82f6',
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
             color: 'white',
-            padding: '10px 16px',
+            padding: '16px 20px',
             border: 'none',
-            borderRadius: '6px',
+            borderRadius: '12px',
             cursor: 'pointer',
-            fontSize: '14px'
+            fontSize: '16px',
+            fontWeight: 'bold',
+            textAlign: 'center',
+            transition: 'all 0.3s ease'
           }}
+          onMouseEnter={(e) => e.target.style.transform = 'translateY(-2px)'}
+          onMouseLeave={(e) => e.target.style.transform = 'translateY(0)'}
         >
           📚 View Assignments
         </button>
         <button
           onClick={() => navigate('/student/grades')}
           style={{
-            backgroundColor: '#10b981',
+            background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
             color: 'white',
-            padding: '10px 16px',
+            padding: '16px 20px',
             border: 'none',
-            borderRadius: '6px',
+            borderRadius: '12px',
             cursor: 'pointer',
-            fontSize: '14px'
+            fontSize: '16px',
+            fontWeight: 'bold',
+            textAlign: 'center',
+            transition: 'all 0.3s ease'
           }}
+          onMouseEnter={(e) => e.target.style.transform = 'translateY(-2px)'}
+          onMouseLeave={(e) => e.target.style.transform = 'translateY(0)'}
         >
           📊 My Grades
         </button>
         <button
           onClick={() => navigate('/student/messages')}
           style={{
-            backgroundColor: '#8b5cf6',
+            background: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
             color: 'white',
-            padding: '10px 16px',
+            padding: '16px 20px',
             border: 'none',
-            borderRadius: '6px',
+            borderRadius: '12px',
             cursor: 'pointer',
-            fontSize: '14px'
+            fontSize: '16px',
+            fontWeight: 'bold',
+            textAlign: 'center',
+            transition: 'all 0.3s ease'
           }}
+          onMouseEnter={(e) => e.target.style.transform = 'translateY(-2px)'}
+          onMouseLeave={(e) => e.target.style.transform = 'translateY(0)'}
         >
           💬 Messages
         </button>
