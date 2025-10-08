@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 
-// Simple Assignments View
+// Modern Assignments View
 const StudentAssignments = ({ user }) => {
   const [assignments, setAssignments] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -13,14 +13,19 @@ const StudentAssignments = ({ user }) => {
 
   const fetchAssignments = async () => {
     try {
+      const token = localStorage.getItem('token');
       const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/student/assignments`, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
         }
       });
+      
       if (response.ok) {
         const data = await response.json();
         setAssignments(data);
+      } else {
+        console.error('Failed to fetch assignments:', response.status);
       }
     } catch (error) {
       console.error('Error fetching assignments:', error);
@@ -30,45 +35,194 @@ const StudentAssignments = ({ user }) => {
   };
 
   if (loading) {
-    return <div style={{ color: 'white', padding: '20px' }}>Loading assignments...</div>;
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        height: '200px',
+        flexDirection: 'column'
+      }}>
+        <div style={{
+          width: '50px',
+          height: '50px',
+          border: '4px solid #e5e7eb',
+          borderTop: '4px solid #3b82f6',
+          borderRadius: '50%',
+          animation: 'spin 1s linear infinite',
+          marginBottom: '15px'
+        }}></div>
+        <p style={{ color: '#94a3b8', fontSize: '16px' }}>Loading your awesome assignments...</p>
+      </div>
+    );
   }
 
+  const getSubjectEmoji = (subject) => {
+    const emojis = {
+      'Learn to Code': '💻',
+      'Math': '🧮',
+      'Science': '🔬',
+      'Reading': '📖',
+      'History': '🏛️',
+      'English': '📝'
+    };
+    return emojis[subject] || '📚';
+  };
+
+  const getSubjectColor = (subject) => {
+    const colors = {
+      'Learn to Code': 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+      'Math': 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+      'Science': 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+      'Reading': 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
+      'History': 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
+      'English': 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)'
+    };
+    return colors[subject] || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+  };
+
   return (
-    <div style={{ color: 'white', padding: '20px' }}>
-      <h2 style={{ marginBottom: '20px' }}>My Assignments</h2>
+    <div>
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        marginBottom: '30px'
+      }}>
+        <h2 style={{ 
+          fontSize: '28px', 
+          margin: 0,
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          backgroundClip: 'text',
+          WebkitBackgroundClip: 'text',
+          color: 'transparent',
+          fontWeight: 'bold'
+        }}>
+          📚 My Assignments
+        </h2>
+      </div>
+
       {assignments.length === 0 ? (
-        <p>No assignments available yet. Check back later!</p>
+        <div style={{
+          textAlign: 'center',
+          padding: '60px 20px',
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          borderRadius: '20px',
+          color: 'white'
+        }}>
+          <div style={{ fontSize: '64px', marginBottom: '20px' }}>🎯</div>
+          <h3 style={{ fontSize: '24px', marginBottom: '10px' }}>No assignments yet!</h3>
+          <p style={{ fontSize: '16px', opacity: 0.9 }}>
+            Check back soon for exciting Learn to Code challenges!
+          </p>
+        </div>
       ) : (
-        <div style={{ display: 'grid', gap: '15px' }}>
-          {assignments.map((assignment) => (
+        <div style={{ 
+          display: 'grid', 
+          gap: '20px',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))'
+        }}>
+          {assignments.map((assignment, index) => (
             <div key={assignment.id} style={{
-              backgroundColor: '#1e293b',
-              padding: '20px',
-              borderRadius: '8px',
-              border: '1px solid #374151'
+              background: getSubjectColor(assignment.assignment.subject),
+              padding: '0',
+              borderRadius: '16px',
+              overflow: 'hidden',
+              boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
+              transform: 'translateY(0)',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-5px)';
+              e.currentTarget.style.boxShadow = '0 15px 35px rgba(0,0,0,0.2)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = '0 10px 25px rgba(0,0,0,0.1)';
             }}>
-              <h3 style={{ color: '#3b82f6', marginBottom: '10px' }}>
-                {assignment.assignment.title}
-              </h3>
-              <p><strong>Subject:</strong> {assignment.assignment.subject}</p>
-              <p><strong>Grade:</strong> {assignment.assignment.grade_level}</p>
-              <p><strong>Status:</strong> {assignment.completed ? '✅ Completed' : '⏳ Pending'}</p>
-              {!assignment.completed && (
-                <button
-                  onClick={() => window.location.href = `/student/assignment/${assignment.id}`}
-                  style={{
-                    backgroundColor: '#3b82f6',
-                    color: 'white',
-                    padding: '8px 16px',
-                    border: 'none',
-                    borderRadius: '6px',
-                    cursor: 'pointer',
-                    marginTop: '10px'
-                  }}
-                >
-                  Start Assignment
-                </button>
-              )}
+              <div style={{ padding: '24px', color: 'white' }}>
+                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '15px' }}>
+                  <div style={{
+                    fontSize: '32px',
+                    marginRight: '12px',
+                    backgroundColor: 'rgba(255,255,255,0.2)',
+                    padding: '8px',
+                    borderRadius: '12px'
+                  }}>
+                    {getSubjectEmoji(assignment.assignment.subject)}
+                  </div>
+                  <div>
+                    <h3 style={{ 
+                      fontSize: '18px', 
+                      margin: 0, 
+                      fontWeight: 'bold',
+                      textShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                    }}>
+                      {assignment.assignment.title}
+                    </h3>
+                    <p style={{ 
+                      fontSize: '14px', 
+                      margin: 0, 
+                      opacity: 0.9,
+                      fontWeight: '500'
+                    }}>
+                      {assignment.assignment.subject} • {assignment.assignment.grade_level}
+                    </p>
+                  </div>
+                </div>
+
+                <div style={{ 
+                  backgroundColor: 'rgba(255,255,255,0.15)', 
+                  padding: '12px', 
+                  borderRadius: '10px',
+                  marginBottom: '20px'
+                }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ fontSize: '14px', fontWeight: '600' }}>
+                      {assignment.completed ? '✅ Completed!' : '⏳ Ready to Start'}
+                    </span>
+                    {assignment.score !== undefined && assignment.score !== null && (
+                      <span style={{ 
+                        fontSize: '16px', 
+                        fontWeight: 'bold',
+                        backgroundColor: 'rgba(255,255,255,0.2)',
+                        padding: '4px 8px',
+                        borderRadius: '6px'
+                      }}>
+                        {Math.round(assignment.score)}%
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {!assignment.completed && (
+                  <button
+                    onClick={() => window.location.href = `/student/assignment/${assignment.id}`}
+                    style={{
+                      backgroundColor: 'rgba(255,255,255,0.9)',
+                      color: '#1f2937',
+                      padding: '12px 24px',
+                      border: 'none',
+                      borderRadius: '10px',
+                      cursor: 'pointer',
+                      fontSize: '16px',
+                      fontWeight: 'bold',
+                      width: '100%',
+                      transition: 'all 0.2s ease'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.backgroundColor = 'white';
+                      e.target.style.transform = 'scale(1.02)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.backgroundColor = 'rgba(255,255,255,0.9)';
+                      e.target.style.transform = 'scale(1)';
+                    }}
+                  >
+                    🚀 Start Assignment
+                  </button>
+                )}
+              </div>
             </div>
           ))}
         </div>
