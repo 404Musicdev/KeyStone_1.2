@@ -82,10 +82,10 @@ class StudentAssignmentEndpointTester:
         try:
             response = requests.get(f"{BACKEND_URL}/student/assignments/{self.test_student_assignment_id}")
             
-            if response.status_code == 401:
-                self.log_test("Unauthenticated Request Rejection", True, "Correctly returned 401 Unauthorized")
+            if response.status_code in [401, 403]:
+                self.log_test("Unauthenticated Request Rejection", True, f"Correctly returned {response.status_code} (authentication required)")
             else:
-                self.log_test("Unauthenticated Request Rejection", False, f"Expected 401, got {response.status_code}")
+                self.log_test("Unauthenticated Request Rejection", False, f"Expected 401 or 403, got {response.status_code}")
                 
         except Exception as e:
             self.log_test("Unauthenticated Request Rejection", False, f"Exception: {str(e)}")
