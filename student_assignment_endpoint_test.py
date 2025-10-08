@@ -36,10 +36,10 @@ class StudentAssignmentEndpointTester:
         """Setup authentication tokens for testing"""
         print("\n=== Setting up Authentication ===")
         
-        # Login as teststudent (password: test123 as mentioned in review request)
+        # Login as teststudent (password: testpass - corrected from system)
         student_credentials = {
             "username": "teststudent",
-            "password": "test123"
+            "password": "testpass"
         }
         
         try:
