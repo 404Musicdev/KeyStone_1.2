@@ -50,7 +50,7 @@ const StudentDashboard = () => {
           <h2 style={{ color: '#ef4444', marginBottom: '20px' }}>Access Denied</h2>
           <p style={{ marginBottom: '20px' }}>You need to be logged in as a student to access this page.</p>
           <p style={{ fontSize: '12px', color: '#666', marginBottom: '20px' }}>
-            Debug: isAuth={String(isAuthenticated)}, user={user ? 'exists' : 'null'}
+            Debug: isAuth={String(isAuthenticated)}, hasTeacherId={String(!!user?.teacher_id)}
           </p>
           <button 
             onClick={() => window.location.href = '/'}
