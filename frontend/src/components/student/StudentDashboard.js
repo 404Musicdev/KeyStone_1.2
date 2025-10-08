@@ -111,7 +111,7 @@ const StudentDashboard = () => {
             <strong>Username:</strong> {user.username}
           </p>
           <p style={{ marginBottom: '20px' }}>
-            <strong>Role:</strong> {user.role}
+            <strong>Role:</strong> Student
           </p>
           
           <div style={{ 
