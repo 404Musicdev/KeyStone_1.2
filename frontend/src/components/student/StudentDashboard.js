@@ -476,6 +476,217 @@ const StudentHome = ({ user, navigate }) => {
   </div>
 );
 
+// Detailed Grades View
+const StudentGrades = ({ user }) => {
+  const [assignments, setAssignments] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchGrades();
+  }, []);
+
+  const fetchGrades = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/student/assignments`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        setAssignments(data);
+      }
+    } catch (error) {
+      console.error('Error fetching grades:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getGradeColor = (score) => {
+    if (score >= 90) return '#10b981';
+    if (score >= 80) return '#3b82f6';
+    if (score >= 70) return '#f59e0b';
+    return '#ef4444';
+  };
+
+  const getGradeLetter = (score) => {
+    if (score >= 90) return 'A';
+    if (score >= 80) return 'B';
+    if (score >= 70) return 'C';
+    if (score >= 60) return 'D';
+    return 'F';
+  };
+
+  const completedAssignments = assignments.filter(a => a.completed && a.score !== undefined && a.score !== null);
+  const overallGrade = completedAssignments.length > 0 
+    ? Math.round(completedAssignments.reduce((sum, a) => sum + a.score, 0) / completedAssignments.length)
+    : null;
+
+  if (loading) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        height: '300px',
+        flexDirection: 'column'
+      }}>
+        <div style={{
+          width: '50px',
+          height: '50px',
+          border: '4px solid #e5e7eb',
+          borderTop: '4px solid #3b82f6',
+          borderRadius: '50%',
+          animation: 'spin 1s linear infinite',
+          marginBottom: '15px'
+        }}></div>
+        <p style={{ color: '#94a3b8', fontSize: '16px' }}>Loading your grades...</p>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        marginBottom: '30px'
+      }}>
+        <h2 style={{ 
+          fontSize: '28px', 
+          margin: 0,
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          backgroundClip: 'text',
+          WebkitBackgroundClip: 'text',
+          color: 'transparent',
+          fontWeight: 'bold'
+        }}>
+          📊 My Grades Report
+        </h2>
+      </div>
+
+      {/* Overall Grade Summary */}
+      {overallGrade !== null && (
+        <div style={{
+          background: `linear-gradient(135deg, ${getGradeColor(overallGrade)} 0%, ${getGradeColor(overallGrade)}dd 100%)`,
+          padding: '25px',
+          borderRadius: '16px',
+          marginBottom: '25px',
+          color: 'white',
+          textAlign: 'center'
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '20px', flexWrap: 'wrap' }}>
+            <div>
+              <div style={{ fontSize: '48px', fontWeight: 'bold', marginBottom: '5px' }}>
+                {overallGrade}%
+              </div>
+              <div style={{ fontSize: '24px', fontWeight: 'bold' }}>
+                Grade: {getGradeLetter(overallGrade)}
+              </div>
+            </div>
+            <div style={{ textAlign: 'left' }}>
+              <p style={{ margin: '5px 0', fontSize: '16px' }}>
+                📋 Total Assignments: {assignments.length}
+              </p>
+              <p style={{ margin: '5px 0', fontSize: '16px' }}>
+                ✅ Completed: {completedAssignments.length}
+              </p>
+              <p style={{ margin: '5px 0', fontSize: '16px' }}>
+                ⏳ Pending: {assignments.length - completedAssignments.length}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Individual Assignment Grades */}
+      {completedAssignments.length > 0 ? (
+        <div style={{ marginBottom: '20px' }}>
+          <h3 style={{ 
+            fontSize: '20px', 
+            marginBottom: '15px',
+            color: '#e5e7eb'
+          }}>
+            Individual Assignment Grades
+          </h3>
+          <div style={{ display: 'grid', gap: '15px' }}>
+            {completedAssignments.map((assignment, index) => (
+              <div key={assignment.id} style={{
+                background: 'rgba(255,255,255,0.05)',
+                padding: '20px',
+                borderRadius: '12px',
+                border: '1px solid rgba(255,255,255,0.1)',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center'
+              }}>
+                <div>
+                  <h4 style={{ 
+                    margin: '0 0 8px 0', 
+                    fontSize: '18px',
+                    color: '#e5e7eb'
+                  }}>
+                    {assignment.assignment.title}
+                  </h4>
+                  <p style={{ 
+                    margin: '0 0 5px 0', 
+                    fontSize: '14px', 
+                    opacity: 0.8 
+                  }}>
+                    {assignment.assignment.subject} • {assignment.assignment.grade_level}
+                  </p>
+                  {assignment.submitted_at && (
+                    <p style={{ 
+                      margin: 0, 
+                      fontSize: '12px', 
+                      opacity: 0.6 
+                    }}>
+                      Submitted: {new Date(assignment.submitted_at).toLocaleDateString()}
+                    </p>
+                  )}
+                </div>
+                <div style={{
+                  textAlign: 'center',
+                  padding: '15px 20px',
+                  borderRadius: '10px',
+                  backgroundColor: getGradeColor(assignment.score),
+                  color: 'white',
+                  minWidth: '80px'
+                }}>
+                  <div style={{ fontSize: '24px', fontWeight: 'bold' }}>
+                    {Math.round(assignment.score)}%
+                  </div>
+                  <div style={{ fontSize: '14px', fontWeight: 'bold' }}>
+                    {getGradeLetter(assignment.score)}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <div style={{
+          textAlign: 'center',
+          padding: '60px 20px',
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          borderRadius: '20px',
+          color: 'white'
+        }}>
+          <div style={{ fontSize: '64px', marginBottom: '20px' }}>📚</div>
+          <h3 style={{ fontSize: '24px', marginBottom: '10px' }}>No Grades Yet</h3>
+          <p style={{ fontSize: '16px', opacity: 0.9 }}>
+            Complete some assignments to see your grades here!
+          </p>
+        </div>
+      )}
+    </div>
+  );
+};
+
 const StudentDashboard = () => {
   const { user, isAuthenticated, loading, logout } = useAuth();
   const navigate = useNavigate();
