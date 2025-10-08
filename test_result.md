@@ -116,6 +116,18 @@ user_problem_statement: |
   - Assignment backgrounds: deep blue with soft white text
 
 backend:
+  - task: "Add endpoint to fetch individual student assignment by ID"
+    implemented: true
+    working: "NA"
+    file: "server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Added GET /api/student/assignments/{student_assignment_id} endpoint to fetch individual student assignment by ID. Endpoint includes authentication check, retrieves student assignment with assignment details, and returns all necessary data including assignment content, completion status, score, and submitted answers."
+
   - task: "Replace Learning to Read with Learn to Code subject"
     implemented: true
     working: true
