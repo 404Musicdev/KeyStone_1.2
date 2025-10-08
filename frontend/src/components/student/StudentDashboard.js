@@ -2,8 +2,62 @@ import React from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 
 const StudentDashboard = () => {
-  const { user, logout } = useAuth();
+  const { user, isAuthenticated, loading, logout } = useAuth();
   
+  // Handle loading state
+  if (loading) {
+    return (
+      <div style={{ 
+        minHeight: '100vh', 
+        backgroundColor: '#0f172a', 
+        color: 'white', 
+        padding: '40px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}>
+        <div style={{ textAlign: 'center' }}>
+          <h2>Loading...</h2>
+          <p>Please wait while we load your dashboard.</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Handle not authenticated or wrong role
+  if (!isAuthenticated || !user || user.role !== 'student') {
+    return (
+      <div style={{ 
+        minHeight: '100vh', 
+        backgroundColor: '#0f172a', 
+        color: 'white', 
+        padding: '40px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}>
+        <div style={{ textAlign: 'center' }}>
+          <h2 style={{ color: '#ef4444', marginBottom: '20px' }}>Access Denied</h2>
+          <p style={{ marginBottom: '20px' }}>You need to be logged in as a student to access this page.</p>
+          <button 
+            onClick={() => window.location.href = '/'}
+            style={{ 
+              backgroundColor: '#3b82f6', 
+              color: 'white', 
+              padding: '12px 24px',
+              border: 'none',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontSize: '16px'
+            }}
+          >
+            Go to Login
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   const handleLogout = () => {
     logout();
     window.location.href = '/';
@@ -38,13 +92,13 @@ const StudentDashboard = () => {
           </h2>
           
           <p style={{ marginBottom: '10px' }}>
-            <strong>Welcome:</strong> {user?.first_name} {user?.last_name}
+            <strong>Welcome:</strong> {user.first_name} {user.last_name}
           </p>
           <p style={{ marginBottom: '10px' }}>
-            <strong>Username:</strong> {user?.username}
+            <strong>Username:</strong> {user.username}
           </p>
           <p style={{ marginBottom: '20px' }}>
-            <strong>Role:</strong> {user?.role}
+            <strong>Role:</strong> {user.role}
           </p>
           
           <div style={{ 
