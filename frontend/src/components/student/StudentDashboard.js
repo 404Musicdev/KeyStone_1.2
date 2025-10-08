@@ -198,7 +198,7 @@ const StudentAssignments = ({ user }) => {
 
                 {!assignment.completed && (
                   <button
-                    onClick={() => window.location.href = `/student/assignment/${assignment.id}`}
+                    onClick={() => navigate(`/student/assignment/${assignment.id}`)}
                     style={{
                       backgroundColor: 'rgba(255,255,255,0.9)',
                       color: '#1f2937',
