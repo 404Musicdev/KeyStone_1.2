@@ -698,8 +698,17 @@ const StudentAssignmentView = ({ user, navigate }) => {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
+  // Debug logging
+  console.log('StudentAssignmentView - assignmentId from useParams:', assignmentId);
+  console.log('StudentAssignmentView - all params:', useParams());
+
   useEffect(() => {
-    fetchAssignment();
+    if (assignmentId) {
+      fetchAssignment();
+    } else {
+      console.error('No assignmentId found in URL params');
+      navigate('/student/assignments');
+    }
   }, [assignmentId]);
 
   const fetchAssignment = async () => {
