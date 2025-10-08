@@ -199,8 +199,11 @@ const StudentAssignments = ({ user }) => {
                 {!assignment.completed && (
                   <button
                     onClick={() => {
-                      console.log('Navigating to assignment with ID:', assignment.id);
-                      navigate(`/student/assignment/${assignment.id}`);
+                      console.log('Assignment object:', assignment);
+                      console.log('Assignment ID:', assignment.id);
+                      const url = `/student/assignment/${assignment.id}`;
+                      console.log('Navigating to URL:', url);
+                      navigate(url);
                     }}
                     style={{
                       backgroundColor: 'rgba(255,255,255,0.9)',
