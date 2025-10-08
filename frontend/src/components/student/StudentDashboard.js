@@ -681,24 +681,7 @@ const StudentDashboard = () => {
           <Routes>
             <Route index element={<StudentHome user={user} navigate={navigate} />} />
             <Route path="assignments" element={<StudentAssignments user={user} />} />
-            <Route path="grades" element={
-              <div style={{ textAlign: 'center', padding: '60px 20px' }}>
-                <div style={{ fontSize: '64px', marginBottom: '20px' }}>📊</div>
-                <h2 style={{ 
-                  fontSize: '28px',
-                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                  backgroundClip: 'text',
-                  WebkitBackgroundClip: 'text',
-                  color: 'transparent',
-                  marginBottom: '15px'
-                }}>
-                  My Grades
-                </h2>
-                <p style={{ fontSize: '18px', opacity: 0.8 }}>
-                  Complete assignments to see your grades here!
-                </p>
-              </div>
-            } />
+            <Route path="grades" element={<StudentGrades user={user} />} />
             <Route path="*" element={<StudentHome user={user} navigate={navigate} />} />
           </Routes>
         </div>
