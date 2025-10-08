@@ -318,13 +318,43 @@ const StudentHome = ({ user, navigate }) => {
       </p>
     </div>
 
+    {/* Overall Grade - Featured Section */}
+    {overallGrade !== null && (
+      <div style={{
+        background: getGradeColor(overallGrade),
+        padding: '30px',
+        borderRadius: '20px',
+        marginBottom: '25px',
+        color: 'white',
+        textAlign: 'center',
+        boxShadow: '0 15px 35px rgba(0,0,0,0.2)'
+      }}>
+        <div style={{ fontSize: '64px', marginBottom: '15px' }}>
+          {getGradeEmoji(overallGrade)}
+        </div>
+        <h2 style={{ 
+          fontSize: '28px', 
+          margin: '0 0 10px 0',
+          fontWeight: 'bold'
+        }}>
+          Overall Grade: {overallGrade}%
+        </h2>
+        <p style={{ fontSize: '18px', opacity: 0.9, margin: '0 0 10px 0' }}>
+          {getGradeMessage(overallGrade)}
+        </p>
+        <p style={{ fontSize: '14px', opacity: 0.8, margin: 0 }}>
+          Based on {completedCount} completed assignment{completedCount !== 1 ? 's' : ''}
+        </p>
+      </div>
+    )}
+
     <div style={{
       display: 'grid',
       gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
       gap: '20px',
       marginBottom: '30px'
     }}>
-      {/* Quick Stats */}
+      {/* Assignment Stats */}
       <div style={{
         background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
         padding: '24px',
@@ -332,33 +362,33 @@ const StudentHome = ({ user, navigate }) => {
         color: 'white',
         textAlign: 'center'
       }}>
-        <div style={{ fontSize: '36px', marginBottom: '10px' }}>📊</div>
-        <h3 style={{ margin: '0 0 8px 0', fontSize: '18px' }}>Progress</h3>
-        <p style={{ margin: 0, fontSize: '24px', fontWeight: 'bold' }}>Keep Going!</p>
+        <div style={{ fontSize: '36px', marginBottom: '10px' }}>📋</div>
+        <h3 style={{ margin: '0 0 8px 0', fontSize: '18px' }}>Total Assignments</h3>
+        <p style={{ margin: 0, fontSize: '32px', fontWeight: 'bold' }}>{totalCount}</p>
       </div>
 
       <div style={{
-        background: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
+        background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
         padding: '24px',
         borderRadius: '16px',
         color: 'white',
         textAlign: 'center'
       }}>
-        <div style={{ fontSize: '36px', marginBottom: '10px' }}>🎯</div>
-        <h3 style={{ margin: '0 0 8px 0', fontSize: '18px' }}>Goals</h3>
-        <p style={{ margin: 0, fontSize: '24px', fontWeight: 'bold' }}>Stay Focused!</p>
+        <div style={{ fontSize: '36px', marginBottom: '10px' }}>✅</div>
+        <h3 style={{ margin: '0 0 8px 0', fontSize: '18px' }}>Completed</h3>
+        <p style={{ margin: 0, fontSize: '32px', fontWeight: 'bold' }}>{completedCount}</p>
       </div>
 
       <div style={{
-        background: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
+        background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
         padding: '24px',
         borderRadius: '16px',
         color: 'white',
         textAlign: 'center'
       }}>
-        <div style={{ fontSize: '36px', marginBottom: '10px' }}>⭐</div>
-        <h3 style={{ margin: '0 0 8px 0', fontSize: '18px' }}>Achievements</h3>
-        <p style={{ margin: 0, fontSize: '24px', fontWeight: 'bold' }}>You Rock!</p>
+        <div style={{ fontSize: '36px', marginBottom: '10px' }}>⏳</div>
+        <h3 style={{ margin: '0 0 8px 0', fontSize: '18px' }}>Pending</h3>
+        <p style={{ margin: 0, fontSize: '32px', fontWeight: 'bold' }}>{pendingCount}</p>
       </div>
     </div>
     
