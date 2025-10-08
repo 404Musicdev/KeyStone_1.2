@@ -893,6 +893,7 @@ const StudentDashboard = () => {
           <Routes>
             <Route index element={<StudentHome user={user} navigate={navigate} />} />
             <Route path="assignments" element={<StudentAssignments user={user} />} />
+            <Route path="assignment/:assignmentId" element={<StudentAssignmentView user={user} navigate={navigate} />} />
             <Route path="grades" element={<StudentGrades user={user} />} />
             <Route path="*" element={<StudentHome user={user} navigate={navigate} />} />
           </Routes>
