@@ -2,8 +2,157 @@ import React, { useState, useEffect } from 'react';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 
+// Simple Assignments View
+const StudentAssignments = ({ user }) => {
+  const [assignments, setAssignments] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchAssignments();
+  }, []);
+
+  const fetchAssignments = async () => {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/student/assignments`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setAssignments(data);
+      }
+    } catch (error) {
+      console.error('Error fetching assignments:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return <div style={{ color: 'white', padding: '20px' }}>Loading assignments...</div>;
+  }
+
+  return (
+    <div style={{ color: 'white', padding: '20px' }}>
+      <h2 style={{ marginBottom: '20px' }}>My Assignments</h2>
+      {assignments.length === 0 ? (
+        <p>No assignments available yet. Check back later!</p>
+      ) : (
+        <div style={{ display: 'grid', gap: '15px' }}>
+          {assignments.map((assignment) => (
+            <div key={assignment.id} style={{
+              backgroundColor: '#1e293b',
+              padding: '20px',
+              borderRadius: '8px',
+              border: '1px solid #374151'
+            }}>
+              <h3 style={{ color: '#3b82f6', marginBottom: '10px' }}>
+                {assignment.assignment.title}
+              </h3>
+              <p><strong>Subject:</strong> {assignment.assignment.subject}</p>
+              <p><strong>Grade:</strong> {assignment.assignment.grade_level}</p>
+              <p><strong>Status:</strong> {assignment.completed ? '✅ Completed' : '⏳ Pending'}</p>
+              {!assignment.completed && (
+                <button
+                  onClick={() => window.location.href = `/student/assignment/${assignment.id}`}
+                  style={{
+                    backgroundColor: '#3b82f6',
+                    color: 'white',
+                    padding: '8px 16px',
+                    border: 'none',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    marginTop: '10px'
+                  }}
+                >
+                  Start Assignment
+                </button>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Dashboard Home Component
+const StudentHome = ({ user, navigate }) => (
+  <div>
+    <h2 style={{ color: '#10b981', marginBottom: '15px' }}>
+      ✅ SUCCESS: Student Login Working!
+    </h2>
+    
+    <p style={{ marginBottom: '10px' }}>
+      <strong>Welcome:</strong> {user.first_name} {user.last_name}
+    </p>
+    <p style={{ marginBottom: '10px' }}>
+      <strong>Username:</strong> {user.username}
+    </p>
+    <p style={{ marginBottom: '20px' }}>
+      <strong>Role:</strong> Student
+    </p>
+    
+    <div style={{ 
+      backgroundColor: '#065f46', 
+      padding: '15px', 
+      borderRadius: '8px',
+      marginBottom: '20px'
+    }}>
+      <h3 style={{ color: '#10b981', marginBottom: '15px' }}>Quick Actions:</h3>
+      <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+        <button
+          onClick={() => navigate('/student/assignments')}
+          style={{
+            backgroundColor: '#3b82f6',
+            color: 'white',
+            padding: '10px 16px',
+            border: 'none',
+            borderRadius: '6px',
+            cursor: 'pointer',
+            fontSize: '14px'
+          }}
+        >
+          📚 View Assignments
+        </button>
+        <button
+          onClick={() => navigate('/student/grades')}
+          style={{
+            backgroundColor: '#10b981',
+            color: 'white',
+            padding: '10px 16px',
+            border: 'none',
+            borderRadius: '6px',
+            cursor: 'pointer',
+            fontSize: '14px'
+          }}
+        >
+          📊 My Grades
+        </button>
+        <button
+          onClick={() => navigate('/student/messages')}
+          style={{
+            backgroundColor: '#8b5cf6',
+            color: 'white',
+            padding: '10px 16px',
+            border: 'none',
+            borderRadius: '6px',
+            cursor: 'pointer',
+            fontSize: '14px'
+          }}
+        >
+          💬 Messages
+        </button>
+      </div>
+    </div>
+  </div>
+);
+
 const StudentDashboard = () => {
   const { user, isAuthenticated, loading, logout } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
   
   // Handle loading state
   if (loading) {
