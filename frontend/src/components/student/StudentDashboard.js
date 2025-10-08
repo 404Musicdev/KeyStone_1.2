@@ -24,16 +24,18 @@ const StudentDashboard = () => {
     );
   }
 
-  // Debug info
+  // Check if user is a student (students have teacher_id, teachers don't)
+  const isStudent = user && user.teacher_id;
+  
   console.log('StudentDashboard auth check:', { 
     isAuthenticated, 
     user, 
-    userRole: user?.role,
-    userString: JSON.stringify(user) 
+    isStudent,
+    hasTeacherId: !!user?.teacher_id
   });
 
-  // Handle not authenticated - but be more lenient
-  if (!isAuthenticated || !user) {
+  // Handle not authenticated or not a student
+  if (!isAuthenticated || !user || !isStudent) {
     return (
       <div style={{ 
         minHeight: '100vh', 
