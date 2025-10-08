@@ -121,7 +121,7 @@ const StudentAssignments = ({ user }) => {
           gap: '20px',
           gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))'
         }}>
-          {assignments.map((assignment, index) => (
+          {assignments.map((assignment) => (
             <div key={assignment.id} style={{
               background: getSubjectColor(assignment.assignment.subject),
               padding: '0',
