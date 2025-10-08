@@ -8,16 +8,25 @@ import { Toaster } from './components/ui/sonner';
 
 // Protected Route Component
 const ProtectedRoute = ({ children, requiredRole }) => {
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, loading } = useAuth();
   
-  if (!isAuthenticated) {
+  console.log('ProtectedRoute check:', { isAuthenticated, user, requiredRole, loading });
+  
+  if (loading) {
+    return <div style={{color: 'white', padding: '20px'}}>Loading...</div>;
+  }
+  
+  if (!isAuthenticated || !user) {
+    console.log('Not authenticated, redirecting to login');
     return <Navigate to="/login" replace />;
   }
   
-  if (requiredRole && user?.role !== requiredRole) {
+  if (requiredRole && user.role !== requiredRole) {
+    console.log(`Role mismatch: expected ${requiredRole}, got ${user.role}`);
     return <Navigate to="/login" replace />;
   }
   
+  console.log('ProtectedRoute: Access granted');
   return children;
 };
 
