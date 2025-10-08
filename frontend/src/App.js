@@ -50,6 +50,14 @@ const AppContent = () => {
           path="/student/*" 
           element={<StudentDashboard />} 
         />
+        <Route 
+          path="/test" 
+          element={
+            <div style={{backgroundColor: 'green', color: 'white', padding: '50px', fontSize: '30px'}}>
+              🟢 TEST ROUTE WORKS - If you see this, routing is OK
+            </div>
+          } 
+        />
         <Route path="/" element={<Navigate to="/login" replace />} />
       </Routes>
       <Toaster position="top-right" />
