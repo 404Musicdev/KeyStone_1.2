@@ -1,11 +1,17 @@
 import React from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-// Minimal Student Dashboard Component
+
 const StudentDashboard = () => {
   const { user, logout } = useAuth();
   
   const handleLogout = () => {
     logout();
+    window.location.href = '/';
+  };
+
+  const handleEmergencyReset = () => {
+    localStorage.clear();
+    sessionStorage.clear();
     window.location.href = '/';
   };
 
@@ -65,18 +71,15 @@ const StudentDashboard = () => {
               border: 'none',
               borderRadius: '8px',
               cursor: 'pointer',
-              fontSize: '16px'
+              fontSize: '16px',
+              marginRight: '10px'
             }}
           >
             🚪 Logout
           </button>
           
           <button 
-            onClick={() => {
-              localStorage.clear();
-              sessionStorage.clear();
-              window.location.href = '/';
-            }}
+            onClick={handleEmergencyReset}
             style={{ 
               backgroundColor: '#7c2d12', 
               color: 'white', 
@@ -84,8 +87,7 @@ const StudentDashboard = () => {
               border: 'none',
               borderRadius: '6px',
               cursor: 'pointer',
-              fontSize: '14px',
-              marginLeft: '10px'
+              fontSize: '14px'
             }}
           >
             🔥 Emergency Reset
