@@ -120,13 +120,51 @@ const StudentDashboard = () => {
             borderRadius: '8px',
             marginBottom: '20px'
           }}>
-            <h3 style={{ color: '#10b981', marginBottom: '10px' }}>Dashboard Features Available:</h3>
-            <ul style={{ listStyle: 'none', padding: 0 }}>
-              <li>📚 View Learn to Code Assignments</li>
-              <li>✏️ Complete Coding Exercises</li>
-              <li>📊 Check Grades</li>
-              <li>💬 Message Teachers</li>
-            </ul>
+            <h3 style={{ color: '#10b981', marginBottom: '15px' }}>Quick Actions:</h3>
+            <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+              <button
+                onClick={() => window.location.href = '/student/assignments'}
+                style={{
+                  backgroundColor: '#3b82f6',
+                  color: 'white',
+                  padding: '10px 16px',
+                  border: 'none',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  fontSize: '14px'
+                }}
+              >
+                📚 View Assignments
+              </button>
+              <button
+                onClick={() => window.location.href = '/student/grades'}
+                style={{
+                  backgroundColor: '#10b981',
+                  color: 'white',
+                  padding: '10px 16px',
+                  border: 'none',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  fontSize: '14px'
+                }}
+              >
+                📊 My Grades
+              </button>
+              <button
+                onClick={() => window.location.href = '/student/messages'}
+                style={{
+                  backgroundColor: '#8b5cf6',
+                  color: 'white',
+                  padding: '10px 16px',
+                  border: 'none',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  fontSize: '14px'
+                }}
+              >
+                💬 Messages
+              </button>
+            </div>
           </div>
           
           <button 
