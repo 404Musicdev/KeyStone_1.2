@@ -8,7 +8,7 @@ import json
 from datetime import datetime
 
 # Configuration
-BACKEND_URL = "https://homeschool-ai.preview.emergentagent.com/api"
+BACKEND_URL = "https://keystoneedu.preview.emergentagent.com/api"
 
 def log_test(test_name, success, details=""):
     """Log test results"""

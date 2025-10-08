@@ -6,7 +6,7 @@ Debug Level 4 specifically to see what's happening
 import requests
 import json
 
-BACKEND_URL = "https://homeschool-ai.preview.emergentagent.com/api"
+BACKEND_URL = "https://keystoneedu.preview.emergentagent.com/api"
 
 # Use existing teacher credentials
 teacher_data = {

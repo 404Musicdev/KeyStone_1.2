@@ -10,7 +10,7 @@ import os
 from datetime import datetime
 
 # Configuration
-BACKEND_URL = "https://homeschool-ai.preview.emergentagent.com/api"
+BACKEND_URL = "https://keystoneedu.preview.emergentagent.com/api"
 
 class BackendTester:
     def __init__(self):

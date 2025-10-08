@@ -6,7 +6,7 @@ Quick test of all Learn to Code levels
 import requests
 import json
 
-BACKEND_URL = "https://homeschool-ai.preview.emergentagent.com/api"
+BACKEND_URL = "https://keystoneedu.preview.emergentagent.com/api"
 
 # Login teacher
 teacher_data = {"email": "teacher.code@example.com", "password": "SecurePass123!"}

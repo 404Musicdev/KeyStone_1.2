@@ -5,7 +5,7 @@ Test edge cases for Learn to Code functionality
 
 import requests
 
-BACKEND_URL = "https://homeschool-ai.preview.emergentagent.com/api"
+BACKEND_URL = "https://keystoneedu.preview.emergentagent.com/api"
 
 # Login teacher
 teacher_data = {"email": "teacher.code@example.com", "password": "SecurePass123!"}
