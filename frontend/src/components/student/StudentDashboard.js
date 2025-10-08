@@ -96,41 +96,4 @@ const StudentDashboard = () => {
   );
 };
 
-const StudentDashboard = () => {
-  const { logout } = useAuth();
-  const navigate = useNavigate();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-
-  // Debug logging
-  React.useEffect(() => {
-    console.log('StudentDashboard mounted successfully');
-  }, []);
-
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
-
-  return (
-    <div className="min-h-screen bg-slate-950 flex" data-testid="student-dashboard">
-      <SimpleSidebar 
-        isOpen={sidebarOpen} 
-        onToggle={() => setSidebarOpen(!sidebarOpen)}
-        onLogout={handleLogout}
-      />
-      
-      <main className="flex-1 lg:ml-64 transition-all duration-300">
-        <div className="p-6 min-h-screen bg-slate-900">
-          <ErrorBoundary>
-            <Routes>
-              <Route index element={<SimpleStudentOverview />} />
-              <Route path="*" element={<SimpleStudentOverview />} />
-            </Routes>
-          </ErrorBoundary>
-        </div>
-      </main>
-    </div>
-  );
-};
-
 export default StudentDashboard;
