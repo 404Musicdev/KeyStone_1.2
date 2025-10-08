@@ -869,8 +869,11 @@ class BackendTester:
 
     def run_all_tests(self):
         """Run all tests"""
-        print("🚀 Starting Backend Tests - Focus on Student Login Issue")
+        print("🚀 Starting Backend Tests - Focus on Learn to Code Assignment for Student Testing")
         print(f"Backend URL: {BACKEND_URL}")
+        
+        # PRIORITY: Create the specific Learn to Code assignment for student testing
+        assignment_result = self.test_learn_to_code_assignment_for_student_clicking()
         
         # PRIORITY: Create test accounts to fix student login black screen
         if not self.create_test_accounts_for_student_login():
@@ -900,6 +903,8 @@ class BackendTester:
         
         # Summary
         self.print_summary()
+        
+        return assignment_result
         
     def print_summary(self):
         """Print test summary"""
