@@ -4,6 +4,7 @@ import { useAuth } from '../../contexts/AuthContext';
 
 // Modern Assignments View
 const StudentAssignments = ({ user }) => {
+  const navigate = useNavigate();
   const [assignments, setAssignments] = useState([]);
   const [loading, setLoading] = useState(true);
 
