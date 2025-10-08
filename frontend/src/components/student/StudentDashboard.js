@@ -473,8 +473,9 @@ const StudentHome = ({ user, navigate }) => {
         </button>
       </div>
     </div>
-  </div>
-);
+    </div>
+  );
+};
 
 // Detailed Grades View
 const StudentGrades = ({ user }) => {
