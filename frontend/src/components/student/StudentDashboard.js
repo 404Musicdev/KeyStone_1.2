@@ -237,116 +237,115 @@ const StudentDashboard = () => {
       minHeight: '100vh', 
       backgroundColor: '#0f172a', 
       color: 'white', 
-      padding: '40px' 
+      padding: '20px' 
     }}>
-      <div style={{ maxWidth: '800px', margin: '0 auto' }}>
-        <h1 style={{ fontSize: '36px', marginBottom: '20px', color: '#3b82f6' }}>
-          🎓 Student Dashboard
-        </h1>
-        
+      <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+        {/* Header */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
+          <h1 style={{ fontSize: '28px', color: '#3b82f6', margin: 0 }}>
+            🎓 Student Dashboard
+          </h1>
+          <div style={{ display: 'flex', gap: '10px' }}>
+            <button 
+              onClick={handleLogout}
+              style={{ 
+                backgroundColor: '#dc2626', 
+                color: 'white', 
+                padding: '8px 16px',
+                border: 'none',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontSize: '14px'
+              }}
+            >
+              🚪 Logout
+            </button>
+            <button 
+              onClick={handleEmergencyReset}
+              style={{ 
+                backgroundColor: '#7c2d12', 
+                color: 'white', 
+                padding: '6px 12px',
+                border: 'none',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontSize: '12px'
+              }}
+            >
+              🔥 Reset
+            </button>
+          </div>
+        </div>
+
+        {/* Navigation */}
+        <div style={{ marginBottom: '20px' }}>
+          <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
+            <button
+              onClick={() => navigate('/student')}
+              style={{
+                backgroundColor: location.pathname === '/student' ? '#3b82f6' : '#374151',
+                color: 'white',
+                padding: '10px 20px',
+                border: 'none',
+                borderRadius: '6px',
+                cursor: 'pointer'
+              }}
+            >
+              🏠 Dashboard
+            </button>
+            <button
+              onClick={() => navigate('/student/assignments')}
+              style={{
+                backgroundColor: location.pathname === '/student/assignments' ? '#3b82f6' : '#374151',
+                color: 'white',
+                padding: '10px 20px',
+                border: 'none',
+                borderRadius: '6px',
+                cursor: 'pointer'
+              }}
+            >
+              📚 Assignments
+            </button>
+            <button
+              onClick={() => navigate('/student/grades')}
+              style={{
+                backgroundColor: location.pathname === '/student/grades' ? '#3b82f6' : '#374151',
+                color: 'white',
+                padding: '10px 20px',
+                border: 'none',
+                borderRadius: '6px',
+                cursor: 'pointer'
+              }}
+            >
+              📊 Grades
+            </button>
+          </div>
+        </div>
+
+        {/* Content Area */}
         <div style={{ 
           backgroundColor: '#1e293b', 
           padding: '30px', 
           borderRadius: '10px',
-          marginBottom: '20px'
+          minHeight: '400px'
         }}>
-          <h2 style={{ color: '#10b981', marginBottom: '15px' }}>
-            ✅ SUCCESS: Student Login Working!
-          </h2>
-          
-          <p style={{ marginBottom: '10px' }}>
-            <strong>Welcome:</strong> {user.first_name} {user.last_name}
-          </p>
-          <p style={{ marginBottom: '10px' }}>
-            <strong>Username:</strong> {user.username}
-          </p>
-          <p style={{ marginBottom: '20px' }}>
-            <strong>Role:</strong> Student
-          </p>
-          
-          <div style={{ 
-            backgroundColor: '#065f46', 
-            padding: '15px', 
-            borderRadius: '8px',
-            marginBottom: '20px'
-          }}>
-            <h3 style={{ color: '#10b981', marginBottom: '15px' }}>Quick Actions:</h3>
-            <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-              <button
-                onClick={() => window.location.href = '/student/assignments'}
-                style={{
-                  backgroundColor: '#3b82f6',
-                  color: 'white',
-                  padding: '10px 16px',
-                  border: 'none',
-                  borderRadius: '6px',
-                  cursor: 'pointer',
-                  fontSize: '14px'
-                }}
-              >
-                📚 View Assignments
-              </button>
-              <button
-                onClick={() => window.location.href = '/student/grades'}
-                style={{
-                  backgroundColor: '#10b981',
-                  color: 'white',
-                  padding: '10px 16px',
-                  border: 'none',
-                  borderRadius: '6px',
-                  cursor: 'pointer',
-                  fontSize: '14px'
-                }}
-              >
-                📊 My Grades
-              </button>
-              <button
-                onClick={() => window.location.href = '/student/messages'}
-                style={{
-                  backgroundColor: '#8b5cf6',
-                  color: 'white',
-                  padding: '10px 16px',
-                  border: 'none',
-                  borderRadius: '6px',
-                  cursor: 'pointer',
-                  fontSize: '14px'
-                }}
-              >
-                💬 Messages
-              </button>
-            </div>
-          </div>
-          
-          <button 
-            onClick={handleLogout}
-            style={{ 
-              backgroundColor: '#dc2626', 
-              color: 'white', 
-              padding: '12px 24px',
-              border: 'none',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              fontSize: '16px',
-              marginRight: '10px'
-            }}
-          >
-            🚪 Logout
-          </button>
-          
-          <button 
-            onClick={handleEmergencyReset}
-            style={{ 
-              backgroundColor: '#7c2d12', 
-              color: 'white', 
-              padding: '8px 16px',
-              border: 'none',
-              borderRadius: '6px',
-              cursor: 'pointer',
-              fontSize: '14px'
-            }}
-          >
-            🔥 Emergency Reset
-          </button>
+          <Routes>
+            <Route index element={<StudentHome user={user} navigate={navigate} />} />
+            <Route path="assignments" element={<StudentAssignments user={user} />} />
+            <Route path="grades" element={
+              <div style={{ color: 'white' }}>
+                <h2>My Grades</h2>
+                <p>Grades will be displayed here once you complete assignments.</p>
+              </div>
+            } />
+            <Route path="messages" element={
+              <div style={{ color: 'white' }}>
+                <h2>Messages</h2>
+                <p>Messages from your teacher will appear here.</p>
+              </div>
+            } />
+            <Route path="*" element={<StudentHome user={user} navigate={navigate} />} />
+          </Routes>
         </div>
       </div>
     </div>
