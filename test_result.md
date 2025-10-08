@@ -260,8 +260,8 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Student login black page issue investigation"
-    - "Student assignment view testing with Learn to Code assignments"
+    - "Add endpoint to fetch individual student assignment by ID"
+    - "Student assignment view testing with new endpoint"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
