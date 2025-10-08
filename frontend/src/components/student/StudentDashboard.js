@@ -688,6 +688,442 @@ const StudentGrades = ({ user }) => {
   );
 };
 
+// Student Assignment View Component
+const StudentAssignmentView = ({ user, navigate }) => {
+  const { assignmentId } = useParams();
+  const [assignment, setAssignment] = useState(null);
+  const [answers, setAnswers] = useState({});
+  const [codingAnswers, setCodingAnswers] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    fetchAssignment();
+  }, [assignmentId]);
+
+  const fetchAssignment = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/student/assignments/${assignmentId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        setAssignment(data);
+      } else {
+        console.error('Failed to fetch assignment');
+        navigate('/student/assignments');
+      }
+    } catch (error) {
+      console.error('Error fetching assignment:', error);
+      navigate('/student/assignments');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAnswerSelect = (questionIndex, answerIndex) => {
+    setAnswers(prevAnswers => ({
+      ...prevAnswers,
+      [questionIndex]: answerIndex
+    }));
+  };
+
+  const handleCodingAnswerChange = (exerciseIndex, code) => {
+    setCodingAnswers(prevAnswers => ({
+      ...prevAnswers,
+      [exerciseIndex]: code
+    }));
+  };
+
+  const handleSubmit = async () => {
+    if (!assignment || assignment.completed) return;
+
+    const totalQuestions = assignment.assignment.questions.length;
+    const totalCodingExercises = assignment.assignment.coding_exercises?.length || 0;
+    
+    // Check if all questions are answered
+    if (Object.keys(answers).length < totalQuestions) {
+      alert(`Please answer all ${totalQuestions} questions before submitting.`);
+      return;
+    }
+
+    // Check if all coding exercises are completed
+    if (totalCodingExercises > 0 && Object.keys(codingAnswers).length < totalCodingExercises) {
+      alert(`Please complete all ${totalCodingExercises} coding exercises before submitting.`);
+      return;
+    }
+
+    setSubmitting(true);
+    
+    try {
+      // Convert answers to arrays
+      const answersArray = [];
+      for (let i = 0; i < totalQuestions; i++) {
+        answersArray[i] = answers[i] !== undefined ? answers[i] : -1;
+      }
+
+      const codingAnswersArray = [];
+      for (let i = 0; i < totalCodingExercises; i++) {
+        codingAnswersArray[i] = codingAnswers[i] || '';
+      }
+
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/student/assignments/submit`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          student_assignment_id: assignmentId,
+          answers: answersArray.length > 0 ? answersArray : null,
+          coding_answers: codingAnswersArray.length > 0 ? codingAnswersArray : null
+        })
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        alert(`Assignment submitted successfully! Score: ${result.score}%`);
+        navigate('/student/assignments');
+      } else {
+        alert('Failed to submit assignment. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error submitting assignment:', error);
+      alert('Error submitting assignment. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        height: '400px',
+        flexDirection: 'column'
+      }}>
+        <div style={{
+          width: '50px',
+          height: '50px',
+          border: '4px solid #e5e7eb',
+          borderTop: '4px solid #3b82f6',
+          borderRadius: '50%',
+          animation: 'spin 1s linear infinite',
+          marginBottom: '15px'
+        }}></div>
+        <p style={{ color: '#94a3b8', fontSize: '16px' }}>Loading assignment...</p>
+      </div>
+    );
+  }
+
+  if (!assignment) {
+    return (
+      <div style={{ textAlign: 'center', padding: '60px 20px' }}>
+        <div style={{ fontSize: '64px', marginBottom: '20px' }}>❌</div>
+        <h2 style={{ fontSize: '24px', marginBottom: '15px', color: '#ef4444' }}>
+          Assignment Not Found
+        </h2>
+        <button
+          onClick={() => navigate('/student/assignments')}
+          style={{
+            background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
+            color: 'white',
+            padding: '12px 24px',
+            border: 'none',
+            borderRadius: '10px',
+            cursor: 'pointer',
+            fontSize: '16px'
+          }}
+        >
+          Back to Assignments
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      {/* Header */}
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: '25px',
+        padding: '20px',
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        borderRadius: '12px',
+        color: 'white'
+      }}>
+        <div>
+          <h1 style={{ fontSize: '24px', margin: '0 0 5px 0', fontWeight: 'bold' }}>
+            {assignment.assignment.title}
+          </h1>
+          <p style={{ margin: 0, opacity: 0.9 }}>
+            {assignment.assignment.subject} • {assignment.assignment.grade_level}
+            {assignment.assignment.coding_level && ` • Level ${assignment.assignment.coding_level}`}
+          </p>
+        </div>
+        <button
+          onClick={() => navigate('/student/assignments')}
+          style={{
+            backgroundColor: 'rgba(255,255,255,0.2)',
+            color: 'white',
+            padding: '8px 16px',
+            border: 'none',
+            borderRadius: '8px',
+            cursor: 'pointer'
+          }}
+        >
+          ← Back
+        </button>
+      </div>
+
+      {/* Assignment Status */}
+      {assignment.completed && (
+        <div style={{
+          background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+          padding: '15px 20px',
+          borderRadius: '10px',
+          marginBottom: '20px',
+          color: 'white',
+          textAlign: 'center'
+        }}>
+          ✅ Assignment Completed! Score: {assignment.score ? Math.round(assignment.score) : 0}%
+        </div>
+      )}
+
+      {/* Questions Section */}
+      {assignment.assignment.questions && assignment.assignment.questions.length > 0 && (
+        <div style={{ marginBottom: '30px' }}>
+          <h2 style={{ 
+            fontSize: '20px', 
+            marginBottom: '20px',
+            color: '#e5e7eb'
+          }}>
+            📝 Questions ({assignment.assignment.questions.length})
+          </h2>
+          
+          {assignment.assignment.questions.map((question, index) => (
+            <div key={index} style={{
+              background: '#1e40af',
+              padding: '25px',
+              borderRadius: '12px',
+              marginBottom: '20px',
+              color: '#f8fafc'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'start', gap: '15px' }}>
+                <div style={{
+                  width: '30px',
+                  height: '30px',
+                  borderRadius: '50%',
+                  backgroundColor: assignment.completed ? '#10b981' : 'rgba(248, 250, 252, 0.2)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '14px',
+                  fontWeight: 'bold'
+                }}>
+                  {index + 1}
+                </div>
+                <div style={{ flex: 1 }}>
+                  <h3 style={{ fontSize: '18px', marginBottom: '15px', fontWeight: '600' }}>
+                    {question.question}
+                  </h3>
+                  <div style={{ display: 'grid', gap: '10px' }}>
+                    {question.options.map((option, optionIndex) => (
+                      <label key={optionIndex} style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        padding: '12px',
+                        backgroundColor: 'rgba(248, 250, 252, 0.1)',
+                        borderRadius: '8px',
+                        cursor: assignment.completed ? 'default' : 'pointer',
+                        border: answers[index] === optionIndex ? '2px solid #f8fafc' : '2px solid transparent'
+                      }}>
+                        <input
+                          type="radio"
+                          name={`question-${index}`}
+                          value={optionIndex}
+                          checked={answers[index] === optionIndex}
+                          onChange={() => !assignment.completed && handleAnswerSelect(index, optionIndex)}
+                          disabled={assignment.completed}
+                          style={{ marginRight: '12px' }}
+                        />
+                        {option}
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Coding Exercises Section */}
+      {assignment.assignment.coding_exercises && assignment.assignment.coding_exercises.length > 0 && (
+        <div style={{ marginBottom: '30px' }}>
+          <h2 style={{ 
+            fontSize: '20px', 
+            marginBottom: '20px',
+            color: '#e5e7eb'
+          }}>
+            💻 Coding Exercises ({assignment.assignment.coding_exercises.length})
+          </h2>
+          
+          {assignment.assignment.coding_exercises.map((exercise, index) => (
+            <div key={index} style={{
+              background: '#1e40af',
+              padding: '25px',
+              borderRadius: '12px',
+              marginBottom: '20px',
+              color: '#f8fafc'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'start', gap: '15px' }}>
+                <div style={{
+                  width: '30px',
+                  height: '30px',
+                  borderRadius: '50%',
+                  backgroundColor: assignment.completed ? '#10b981' : 'rgba(248, 250, 252, 0.2)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '14px',
+                  fontWeight: 'bold'
+                }}>
+                  {index + 1}
+                </div>
+                <div style={{ flex: 1 }}>
+                  <h3 style={{ fontSize: '18px', marginBottom: '10px', fontWeight: '600' }}>
+                    {exercise.prompt}
+                  </h3>
+                  <div style={{
+                    backgroundColor: 'rgba(0,0,0,0.2)',
+                    padding: '8px 12px',
+                    borderRadius: '6px',
+                    fontSize: '12px',
+                    marginBottom: '15px',
+                    display: 'inline-block'
+                  }}>
+                    Language: {exercise.language.toUpperCase()}
+                  </div>
+                  
+                  {exercise.starter_code && (
+                    <div style={{ marginBottom: '15px' }}>
+                      <p style={{ fontSize: '14px', marginBottom: '8px', opacity: 0.9 }}>Starter Code:</p>
+                      <pre style={{
+                        backgroundColor: 'rgba(0,0,0,0.3)',
+                        padding: '15px',
+                        borderRadius: '8px',
+                        fontSize: '14px',
+                        fontFamily: 'Monaco, "Lucida Console", monospace',
+                        overflow: 'auto',
+                        whiteSpace: 'pre-wrap'
+                      }}>
+                        {exercise.starter_code}
+                      </pre>
+                    </div>
+                  )}
+                  
+                  <div>
+                    <p style={{ fontSize: '14px', marginBottom: '8px', opacity: 0.9 }}>Your Code:</p>
+                    <textarea
+                      value={codingAnswers[index] || exercise.starter_code || ''}
+                      onChange={(e) => !assignment.completed && handleCodingAnswerChange(index, e.target.value)}
+                      disabled={assignment.completed}
+                      placeholder={`Write your ${exercise.language} code here...`}
+                      style={{
+                        width: '100%',
+                        height: '150px',
+                        backgroundColor: 'rgba(0,0,0,0.3)',
+                        color: '#f8fafc',
+                        border: '1px solid rgba(248, 250, 252, 0.2)',
+                        borderRadius: '8px',
+                        padding: '15px',
+                        fontSize: '14px',
+                        fontFamily: 'Monaco, "Lucida Console", monospace',
+                        resize: 'vertical'
+                      }}
+                    />
+                  </div>
+
+                  {assignment.completed && exercise.correct_answer && (
+                    <div style={{ marginTop: '15px' }}>
+                      <p style={{ fontSize: '14px', marginBottom: '8px', color: '#10b981' }}>Correct Answer:</p>
+                      <pre style={{
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        border: '1px solid rgba(16, 185, 129, 0.3)',
+                        padding: '15px',
+                        borderRadius: '8px',
+                        fontSize: '14px',
+                        fontFamily: 'Monaco, "Lucida Console", monospace',
+                        overflow: 'auto',
+                        whiteSpace: 'pre-wrap'
+                      }}>
+                        {exercise.correct_answer}
+                      </pre>
+                      {exercise.explanation && (
+                        <p style={{ 
+                          fontSize: '14px', 
+                          marginTop: '10px', 
+                          fontStyle: 'italic',
+                          opacity: 0.9
+                        }}>
+                          💡 {exercise.explanation}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Submit Button */}
+      {!assignment.completed && (
+        <div style={{
+          background: 'rgba(255,255,255,0.05)',
+          padding: '20px',
+          borderRadius: '12px',
+          textAlign: 'center'
+        }}>
+          <p style={{ fontSize: '14px', marginBottom: '15px', opacity: 0.8 }}>
+            Make sure you've answered all questions and completed all coding exercises.
+          </p>
+          <button
+            onClick={handleSubmit}
+            disabled={submitting}
+            style={{
+              background: submitting 
+                ? 'rgba(107, 114, 128, 0.5)' 
+                : 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+              color: 'white',
+              padding: '15px 30px',
+              border: 'none',
+              borderRadius: '10px',
+              cursor: submitting ? 'not-allowed' : 'pointer',
+              fontSize: '16px',
+              fontWeight: 'bold'
+            }}
+          >
+            {submitting ? '⏳ Submitting...' : '🚀 Submit Assignment'}
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
+
 const StudentDashboard = () => {
   const { user, isAuthenticated, loading, logout } = useAuth();
   const navigate = useNavigate();
