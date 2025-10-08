@@ -200,8 +200,8 @@ const StudentAssignments = ({ user }) => {
                   <button
                     onClick={() => {
                       console.log('Assignment object:', assignment);
-                      console.log('Assignment ID:', assignment.id);
-                      const url = `/student/assignment/${assignment.id}`;
+                      console.log('Student Assignment ID:', assignment.student_assignment_id);
+                      const url = `/student/assignment/${assignment.student_assignment_id}`;
                       console.log('Navigating to URL:', url);
                       navigate(url);
                     }}
