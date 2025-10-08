@@ -232,7 +232,70 @@ const StudentAssignments = ({ user }) => {
 };
 
 // Modern Dashboard Home Component
-const StudentHome = ({ user, navigate }) => (
+const StudentHome = ({ user, navigate }) => {
+  const [assignments, setAssignments] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchGradeData();
+  }, []);
+
+  const fetchGradeData = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/student/assignments`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        setAssignments(data);
+      }
+    } catch (error) {
+      console.error('Error fetching grade data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const calculateOverallGrade = () => {
+    const completedAssignments = assignments.filter(a => a.completed && a.score !== undefined && a.score !== null);
+    if (completedAssignments.length === 0) return null;
+    
+    const totalScore = completedAssignments.reduce((sum, a) => sum + a.score, 0);
+    return Math.round(totalScore / completedAssignments.length);
+  };
+
+  const getGradeColor = (grade) => {
+    if (grade >= 90) return 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+    if (grade >= 80) return 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)';
+    if (grade >= 70) return 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)';
+    return 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
+  };
+
+  const getGradeEmoji = (grade) => {
+    if (grade >= 90) return '🌟';
+    if (grade >= 80) return '😊';
+    if (grade >= 70) return '👍';
+    return '💪';
+  };
+
+  const getGradeMessage = (grade) => {
+    if (grade >= 90) return 'Outstanding work!';
+    if (grade >= 80) return 'Great job!';
+    if (grade >= 70) return 'Good progress!';
+    return 'Keep trying!';
+  };
+
+  const overallGrade = calculateOverallGrade();
+  const completedCount = assignments.filter(a => a.completed).length;
+  const totalCount = assignments.length;
+  const pendingCount = totalCount - completedCount;
+
+  return (
   <div>
     <div style={{
       background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
