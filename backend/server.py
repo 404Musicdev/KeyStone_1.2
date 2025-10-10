@@ -427,6 +427,69 @@ async def generate_assignment_with_ai(subject: str, grade_level: str, topic: str
             
             Make sure the story is engaging, age-appropriate, and the questions test both comprehension and vocabulary.
             """
+        elif subject.lower() == "critical thinking skills":
+            # Determine puzzle complexity based on grade level
+            grade_complexity = {
+                "1st Grade": "very simple, 3-4 items",
+                "2nd Grade": "simple, 4 items",
+                "3rd Grade": "simple to moderate, 4-5 items",
+                "4th Grade": "moderate, 5 items",
+                "5th Grade": "moderate, 5-6 items",
+                "6th Grade": "moderate to challenging, 6 items",
+                "7th Grade": "challenging, 6-7 items",
+                "8th Grade": "challenging, 7 items",
+                "9th Grade": "complex, 7-8 items",
+                "10th Grade": "complex, 8 items",
+                "11th Grade": "very complex, 8-9 items",
+                "12th Grade": "very complex, 9-10 items"
+            }
+            complexity = grade_complexity.get(grade_level, "moderate, 5 items")
+            
+            prompt = f"""
+            Create a Critical Thinking Skills drag-and-drop puzzle for {grade_level} students on the topic: {topic}
+            
+            Choose between logic puzzle or pattern recognition:
+            
+            LOGIC PUZZLE examples:
+            - Arrange items by size (smallest to largest)
+            - Arrange events in chronological order
+            - Categorize items by properties
+            - Sequence steps in a process
+            
+            PATTERN RECOGNITION examples:
+            - Complete a color sequence (red, blue, red, blue, ?, ?)
+            - Complete a number pattern (2, 4, 8, 16, ?, ?)
+            - Complete a shape pattern
+            - Complete an alphabetical pattern
+            
+            Difficulty: {complexity}
+            
+            Create 1 puzzle with:
+            - Clear instructions
+            - Items that need to be dragged (provide unique IDs like "item1", "item2", etc.)
+            - Drop zones where items belong (provide unique IDs like "zone1", "zone2", etc.)
+            - Each zone should have a clear label showing what goes there
+            - Make it grade-appropriate and engaging
+            
+            Return your response in this EXACT JSON format:
+            {{
+                "drag_drop_puzzle": {{
+                    "prompt": "Instructions for the puzzle",
+                    "items": [
+                        {{"id": "item1", "content": "Item text 1"}},
+                        {{"id": "item2", "content": "Item text 2"}}
+                    ],
+                    "zones": [
+                        {{"id": "zone1", "label": "Zone label 1", "correct_item_id": "item1"}},
+                        {{"id": "zone2", "label": "Zone label 2", "correct_item_id": "item2"}}
+                    ],
+                    "explanation": "Explanation of the correct solution"
+                }},
+                "questions": []
+            }}
+            
+            Make the puzzle challenging but appropriate for {grade_level}.
+            """
         else:
             youtube_context = ""
             if youtube_url:
