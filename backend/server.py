@@ -915,6 +915,7 @@ async def submit_assignment(submission: SubmissionRequest, current_user=Depends(
             "$set": {
                 "answers": submission.answers,
                 "coding_answers": submission.coding_answers,
+                "drag_drop_answer": submission.drag_drop_answer,
                 "score": score,
                 "completed": True,
                 "submitted_at": datetime.now(timezone.utc).isoformat()
@@ -927,8 +928,10 @@ async def submit_assignment(submission: SubmissionRequest, current_user=Depends(
         "score": score,
         "mcq_correct": mcq_correct,
         "coding_correct": coding_correct,
+        "drag_drop_correct": drag_drop_correct,
         "total_mcq": total_mcq,
         "total_coding": total_coding,
+        "total_drag_drop": total_drag_drop,
         "total_questions": total_questions
     }
 
