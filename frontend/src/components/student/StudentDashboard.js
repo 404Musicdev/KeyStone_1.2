@@ -731,6 +731,9 @@ const StudentAssignmentView = ({ user, navigate }) => {
       
       if (response.ok) {
         const data = await response.json();
+        console.log('=== ASSIGNMENT DATA ===', data);
+        console.log('Has drag_drop_puzzle?', data.assignment?.drag_drop_puzzle);
+        console.log('Questions length:', data.assignment?.questions?.length);
         setAssignment(data);
       } else {
         console.error('Failed to fetch assignment');
