@@ -792,9 +792,10 @@ const StudentAssignmentView = ({ user, navigate }) => {
 
     const totalQuestions = assignment.assignment.questions.length;
     const totalCodingExercises = assignment.assignment.coding_exercises?.length || 0;
+    const hasDragDropPuzzle = assignment.assignment.drag_drop_puzzle;
     
     // Check if all questions are answered
-    if (Object.keys(answers).length < totalQuestions) {
+    if (totalQuestions > 0 && Object.keys(answers).length < totalQuestions) {
       alert(`Please answer all ${totalQuestions} questions before submitting.`);
       return;
     }
@@ -803,6 +804,16 @@ const StudentAssignmentView = ({ user, navigate }) => {
     if (totalCodingExercises > 0 && Object.keys(codingAnswers).length < totalCodingExercises) {
       alert(`Please complete all ${totalCodingExercises} coding exercises before submitting.`);
       return;
+    }
+
+    // Check if drag-drop puzzle is completed
+    if (hasDragDropPuzzle) {
+      const totalZones = hasDragDropPuzzle.zones.length;
+      const filledZones = Object.keys(dragDropAnswer).length;
+      if (filledZones < totalZones) {
+        alert(`Please complete the drag-and-drop puzzle by placing all items in their correct zones.`);
+        return;
+      }
     }
 
     setSubmitting(true);
@@ -829,7 +840,8 @@ const StudentAssignmentView = ({ user, navigate }) => {
         body: JSON.stringify({
           student_assignment_id: assignmentId,
           answers: answersArray.length > 0 ? answersArray : null,
-          coding_answers: codingAnswersArray.length > 0 ? codingAnswersArray : null
+          coding_answers: codingAnswersArray.length > 0 ? codingAnswersArray : null,
+          drag_drop_answer: hasDragDropPuzzle ? dragDropAnswer : null
         })
       });
 
