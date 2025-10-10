@@ -95,6 +95,21 @@ class CodingExercise(BaseModel):
     correct_answer: str
     explanation: Optional[str] = None
 
+class DragDropItem(BaseModel):
+    id: str
+    content: str  # The text/label of the item to drag
+
+class DragDropZone(BaseModel):
+    id: str
+    label: str  # Label for the drop zone
+    correct_item_id: str  # ID of the item that belongs here
+
+class DragDropPuzzle(BaseModel):
+    prompt: str  # Instructions for the puzzle
+    items: List[DragDropItem]  # Items to drag
+    zones: List[DragDropZone]  # Drop zones where items should be placed
+    explanation: Optional[str] = None
+
 class Assignment(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     title: str
