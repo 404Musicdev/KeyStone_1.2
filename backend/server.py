@@ -886,9 +886,26 @@ async def submit_assignment(submission: SubmissionRequest, current_user=Depends(
                 if code_answer.strip().replace(" ", "").replace("\n", "") == correct_code.strip().replace(" ", "").replace("\n", ""):
                     coding_correct += 1
     
+    # Calculate score for drag-and-drop puzzle
+    drag_drop_correct = 0
+    total_drag_drop = 0
+    
+    if assignment.get("drag_drop_puzzle") and submission.drag_drop_answer:
+        puzzle = assignment["drag_drop_puzzle"]
+        total_drag_drop = len(puzzle["zones"])
+        
+        # Check each zone to see if correct item was placed
+        for zone in puzzle["zones"]:
+            zone_id = zone["id"]
+            correct_item_id = zone["correct_item_id"]
+            student_answer = submission.drag_drop_answer.get(zone_id)
+            
+            if student_answer == correct_item_id:
+                drag_drop_correct += 1
+    
     # Calculate overall score
-    total_questions = total_mcq + total_coding
-    total_correct = mcq_correct + coding_correct
+    total_questions = total_mcq + total_coding + total_drag_drop
+    total_correct = mcq_correct + coding_correct + drag_drop_correct
     score = (total_correct / total_questions) * 100 if total_questions > 0 else 0
     
     # Update student assignment
