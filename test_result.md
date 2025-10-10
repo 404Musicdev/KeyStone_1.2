@@ -116,7 +116,7 @@ user_problem_statement: |
   - Assignment backgrounds: deep blue with soft white text
 
 backend:
-  - task: "Add endpoint to fetch individual student assignment by ID"
+  - task: "Enhance Reading assignments with 2-6 paragraph stories and 4 MCQ"
     implemented: true
     working: "NA"
     file: "server.py"
@@ -126,7 +126,34 @@ backend:
     status_history:
       - working: "NA"
         agent: "main"
+        comment: "Updated Reading subject AI prompt to generate grade-appropriate stories (2 paragraphs for 1st grade, up to 6 paragraphs for 12th grade). Stories include vocabulary complexity scaling with grade level. Generate exactly 4 MCQ questions mixing reading comprehension and vocabulary in context."
+
+  - task: "Add Critical Thinking Skills subject with drag-and-drop puzzles"
+    implemented: true
+    working: "NA"
+    file: "server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Added new Critical Thinking Skills subject. Created DragDropPuzzle, DragDropItem, and DragDropZone Pydantic models. AI generates 1 puzzle per assignment (logic puzzles or pattern recognition) with difficulty scaling by grade (3-4 items for 1st grade, up to 9-10 items for 12th grade). Updated Assignment model to include drag_drop_puzzle field. Updated StudentAssignment and SubmissionRequest to handle drag_drop_answer (dict mapping zone_id to item_id). Submission endpoint grades drag-and-drop by checking if correct items placed in correct zones."
+
+  - task: "Add endpoint to fetch individual student assignment by ID"
+    implemented: true
+    working: true
+    file: "server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
         comment: "Added GET /api/student/assignments/{student_assignment_id} endpoint to fetch individual student assignment by ID. Endpoint includes authentication check, retrieves student assignment with assignment details, and returns all necessary data including assignment content, completion status, score, and submitted answers."
+      - working: true
+        agent: "testing"
+        comment: "✅ Endpoint working correctly with 100% test pass rate. Successfully retrieves assignments, validates authentication, handles errors properly."
 
   - task: "Replace Learning to Read with Learn to Code subject"
     implemented: true
