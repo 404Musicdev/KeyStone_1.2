@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Backend Test Suite for Learn to Code Functionality
-Tests the new "Learn to Code" subject with 4 coding levels
+Backend Test Suite for Reading Enhancement and Critical Thinking Skills
+Tests the enhanced Reading assignments and new Critical Thinking Skills subject with drag-and-drop puzzles
 """
 
 import requests
