@@ -138,6 +138,7 @@ class StudentAssignment(BaseModel):
     submitted_at: Optional[datetime] = None
     answers: Optional[List[int]] = None  # Student's MCQ answers (indices)
     coding_answers: Optional[List[str]] = None  # Student's code submissions
+    drag_drop_answer: Optional[dict] = None  # Student's drag-drop answer {zone_id: item_id}
     score: Optional[float] = None
     completed: bool = False
 
@@ -145,6 +146,7 @@ class SubmissionRequest(BaseModel):
     student_assignment_id: str
     answers: Optional[List[int]] = None  # MCQ answers
     coding_answers: Optional[List[str]] = None  # Code answers
+    drag_drop_answer: Optional[dict] = None  # Drag-drop answer {zone_id: item_id}
 
 # Lesson Plan Models
 class LessonPlanGenerate(BaseModel):
