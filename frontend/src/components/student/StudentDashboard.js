@@ -758,6 +758,35 @@ const StudentAssignmentView = ({ user, navigate }) => {
     }));
   };
 
+  const handleDragStart = (e, itemId) => {
+    setDraggedItem(itemId);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  };
+
+  const handleDrop = (e, zoneId) => {
+    e.preventDefault();
+    if (draggedItem) {
+      setDragDropAnswer(prev => ({
+        ...prev,
+        [zoneId]: draggedItem
+      }));
+      setDraggedItem(null);
+    }
+  };
+
+  const handleRemoveFromZone = (zoneId) => {
+    setDragDropAnswer(prev => {
+      const updated = { ...prev };
+      delete updated[zoneId];
+      return updated;
+    });
+  };
+
   const handleSubmit = async () => {
     if (!assignment || assignment.completed) return;
 
