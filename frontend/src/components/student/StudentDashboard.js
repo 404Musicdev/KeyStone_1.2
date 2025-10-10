@@ -1148,6 +1148,167 @@ const StudentAssignmentView = ({ user, navigate }) => {
         </div>
       )}
 
+      {/* Drag and Drop Puzzle Section */}
+      {assignment.assignment.drag_drop_puzzle && (
+        <div style={{ marginBottom: '30px' }}>
+          <h2 style={{ 
+            fontSize: '20px', 
+            marginBottom: '20px',
+            color: '#e5e7eb'
+          }}>
+            🧩 Critical Thinking Puzzle
+          </h2>
+          
+          <div style={{
+            background: '#1e40af',
+            padding: '25px',
+            borderRadius: '12px',
+            color: '#f8fafc'
+          }}>
+            <p style={{ fontSize: '16px', marginBottom: '25px', fontWeight: '600' }}>
+              {assignment.assignment.drag_drop_puzzle.prompt}
+            </p>
+
+            <div style={{ 
+              display: 'grid', 
+              gridTemplateColumns: '1fr 1fr',
+              gap: '30px',
+              alignItems: 'start'
+            }}>
+              {/* Items to Drag (Left Side) */}
+              <div>
+                <h3 style={{ fontSize: '14px', marginBottom: '15px', opacity: 0.8, textTransform: 'uppercase' }}>
+                  📦 Drag These Items:
+                </h3>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  {assignment.assignment.drag_drop_puzzle.items.map((item) => {
+                    const isPlaced = Object.values(dragDropAnswer).includes(item.id);
+                    return (
+                      <div
+                        key={item.id}
+                        draggable={!assignment.completed && !isPlaced}
+                        onDragStart={(e) => !assignment.completed && !isPlaced && handleDragStart(e, item.id)}
+                        style={{
+                          backgroundColor: isPlaced ? 'rgba(107, 114, 128, 0.3)' : 'rgba(59, 130, 246, 0.3)',
+                          border: '2px dashed ' + (isPlaced ? 'rgba(107, 114, 128, 0.5)' : 'rgba(96, 165, 250, 0.8)'),
+                          padding: '15px 20px',
+                          borderRadius: '10px',
+                          cursor: !assignment.completed && !isPlaced ? 'grab' : 'not-allowed',
+                          textAlign: 'center',
+                          fontSize: '15px',
+                          fontWeight: '500',
+                          opacity: isPlaced ? 0.4 : 1,
+                          transition: 'all 0.3s ease',
+                          userSelect: 'none'
+                        }}
+                      >
+                        {item.content}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Drop Zones (Right Side) */}
+              <div>
+                <h3 style={{ fontSize: '14px', marginBottom: '15px', opacity: 0.8, textTransform: 'uppercase' }}>
+                  🎯 Drop Zones:
+                </h3>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  {assignment.assignment.drag_drop_puzzle.zones.map((zone) => {
+                    const placedItemId = dragDropAnswer[zone.id];
+                    const placedItem = placedItemId 
+                      ? assignment.assignment.drag_drop_puzzle.items.find(item => item.id === placedItemId)
+                      : null;
+                    
+                    return (
+                      <div
+                        key={zone.id}
+                        onDragOver={!assignment.completed ? handleDragOver : null}
+                        onDrop={(e) => !assignment.completed && handleDrop(e, zone.id)}
+                        style={{
+                          border: '2px solid rgba(248, 250, 252, 0.3)',
+                          backgroundColor: placedItem ? 'rgba(16, 185, 129, 0.2)' : 'rgba(0, 0, 0, 0.2)',
+                          padding: '15px 20px',
+                          borderRadius: '10px',
+                          minHeight: '60px',
+                          transition: 'all 0.3s ease',
+                          position: 'relative'
+                        }}
+                      >
+                        <div style={{ 
+                          fontSize: '12px', 
+                          marginBottom: placedItem ? '8px' : '0',
+                          opacity: 0.7,
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.5px'
+                        }}>
+                          {zone.label}
+                        </div>
+                        
+                        {placedItem ? (
+                          <div style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between'
+                          }}>
+                            <span style={{ fontSize: '15px', fontWeight: '500' }}>
+                              {placedItem.content}
+                            </span>
+                            {!assignment.completed && (
+                              <button
+                                onClick={() => handleRemoveFromZone(zone.id)}
+                                style={{
+                                  backgroundColor: 'rgba(239, 68, 68, 0.3)',
+                                  border: 'none',
+                                  color: 'white',
+                                  padding: '4px 8px',
+                                  borderRadius: '5px',
+                                  cursor: 'pointer',
+                                  fontSize: '12px'
+                                }}
+                              >
+                                ✕
+                              </button>
+                            )}
+                          </div>
+                        ) : (
+                          <div style={{ 
+                            textAlign: 'center',
+                            opacity: 0.5,
+                            fontSize: '14px',
+                            fontStyle: 'italic'
+                          }}>
+                            Drop item here
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+
+            {assignment.completed && assignment.assignment.drag_drop_puzzle.explanation && (
+              <div style={{
+                marginTop: '20px',
+                padding: '15px',
+                backgroundColor: 'rgba(16, 185, 129, 0.2)',
+                borderRadius: '8px',
+                border: '1px solid rgba(16, 185, 129, 0.3)'
+              }}>
+                <p style={{ fontSize: '14px', color: '#10b981', fontWeight: '600', marginBottom: '8px' }}>
+                  ✅ Explanation:
+                </p>
+                <p style={{ fontSize: '14px', opacity: 0.9 }}>
+                  {assignment.assignment.drag_drop_puzzle.explanation}
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Submit Button */}
       {!assignment.completed && (
         <div style={{
