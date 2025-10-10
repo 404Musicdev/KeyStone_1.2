@@ -245,27 +245,33 @@ backend:
 frontend:
   - task: "Add Critical Thinking Skills to subject dropdown"
     implemented: true
-    working: "NA"
+    working: true
     file: "AssignmentGenerator.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Added 'Critical Thinking Skills' to subjects array in AssignmentGenerator. Teachers can now select this subject when creating assignments."
+      - working: true
+        agent: "testing"
+        comment: "✅ VERIFIED: Critical Thinking Skills successfully appears in subject dropdown. Teacher login works correctly, assignment generator accessible, and Critical Thinking Skills option is present in the subject selection dropdown. UI interaction confirmed working."
 
   - task: "Implement drag-and-drop UI for Critical Thinking puzzles"
     implemented: true
-    working: "NA"
+    working: false
     file: "StudentDashboard.js"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Implemented drag-and-drop UI in StudentAssignmentView component. Items displayed on left side (draggable cards), drop zones on right side. Added drag handlers (handleDragStart, handleDragOver, handleDrop, handleRemoveFromZone). Visual feedback shows placed items with remove button. Completed puzzles show explanation. Student-friendly colorful design with gradients and clear labels. Updated handleSubmit to include drag_drop_answer validation and submission."
+      - working: false
+        agent: "testing"
+        comment: "❌ CRITICAL ISSUE: Drag-and-drop UI not rendering for Critical Thinking Skills assignments. Found Critical Thinking Skills assignment 'Pattern Recognition' in student assignments list, but when opened, it displays as MCQ questions (20 radio options) instead of drag-drop puzzle. No draggable items ([draggable='true']) or drop zones found. Backend generates drag_drop_puzzle correctly, but frontend StudentAssignmentView component is not rendering the drag-drop UI - it's falling back to MCQ display instead."
 
   - task: "Update Assignment Generator with Learn to Code and level selection"
     implemented: true
