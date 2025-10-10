@@ -326,9 +326,9 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Reading assignments with 2-6 paragraph stories and 4 MCQ"
-    - "Critical Thinking Skills drag-and-drop puzzles"
-  stuck_tasks: []
+    - "Critical Thinking Skills drag-and-drop UI rendering issue"
+  stuck_tasks:
+    - "Implement drag-and-drop UI for Critical Thinking puzzles"
   test_all: false
   test_priority: "high_first"
 
