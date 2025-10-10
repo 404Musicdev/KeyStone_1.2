@@ -234,6 +234,30 @@ backend:
         comment: "✅ RESOLVED: Created test teacher account (testteacher@example.com) and 3 student accounts (johnstudent, janestudent, teststudent) to fix student login black screen issue. All student authentication endpoints working correctly: POST /api/auth/student/login returns proper tokens and user data. Students can now authenticate and access assignments without black screen. Verified complete authentication workflow including token validation and assignments access. Root cause was no valid student credentials in database - now resolved with test accounts."
 
 frontend:
+  - task: "Add Critical Thinking Skills to subject dropdown"
+    implemented: true
+    working: "NA"
+    file: "AssignmentGenerator.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Added 'Critical Thinking Skills' to subjects array in AssignmentGenerator. Teachers can now select this subject when creating assignments."
+
+  - task: "Implement drag-and-drop UI for Critical Thinking puzzles"
+    implemented: true
+    working: "NA"
+    file: "StudentDashboard.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented drag-and-drop UI in StudentAssignmentView component. Items displayed on left side (draggable cards), drop zones on right side. Added drag handlers (handleDragStart, handleDragOver, handleDrop, handleRemoveFromZone). Visual feedback shows placed items with remove button. Completed puzzles show explanation. Student-friendly colorful design with gradients and clear labels. Updated handleSubmit to include drag_drop_answer validation and submission."
+
   - task: "Update Assignment Generator with Learn to Code and level selection"
     implemented: true
     working: true
