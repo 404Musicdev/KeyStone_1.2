@@ -260,8 +260,8 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Add endpoint to fetch individual student assignment by ID"
-    - "Student assignment view testing with new endpoint"
+    - "Reading assignments with 2-6 paragraph stories and 4 MCQ"
+    - "Critical Thinking Skills drag-and-drop puzzles"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
