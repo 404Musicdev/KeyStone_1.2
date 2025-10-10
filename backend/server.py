@@ -369,12 +369,34 @@ async def generate_assignment_with_ai(subject: str, grade_level: str, topic: str
                 }}
                 """
         elif subject.lower() == "reading":
+            # Determine story length based on grade level
+            grade_map = {
+                "1st Grade": "2 short paragraphs",
+                "2nd Grade": "2-3 short paragraphs",
+                "3rd Grade": "3 paragraphs",
+                "4th Grade": "3-4 paragraphs",
+                "5th Grade": "4 paragraphs",
+                "6th Grade": "4-5 paragraphs",
+                "7th Grade": "5 paragraphs",
+                "8th Grade": "5-6 paragraphs",
+                "9th Grade": "5-6 paragraphs",
+                "10th Grade": "6 paragraphs",
+                "11th Grade": "6 paragraphs",
+                "12th Grade": "6 paragraphs"
+            }
+            story_length = grade_map.get(grade_level, "3-4 paragraphs")
+            
             prompt = f"""
             Create a reading assignment for {grade_level} students on the topic: {topic}
             
             Please generate:
-            1. An original short story (2-4 paragraphs) appropriate for {grade_level} level
-            2. 4 multiple-choice questions about the story (plot, characters, details)
+            1. An original engaging story ({story_length}) appropriate for {grade_level} level
+               - For lower grades (1st-3rd): Use simple vocabulary and short sentences
+               - For middle grades (4th-6th): Use moderate vocabulary and varied sentence structure
+               - For upper grades (7th-12th): Use advanced vocabulary and complex sentence structure
+            2. EXACTLY 4 multiple-choice questions that mix:
+               - Reading comprehension (understanding plot, theme, main idea)
+               - Vocabulary in context (word meanings from the story)
             
             Return your response in this EXACT JSON format:
             {{
@@ -384,11 +406,26 @@ async def generate_assignment_with_ai(subject: str, grade_level: str, topic: str
                         "question": "Question text?",
                         "options": ["Option A", "Option B", "Option C", "Option D"],
                         "correct_answer": 0
+                    }},
+                    {{
+                        "question": "Question text?",
+                        "options": ["Option A", "Option B", "Option C", "Option D"],
+                        "correct_answer": 1
+                    }},
+                    {{
+                        "question": "Question text?",
+                        "options": ["Option A", "Option B", "Option C", "Option D"],
+                        "correct_answer": 2
+                    }},
+                    {{
+                        "question": "Question text?",
+                        "options": ["Option A", "Option B", "Option C", "Option D"],
+                        "correct_answer": 3
                     }}
                 ]
             }}
             
-            Make sure the story is engaging and age-appropriate for {grade_level}.
+            Make sure the story is engaging, age-appropriate, and the questions test both comprehension and vocabulary.
             """
         else:
             youtube_context = ""
