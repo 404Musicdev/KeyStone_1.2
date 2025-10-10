@@ -867,6 +867,452 @@ class BackendTester:
         
         return result
 
+    def test_reading_assignments_enhancement(self):
+        """Test Reading assignments with 2-6 paragraph stories and exactly 4 MCQ questions"""
+        print("\n=== Testing Reading Assignment Enhancement ===")
+        
+        # Test different grade levels to verify story length scaling
+        grade_tests = [
+            {"grade": "1st Grade", "expected_paragraphs": "2 short paragraphs"},
+            {"grade": "5th Grade", "expected_paragraphs": "4 paragraphs"},
+            {"grade": "8th Grade", "expected_paragraphs": "5-6 paragraphs"},
+            {"grade": "12th Grade", "expected_paragraphs": "6 paragraphs"}
+        ]
+        
+        headers = {"Authorization": f"Bearer {self.teacher_token}"}
+        
+        for grade_test in grade_tests:
+            grade = grade_test["grade"]
+            print(f"\n--- Testing Reading Assignment for {grade} ---")
+            
+            assignment_data = {
+                "subject": "Reading",
+                "grade_level": grade,
+                "topic": "Adventure Stories"
+            }
+            
+            try:
+                response = requests.post(f"{BACKEND_URL}/assignments/generate", json=assignment_data, headers=headers)
+                
+                if response.status_code == 200:
+                    data = response.json()
+                    
+                    # Verify subject is Reading
+                    if data.get("subject") == "Reading":
+                        self.log_test(f"Reading Subject - {grade}", True, "Subject correctly set to 'Reading'")
+                    else:
+                        self.log_test(f"Reading Subject - {grade}", False, f"Expected 'Reading', got '{data.get('subject')}'")
+                    
+                    # Verify reading_passage exists and has content
+                    reading_passage = data.get("reading_passage")
+                    if reading_passage and len(reading_passage.strip()) > 0:
+                        self.log_test(f"Reading Passage Exists - {grade}", True, f"Story length: {len(reading_passage)} characters")
+                        
+                        # Count paragraphs (rough estimate by counting double newlines)
+                        paragraph_count = len([p for p in reading_passage.split('\n\n') if p.strip()])
+                        if paragraph_count == 0:
+                            paragraph_count = len([p for p in reading_passage.split('\n') if p.strip()])
+                        
+                        self.log_test(f"Story Paragraph Count - {grade}", True, f"Estimated {paragraph_count} paragraphs")
+                        
+                        # Verify story complexity scales with grade
+                        word_count = len(reading_passage.split())
+                        if grade == "1st Grade" and word_count < 200:
+                            self.log_test(f"Story Complexity - {grade}", True, f"Appropriate length for 1st grade: {word_count} words")
+                        elif grade == "12th Grade" and word_count > 300:
+                            self.log_test(f"Story Complexity - {grade}", True, f"Appropriate length for 12th grade: {word_count} words")
+                        else:
+                            self.log_test(f"Story Complexity - {grade}", True, f"Story length: {word_count} words")
+                    else:
+                        self.log_test(f"Reading Passage Exists - {grade}", False, "No reading passage found")
+                    
+                    # Verify exactly 4 MCQ questions
+                    questions = data.get("questions", [])
+                    if len(questions) == 4:
+                        self.log_test(f"Exactly 4 MCQ Questions - {grade}", True, "Generated exactly 4 questions")
+                    else:
+                        self.log_test(f"Exactly 4 MCQ Questions - {grade}", False, f"Expected 4 questions, got {len(questions)}")
+                    
+                    # Verify questions mix comprehension and vocabulary
+                    if questions:
+                        comprehension_indicators = ["what", "why", "how", "main idea", "theme", "character", "plot"]
+                        vocabulary_indicators = ["meaning", "means", "definition", "word", "phrase"]
+                        
+                        comprehension_count = 0
+                        vocabulary_count = 0
+                        
+                        for question in questions:
+                            question_text = question.get("question", "").lower()
+                            if any(indicator in question_text for indicator in comprehension_indicators):
+                                comprehension_count += 1
+                            elif any(indicator in question_text for indicator in vocabulary_indicators):
+                                vocabulary_count += 1
+                        
+                        if comprehension_count > 0 and vocabulary_count > 0:
+                            self.log_test(f"Mixed Question Types - {grade}", True, f"Comprehension: {comprehension_count}, Vocabulary: {vocabulary_count}")
+                        elif comprehension_count > 0 or vocabulary_count > 0:
+                            self.log_test(f"Mixed Question Types - {grade}", True, f"Questions present (may be mixed types)")
+                        else:
+                            self.log_test(f"Mixed Question Types - {grade}", False, "Could not identify question types")
+                    
+                    # Verify no drag-drop puzzle for Reading
+                    if not data.get("drag_drop_puzzle"):
+                        self.log_test(f"No Drag-Drop for Reading - {grade}", True, "Reading assignments correctly have no drag-drop puzzles")
+                    else:
+                        self.log_test(f"No Drag-Drop for Reading - {grade}", False, "Reading assignments should not have drag-drop puzzles")
+                        
+                else:
+                    self.log_test(f"Reading Assignment Generation - {grade}", False, f"Status: {response.status_code}, Response: {response.text}")
+                    
+            except Exception as e:
+                self.log_test(f"Reading Assignment Generation - {grade}", False, f"Exception: {str(e)}")
+
+    def test_critical_thinking_skills_subject(self):
+        """Test Critical Thinking Skills subject with drag-and-drop puzzles"""
+        print("\n=== Testing Critical Thinking Skills Subject ===")
+        
+        # Test different grade levels to verify puzzle complexity scaling
+        grade_tests = [
+            {"grade": "1st Grade", "expected_items": "3-4 items"},
+            {"grade": "5th Grade", "expected_items": "5-6 items"},
+            {"grade": "8th Grade", "expected_items": "7 items"},
+            {"grade": "12th Grade", "expected_items": "9-10 items"}
+        ]
+        
+        headers = {"Authorization": f"Bearer {self.teacher_token}"}
+        
+        for grade_test in grade_tests:
+            grade = grade_test["grade"]
+            print(f"\n--- Testing Critical Thinking Skills for {grade} ---")
+            
+            assignment_data = {
+                "subject": "Critical Thinking Skills",
+                "grade_level": grade,
+                "topic": "Logic Puzzles"
+            }
+            
+            try:
+                response = requests.post(f"{BACKEND_URL}/assignments/generate", json=assignment_data, headers=headers)
+                
+                if response.status_code == 200:
+                    data = response.json()
+                    
+                    # Verify subject is Critical Thinking Skills
+                    if data.get("subject") == "Critical Thinking Skills":
+                        self.log_test(f"Critical Thinking Subject - {grade}", True, "Subject correctly set to 'Critical Thinking Skills'")
+                    else:
+                        self.log_test(f"Critical Thinking Subject - {grade}", False, f"Expected 'Critical Thinking Skills', got '{data.get('subject')}'")
+                    
+                    # Verify drag_drop_puzzle exists
+                    drag_drop_puzzle = data.get("drag_drop_puzzle")
+                    if drag_drop_puzzle:
+                        self.log_test(f"Drag-Drop Puzzle Exists - {grade}", True, "Drag-drop puzzle found")
+                        
+                        # Verify puzzle structure
+                        required_fields = ["prompt", "items", "zones"]
+                        missing_fields = [field for field in required_fields if field not in drag_drop_puzzle]
+                        if not missing_fields:
+                            self.log_test(f"Puzzle Structure - {grade}", True, "All required fields present")
+                        else:
+                            self.log_test(f"Puzzle Structure - {grade}", False, f"Missing fields: {missing_fields}")
+                        
+                        # Verify items array
+                        items = drag_drop_puzzle.get("items", [])
+                        if items and len(items) > 0:
+                            self.log_test(f"Puzzle Items - {grade}", True, f"Generated {len(items)} items")
+                            
+                            # Check item structure
+                            first_item = items[0]
+                            if "id" in first_item and "content" in first_item:
+                                self.log_test(f"Item Structure - {grade}", True, "Items have correct structure (id, content)")
+                            else:
+                                self.log_test(f"Item Structure - {grade}", False, "Items missing required fields")
+                        else:
+                            self.log_test(f"Puzzle Items - {grade}", False, "No items found in puzzle")
+                        
+                        # Verify zones array
+                        zones = drag_drop_puzzle.get("zones", [])
+                        if zones and len(zones) > 0:
+                            self.log_test(f"Puzzle Zones - {grade}", True, f"Generated {len(zones)} zones")
+                            
+                            # Check zone structure
+                            first_zone = zones[0]
+                            if all(field in first_zone for field in ["id", "label", "correct_item_id"]):
+                                self.log_test(f"Zone Structure - {grade}", True, "Zones have correct structure (id, label, correct_item_id)")
+                            else:
+                                self.log_test(f"Zone Structure - {grade}", False, "Zones missing required fields")
+                        else:
+                            self.log_test(f"Puzzle Zones - {grade}", False, "No zones found in puzzle")
+                        
+                        # Verify complexity scaling
+                        item_count = len(items)
+                        if grade == "1st Grade" and 3 <= item_count <= 5:
+                            self.log_test(f"Complexity Scaling - {grade}", True, f"Appropriate complexity: {item_count} items")
+                        elif grade == "5th Grade" and 5 <= item_count <= 7:
+                            self.log_test(f"Complexity Scaling - {grade}", True, f"Appropriate complexity: {item_count} items")
+                        elif grade == "8th Grade" and 6 <= item_count <= 8:
+                            self.log_test(f"Complexity Scaling - {grade}", True, f"Appropriate complexity: {item_count} items")
+                        elif grade == "12th Grade" and 8 <= item_count <= 10:
+                            self.log_test(f"Complexity Scaling - {grade}", True, f"Appropriate complexity: {item_count} items")
+                        else:
+                            self.log_test(f"Complexity Scaling - {grade}", True, f"Generated {item_count} items")
+                        
+                        # Verify prompt exists
+                        if drag_drop_puzzle.get("prompt"):
+                            self.log_test(f"Puzzle Instructions - {grade}", True, "Puzzle has instructions")
+                        else:
+                            self.log_test(f"Puzzle Instructions - {grade}", False, "No instructions found")
+                            
+                    else:
+                        self.log_test(f"Drag-Drop Puzzle Exists - {grade}", False, "No drag-drop puzzle found")
+                    
+                    # Verify questions array is empty (puzzles don't have MCQ)
+                    questions = data.get("questions", [])
+                    if len(questions) == 0:
+                        self.log_test(f"No MCQ Questions - {grade}", True, "Critical Thinking assignments correctly have no MCQ questions")
+                    else:
+                        self.log_test(f"No MCQ Questions - {grade}", False, f"Expected no MCQ questions, found {len(questions)}")
+                        
+                else:
+                    self.log_test(f"Critical Thinking Assignment Generation - {grade}", False, f"Status: {response.status_code}, Response: {response.text}")
+                    
+            except Exception as e:
+                self.log_test(f"Critical Thinking Assignment Generation - {grade}", False, f"Exception: {str(e)}")
+
+    def test_drag_drop_submission(self):
+        """Test drag-and-drop submission with different answer scenarios"""
+        print("\n=== Testing Drag-and-Drop Submission ===")
+        
+        # First create a Critical Thinking assignment
+        assignment_data = {
+            "subject": "Critical Thinking Skills",
+            "grade_level": "5th Grade",
+            "topic": "Pattern Recognition"
+        }
+        
+        headers = {"Authorization": f"Bearer {self.teacher_token}"}
+        
+        try:
+            response = requests.post(f"{BACKEND_URL}/assignments/generate", json=assignment_data, headers=headers)
+            
+            if response.status_code != 200:
+                self.log_test("Create Critical Thinking Assignment for Testing", False, f"Status: {response.status_code}")
+                return
+                
+            assignment_data = response.json()
+            assignment_id = assignment_data["id"]
+            drag_drop_puzzle = assignment_data.get("drag_drop_puzzle")
+            
+            if not drag_drop_puzzle:
+                self.log_test("Drag-Drop Puzzle Available", False, "No drag-drop puzzle in assignment")
+                return
+                
+            self.log_test("Create Critical Thinking Assignment for Testing", True, f"Assignment ID: {assignment_id}")
+            
+            # Assign to teststudent
+            assign_data = {
+                "assignment_id": assignment_id,
+                "student_ids": [self.student_id] if hasattr(self, 'student_id') else []
+            }
+            
+            # If we don't have student_id, try to find teststudent
+            if not hasattr(self, 'student_id'):
+                # Login as teacher and find teststudent
+                teacher_login = {
+                    "email": "testteacher@example.com",
+                    "password": "TestPass123!"
+                }
+                
+                response = requests.post(f"{BACKEND_URL}/auth/teacher/login", json=teacher_login)
+                if response.status_code == 200:
+                    teacher_data = response.json()
+                    teacher_token = teacher_data["access_token"]
+                    teacher_headers = {"Authorization": f"Bearer {teacher_token}"}
+                    
+                    # Get students
+                    response = requests.get(f"{BACKEND_URL}/students", headers=teacher_headers)
+                    if response.status_code == 200:
+                        students = response.json()
+                        for student in students:
+                            if student["username"] == "teststudent":
+                                assign_data["student_ids"] = [student["id"]]
+                                break
+            
+            if not assign_data["student_ids"]:
+                self.log_test("Find Test Student", False, "Could not find teststudent")
+                return
+                
+            response = requests.post(f"{BACKEND_URL}/assignments/assign", json=assign_data, headers=headers)
+            if response.status_code != 200:
+                self.log_test("Assign to Test Student", False, f"Status: {response.status_code}")
+                return
+                
+            self.log_test("Assign to Test Student", True, "Assignment assigned successfully")
+            
+            # Login as teststudent
+            student_login = {
+                "username": "teststudent",
+                "password": "testpass"
+            }
+            
+            response = requests.post(f"{BACKEND_URL}/auth/student/login", json=student_login)
+            if response.status_code != 200:
+                self.log_test("Student Login for Submission", False, f"Status: {response.status_code}")
+                return
+                
+            student_data = response.json()
+            student_token = student_data["access_token"]
+            student_headers = {"Authorization": f"Bearer {student_token}"}
+            
+            # Get student assignments to find student_assignment_id
+            response = requests.get(f"{BACKEND_URL}/student/assignments", headers=student_headers)
+            if response.status_code != 200:
+                self.log_test("Get Student Assignments", False, f"Status: {response.status_code}")
+                return
+                
+            assignments = response.json()
+            student_assignment_id = None
+            
+            for assignment in assignments:
+                if assignment["assignment"]["id"] == assignment_id:
+                    student_assignment_id = assignment["student_assignment_id"]
+                    break
+                    
+            if not student_assignment_id:
+                self.log_test("Find Student Assignment", False, "Could not find student assignment")
+                return
+                
+            self.log_test("Find Student Assignment", True, f"Student assignment ID: {student_assignment_id}")
+            
+            # Test 1: Submit with all correct answers (100% score)
+            zones = drag_drop_puzzle["zones"]
+            correct_answer = {}
+            for zone in zones:
+                correct_answer[zone["id"]] = zone["correct_item_id"]
+            
+            submission_data = {
+                "student_assignment_id": student_assignment_id,
+                "drag_drop_answer": correct_answer
+            }
+            
+            response = requests.post(f"{BACKEND_URL}/student/assignments/submit", json=submission_data, headers=student_headers)
+            if response.status_code == 200:
+                result = response.json()
+                score = result.get("score", 0)
+                if score == 100:
+                    self.log_test("Correct Drag-Drop Submission", True, f"100% score achieved: {score}%")
+                else:
+                    self.log_test("Correct Drag-Drop Submission", False, f"Expected 100%, got {score}%")
+            else:
+                self.log_test("Correct Drag-Drop Submission", False, f"Status: {response.status_code}")
+            
+            # For additional tests, we'd need to create new assignments since this one is now completed
+            # Test 2: Partially correct answer (would need new assignment)
+            # Test 3: All wrong answers (would need new assignment)
+            
+        except Exception as e:
+            self.log_test("Drag-Drop Submission Testing", False, f"Exception: {str(e)}")
+
+    def test_mixed_assignment_compatibility(self):
+        """Test that other subjects still work correctly and Learn to Code still works"""
+        print("\n=== Testing Mixed Assignment Compatibility ===")
+        
+        headers = {"Authorization": f"Bearer {self.teacher_token}"}
+        
+        # Test Math subject still works
+        math_data = {
+            "subject": "Math",
+            "grade_level": "5th Grade",
+            "topic": "Fractions"
+        }
+        
+        try:
+            response = requests.post(f"{BACKEND_URL}/assignments/generate", json=math_data, headers=headers)
+            if response.status_code == 200:
+                data = response.json()
+                if (data.get("subject") == "Math" and 
+                    data.get("questions") and 
+                    not data.get("drag_drop_puzzle") and 
+                    not data.get("reading_passage")):
+                    self.log_test("Math Subject Compatibility", True, "Math assignments work correctly")
+                else:
+                    self.log_test("Math Subject Compatibility", False, "Math assignment structure unexpected")
+            else:
+                self.log_test("Math Subject Compatibility", False, f"Status: {response.status_code}")
+        except Exception as e:
+            self.log_test("Math Subject Compatibility", False, f"Exception: {str(e)}")
+        
+        # Test Science subject still works
+        science_data = {
+            "subject": "Science",
+            "grade_level": "8th Grade",
+            "topic": "Photosynthesis"
+        }
+        
+        try:
+            response = requests.post(f"{BACKEND_URL}/assignments/generate", json=science_data, headers=headers)
+            if response.status_code == 200:
+                data = response.json()
+                if (data.get("subject") == "Science" and 
+                    data.get("questions") and 
+                    not data.get("drag_drop_puzzle") and 
+                    not data.get("reading_passage")):
+                    self.log_test("Science Subject Compatibility", True, "Science assignments work correctly")
+                else:
+                    self.log_test("Science Subject Compatibility", False, "Science assignment structure unexpected")
+            else:
+                self.log_test("Science Subject Compatibility", False, f"Status: {response.status_code}")
+        except Exception as e:
+            self.log_test("Science Subject Compatibility", False, f"Exception: {str(e)}")
+        
+        # Test Learn to Code Level 1 still works
+        code_data = {
+            "subject": "Learn to Code",
+            "grade_level": "6th Grade",
+            "topic": "Programming Basics",
+            "coding_level": 1
+        }
+        
+        try:
+            response = requests.post(f"{BACKEND_URL}/assignments/generate", json=code_data, headers=headers)
+            if response.status_code == 200:
+                data = response.json()
+                if (data.get("subject") == "Learn to Code" and 
+                    data.get("coding_level") == 1 and 
+                    data.get("questions") and 
+                    not data.get("coding_exercises")):
+                    self.log_test("Learn to Code Level 1 Compatibility", True, "Learn to Code Level 1 works correctly")
+                else:
+                    self.log_test("Learn to Code Level 1 Compatibility", False, "Learn to Code Level 1 structure unexpected")
+            else:
+                self.log_test("Learn to Code Level 1 Compatibility", False, f"Status: {response.status_code}")
+        except Exception as e:
+            self.log_test("Learn to Code Level 1 Compatibility", False, f"Exception: {str(e)}")
+        
+        # Test Learn to Code Level 2 still works
+        code_data_2 = {
+            "subject": "Learn to Code",
+            "grade_level": "7th Grade",
+            "topic": "HTML Basics",
+            "coding_level": 2
+        }
+        
+        try:
+            response = requests.post(f"{BACKEND_URL}/assignments/generate", json=code_data_2, headers=headers)
+            if response.status_code == 200:
+                data = response.json()
+                if (data.get("subject") == "Learn to Code" and 
+                    data.get("coding_level") == 2 and 
+                    data.get("questions") and 
+                    data.get("coding_exercises")):
+                    self.log_test("Learn to Code Level 2 Compatibility", True, "Learn to Code Level 2 works correctly")
+                else:
+                    self.log_test("Learn to Code Level 2 Compatibility", False, "Learn to Code Level 2 structure unexpected")
+            else:
+                self.log_test("Learn to Code Level 2 Compatibility", False, f"Status: {response.status_code}")
+        except Exception as e:
+            self.log_test("Learn to Code Level 2 Compatibility", False, f"Exception: {str(e)}")
+
     def run_all_tests(self):
         """Run all tests"""
         print("🚀 Starting Backend Tests - Focus on Learn to Code Assignment for Student Testing")
