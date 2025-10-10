@@ -118,27 +118,36 @@ user_problem_statement: |
 backend:
   - task: "Enhance Reading assignments with 2-6 paragraph stories and 4 MCQ"
     implemented: true
-    working: "NA"
+    working: true
     file: "server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Updated Reading subject AI prompt to generate grade-appropriate stories (2 paragraphs for 1st grade, up to 6 paragraphs for 12th grade). Stories include vocabulary complexity scaling with grade level. Generate exactly 4 MCQ questions mixing reading comprehension and vocabulary in context."
+      - working: true
+        agent: "testing"
+        comment: "✅ VERIFIED: Reading assignment enhancement working perfectly. Tested all grade levels (1st, 5th, 8th, 12th). Story length scales correctly: 1st grade (124 words, 2 paragraphs), 5th grade (376 words, 4 paragraphs), 8th grade (512 words, 5 paragraphs), 12th grade (612 words, 6 paragraphs). All assignments generate exactly 4 MCQ questions mixing comprehension and vocabulary. Reading_passage field contains proper stories. No drag-drop puzzles (correct for Reading subject)."
 
   - task: "Add Critical Thinking Skills subject with drag-and-drop puzzles"
     implemented: true
-    working: "NA"
+    working: true
     file: "server.py"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Added new Critical Thinking Skills subject. Created DragDropPuzzle, DragDropItem, and DragDropZone Pydantic models. AI generates 1 puzzle per assignment (logic puzzles or pattern recognition) with difficulty scaling by grade (3-4 items for 1st grade, up to 9-10 items for 12th grade). Updated Assignment model to include drag_drop_puzzle field. Updated StudentAssignment and SubmissionRequest to handle drag_drop_answer (dict mapping zone_id to item_id). Submission endpoint grades drag-and-drop by checking if correct items placed in correct zones."
+      - working: false
+        agent: "testing"
+        comment: "❌ CRITICAL BUG FOUND: drag_drop_puzzle field missing from Assignment creation in server.py line 734-745. AI generates correct puzzle structure but Assignment model wasn't populating the drag_drop_puzzle field, causing all Critical Thinking assignments to have null drag_drop_puzzle."
+      - working: true
+        agent: "testing"
+        comment: "✅ FIXED: Added missing drag_drop_puzzle field to Assignment creation. Critical Thinking Skills now working perfectly. Tested all grade levels - proper drag-drop puzzle structure with items array (id, content), zones array (id, label, correct_item_id), prompt, and explanation. Complexity scales with grade level. Questions array correctly empty. Drag-drop submission working with 100% score for correct answers. Full workflow: assignment creation → assignment → student submission → grading all functional."
 
   - task: "Add endpoint to fetch individual student assignment by ID"
     implemented: true
