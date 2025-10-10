@@ -46,6 +46,7 @@ const AssignmentGenerator = () => {
     'Math',
     'Reading',
     'Learn to Code',
+    'Critical Thinking Skills',
     'Science',
     'History',
     'English'
