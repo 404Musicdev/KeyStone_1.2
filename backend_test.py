@@ -1314,43 +1314,69 @@ class BackendTester:
             self.log_test("Learn to Code Level 2 Compatibility", False, f"Exception: {str(e)}")
 
     def run_all_tests(self):
-        """Run all tests"""
-        print("🚀 Starting Backend Tests - Focus on Learn to Code Assignment for Student Testing")
+        """Run all tests focusing on Reading Enhancement and Critical Thinking Skills"""
+        print("🚀 Starting Backend Tests - Focus on Reading Enhancement and Critical Thinking Skills")
         print(f"Backend URL: {BACKEND_URL}")
         
-        # PRIORITY: Create the specific Learn to Code assignment for student testing
-        assignment_result = self.test_learn_to_code_assignment_for_student_clicking()
+        # Setup authentication using existing test accounts
+        teacher_login = {
+            "email": "testteacher@example.com",
+            "password": "TestPass123!"
+        }
         
-        # PRIORITY: Create test accounts to fix student login black screen
-        if not self.create_test_accounts_for_student_login():
-            print("❌ Failed to create test accounts. This may cause continued login issues.")
-        
-        # Test student authentication workflow
-        self.test_student_authentication_workflow()
-        
-        # Setup original authentication for other tests
-        if not self.setup_authentication():
-            print("❌ Authentication setup failed. Cannot continue with Learn to Code tests.")
+        try:
+            response = requests.post(f"{BACKEND_URL}/auth/teacher/login", json=teacher_login)
+            if response.status_code == 200:
+                data = response.json()
+                self.teacher_token = data["access_token"]
+                self.teacher_id = data["user"]["id"]
+                self.log_test("Teacher Authentication", True, f"Teacher ID: {self.teacher_id}")
+            else:
+                self.log_test("Teacher Authentication", False, f"Status: {response.status_code}")
+                print("❌ Cannot continue without teacher authentication")
+                self.print_summary()
+                return
+        except Exception as e:
+            self.log_test("Teacher Authentication", False, f"Exception: {str(e)}")
+            print("❌ Cannot continue without teacher authentication")
             self.print_summary()
             return
-            
-        # Test each coding level
-        level_1_id = self.test_learn_to_code_level_1()
-        level_2_id = self.test_learn_to_code_level_2()
-        level_3_id = self.test_learn_to_code_level_3()
-        level_4_id = self.test_learn_to_code_level_4()
         
-        # Test submission with Level 2 (has both MCQ and coding)
-        if level_2_id:
-            self.test_assignment_submission(level_2_id)
-            
-        # Test edge cases
-        self.test_edge_cases()
+        # Get student ID for testing
+        try:
+            headers = {"Authorization": f"Bearer {self.teacher_token}"}
+            response = requests.get(f"{BACKEND_URL}/students", headers=headers)
+            if response.status_code == 200:
+                students = response.json()
+                for student in students:
+                    if student["username"] == "teststudent":
+                        self.student_id = student["id"]
+                        self.log_test("Find Test Student", True, f"Student ID: {self.student_id}")
+                        break
+        except Exception as e:
+            self.log_test("Find Test Student", False, f"Exception: {str(e)}")
+        
+        # PRIORITY TESTS: Reading Enhancement and Critical Thinking Skills
+        print("\n" + "="*60)
+        print("🎯 PRIORITY: Testing Reading Enhancement and Critical Thinking Skills")
+        print("="*60)
+        
+        # Test Reading assignments enhancement
+        self.test_reading_assignments_enhancement()
+        
+        # Test Critical Thinking Skills subject
+        self.test_critical_thinking_skills_subject()
+        
+        # Test drag-and-drop submission
+        self.test_drag_drop_submission()
+        
+        # Test compatibility with other subjects
+        self.test_mixed_assignment_compatibility()
         
         # Summary
         self.print_summary()
         
-        return assignment_result
+        return True
         
     def print_summary(self):
         """Print test summary"""
