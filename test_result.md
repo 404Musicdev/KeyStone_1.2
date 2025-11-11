@@ -326,7 +326,8 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Critical Thinking Skills drag-and-drop UI rendering issue"
+    - "Learn to Read backend and frontend testing"
+    - "Spelling backend and frontend testing"
   stuck_tasks:
     - "Implement drag-and-drop UI for Critical Thinking puzzles"
   test_all: false
