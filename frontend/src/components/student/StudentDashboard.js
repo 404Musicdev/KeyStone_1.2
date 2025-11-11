@@ -1383,6 +1383,418 @@ const StudentAssignmentView = ({ user, navigate }) => {
         </div>
       )}
 
+      {/* Learn to Read Section */}
+      {assignment.assignment.learn_to_read_content && (
+        <div style={{ marginBottom: '30px' }}>
+          <h2 style={{ 
+            fontSize: '20px', 
+            marginBottom: '20px',
+            color: '#e5e7eb'
+          }}>
+            📚 Mini Book - Let's Read Together!
+          </h2>
+          
+          <div style={{
+            background: '#1e40af',
+            padding: '30px',
+            borderRadius: '12px',
+            color: '#f8fafc'
+          }}>
+            {/* Story Section */}
+            <div style={{ marginBottom: '30px' }}>
+              <div style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'space-between',
+                marginBottom: '20px'
+              }}>
+                <h3 style={{ fontSize: '18px', fontWeight: '600' }}>📖 Story</h3>
+                <button
+                  onClick={() => speakText(assignment.assignment.learn_to_read_content.story.join(' '))}
+                  disabled={assignment.completed}
+                  style={{
+                    backgroundColor: 'rgba(16, 185, 129, 0.3)',
+                    border: '2px solid rgba(16, 185, 129, 0.5)',
+                    color: 'white',
+                    padding: '10px 20px',
+                    borderRadius: '8px',
+                    cursor: assignment.completed ? 'not-allowed' : 'pointer',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px'
+                  }}
+                >
+                  🔊 Read Story Aloud
+                </button>
+              </div>
+              
+              {assignment.assignment.learn_to_read_content.story.map((sentence, index) => (
+                <div key={index} style={{
+                  backgroundColor: 'rgba(0,0,0,0.2)',
+                  padding: '20px',
+                  borderRadius: '10px',
+                  marginBottom: '15px',
+                  fontSize: '20px',
+                  lineHeight: '1.8',
+                  fontWeight: '500',
+                  display: 'flex',
+                  alignItems: 'start',
+                  gap: '15px'
+                }}>
+                  <button
+                    onClick={() => speakText(sentence)}
+                    disabled={assignment.completed}
+                    style={{
+                      backgroundColor: 'rgba(59, 130, 246, 0.3)',
+                      border: 'none',
+                      color: 'white',
+                      padding: '8px 12px',
+                      borderRadius: '6px',
+                      cursor: assignment.completed ? 'not-allowed' : 'pointer',
+                      fontSize: '18px',
+                      flexShrink: 0
+                    }}
+                  >
+                    🔊
+                  </button>
+                  <span style={{ flex: 1 }}>{sentence}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* Interactive Activities */}
+            <div>
+              <h3 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '20px' }}>
+                🎯 Word Activities
+              </h3>
+              
+              {assignment.assignment.learn_to_read_content.activities.map((activity, activityIndex) => {
+                const sentence = assignment.assignment.learn_to_read_content.story[activity.sentence_index];
+                const words = sentence.split(' ');
+                const selectedWord = interactiveWordAnswers[activityIndex];
+                const isCorrect = assignment.completed && selectedWord?.toLowerCase() === activity.target_word.toLowerCase();
+                const isWrong = assignment.completed && selectedWord && selectedWord?.toLowerCase() !== activity.target_word.toLowerCase();
+                
+                return (
+                  <div key={activityIndex} style={{
+                    backgroundColor: 'rgba(0,0,0,0.2)',
+                    padding: '25px',
+                    borderRadius: '10px',
+                    marginBottom: '20px'
+                  }}>
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '10px',
+                      marginBottom: '15px',
+                      fontSize: '16px',
+                      fontWeight: '600'
+                    }}>
+                      <span style={{
+                        backgroundColor: selectedWord ? 'rgba(16, 185, 129, 0.3)' : 'rgba(59, 130, 246, 0.3)',
+                        padding: '5px 12px',
+                        borderRadius: '6px',
+                        fontSize: '14px'
+                      }}>
+                        Activity {activityIndex + 1}
+                      </span>
+                      {activity.instruction}
+                      <button
+                        onClick={() => speakText(activity.instruction)}
+                        style={{
+                          backgroundColor: 'transparent',
+                          border: 'none',
+                          color: 'white',
+                          cursor: 'pointer',
+                          fontSize: '16px'
+                        }}
+                      >
+                        🔊
+                      </button>
+                    </div>
+                    
+                    <div style={{ 
+                      display: 'flex', 
+                      flexWrap: 'wrap', 
+                      gap: '10px',
+                      fontSize: '18px'
+                    }}>
+                      {words.map((word, wordIndex) => {
+                        const cleanWord = word.replace(/[.,!?;:]/g, '');
+                        const isSelected = selectedWord === cleanWord;
+                        const isTarget = cleanWord.toLowerCase() === activity.target_word.toLowerCase();
+                        
+                        return (
+                          <button
+                            key={wordIndex}
+                            onClick={() => handleWordClick(activityIndex, cleanWord)}
+                            disabled={assignment.completed}
+                            style={{
+                              backgroundColor: isSelected 
+                                ? (isCorrect || (assignment.completed && isTarget)) 
+                                  ? 'rgba(16, 185, 129, 0.4)' 
+                                  : isWrong 
+                                    ? 'rgba(239, 68, 68, 0.4)'
+                                    : 'rgba(59, 130, 246, 0.4)'
+                                : 'rgba(255,255,255,0.1)',
+                              border: isSelected ? '2px solid rgba(255,255,255,0.8)' : '2px solid rgba(255,255,255,0.2)',
+                              color: 'white',
+                              padding: '10px 16px',
+                              borderRadius: '8px',
+                              cursor: assignment.completed ? 'not-allowed' : 'pointer',
+                              fontSize: '18px',
+                              fontWeight: isSelected ? '600' : '500',
+                              transition: 'all 0.2s ease'
+                            }}
+                          >
+                            {word}
+                            {assignment.completed && isTarget && ' ✓'}
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    {assignment.completed && (
+                      <div style={{
+                        marginTop: '15px',
+                        padding: '12px',
+                        backgroundColor: isCorrect ? 'rgba(16, 185, 129, 0.2)' : 'rgba(239, 68, 68, 0.2)',
+                        borderRadius: '8px',
+                        fontSize: '14px'
+                      }}>
+                        {isCorrect ? '✅ Correct!' : `❌ The correct word was: ${activity.target_word}`}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Spelling Section */}
+      {assignment.assignment.spelling_exercises && assignment.assignment.spelling_exercises.length > 0 && (
+        <div style={{ marginBottom: '30px' }}>
+          <h2 style={{ 
+            fontSize: '20px', 
+            marginBottom: '20px',
+            color: '#e5e7eb'
+          }}>
+            ✏️ Spelling Exercises
+          </h2>
+          
+          {assignment.assignment.spelling_exercises.map((exercise, index) => (
+            <div key={index} style={{
+              background: '#1e40af',
+              padding: '25px',
+              borderRadius: '12px',
+              marginBottom: '20px',
+              color: '#f8fafc'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
+                <div style={{
+                  backgroundColor: 'rgba(248, 250, 252, 0.2)',
+                  padding: '5px 12px',
+                  borderRadius: '6px',
+                  fontSize: '14px',
+                  fontWeight: '600'
+                }}>
+                  Exercise {index + 1}
+                </div>
+                <span style={{
+                  backgroundColor: exercise.exercise_type === 'typing_test' 
+                    ? 'rgba(59, 130, 246, 0.3)' 
+                    : exercise.exercise_type === 'fill_blank'
+                      ? 'rgba(16, 185, 129, 0.3)'
+                      : 'rgba(251, 191, 36, 0.3)',
+                  padding: '4px 10px',
+                  borderRadius: '5px',
+                  fontSize: '12px',
+                  textTransform: 'uppercase'
+                }}>
+                  {exercise.exercise_type === 'typing_test' ? '⌨️ Type' : exercise.exercise_type === 'fill_blank' ? '📝 Fill' : '✓ Choose'}
+                </span>
+              </div>
+
+              {/* Example Sentence with Audio */}
+              {exercise.example_sentence && (
+                <div style={{
+                  backgroundColor: 'rgba(0,0,0,0.2)',
+                  padding: '15px',
+                  borderRadius: '8px',
+                  marginBottom: '15px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px'
+                }}>
+                  <button
+                    onClick={() => speakText(exercise.example_sentence)}
+                    style={{
+                      backgroundColor: 'rgba(59, 130, 246, 0.3)',
+                      border: 'none',
+                      color: 'white',
+                      padding: '8px 12px',
+                      borderRadius: '6px',
+                      cursor: 'pointer',
+                      fontSize: '16px'
+                    }}
+                  >
+                    🔊
+                  </button>
+                  <span style={{ fontSize: '15px', fontStyle: 'italic' }}>
+                    {exercise.example_sentence}
+                  </span>
+                </div>
+              )}
+
+              {/* Typing Test */}
+              {exercise.exercise_type === 'typing_test' && (
+                <div>
+                  <label style={{ display: 'block', marginBottom: '10px', fontSize: '15px' }}>
+                    Type the word you hear:
+                  </label>
+                  <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                    <button
+                      onClick={() => speakText(exercise.word)}
+                      style={{
+                        backgroundColor: 'rgba(16, 185, 129, 0.3)',
+                        border: '2px solid rgba(16, 185, 129, 0.5)',
+                        color: 'white',
+                        padding: '10px 16px',
+                        borderRadius: '8px',
+                        cursor: 'pointer',
+                        fontSize: '14px'
+                      }}
+                    >
+                      🔊 Hear Word
+                    </button>
+                    <input
+                      type="text"
+                      value={spellingAnswers[index] || ''}
+                      onChange={(e) => handleSpellingAnswer(index, e.target.value)}
+                      disabled={assignment.completed}
+                      placeholder="Type your answer here..."
+                      style={{
+                        flex: 1,
+                        backgroundColor: 'rgba(0,0,0,0.3)',
+                        border: '1px solid rgba(248, 250, 252, 0.2)',
+                        color: 'white',
+                        padding: '12px',
+                        borderRadius: '8px',
+                        fontSize: '16px'
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Fill in the Blank */}
+              {exercise.exercise_type === 'fill_blank' && (
+                <div>
+                  <label style={{ display: 'block', marginBottom: '10px', fontSize: '15px' }}>
+                    Fill in the missing word:
+                  </label>
+                  <div style={{
+                    backgroundColor: 'rgba(0,0,0,0.2)',
+                    padding: '15px',
+                    borderRadius: '8px',
+                    marginBottom: '12px',
+                    fontSize: '16px'
+                  }}>
+                    {exercise.fill_blank_sentence}
+                  </div>
+                  <input
+                    type="text"
+                    value={spellingAnswers[index] || ''}
+                    onChange={(e) => handleSpellingAnswer(index, e.target.value)}
+                    disabled={assignment.completed}
+                    placeholder="Type your answer here..."
+                    style={{
+                      width: '100%',
+                      backgroundColor: 'rgba(0,0,0,0.3)',
+                      border: '1px solid rgba(248, 250, 252, 0.2)',
+                      color: 'white',
+                      padding: '12px',
+                      borderRadius: '8px',
+                      fontSize: '16px'
+                    }}
+                  />
+                </div>
+              )}
+
+              {/* Multiple Choice */}
+              {exercise.exercise_type === 'multiple_choice' && (
+                <div>
+                  <label style={{ display: 'block', marginBottom: '10px', fontSize: '15px' }}>
+                    Choose the correct spelling:
+                  </label>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                    {exercise.multiple_choice_options.map((option, optIndex) => {
+                      const isSelected = spellingAnswers[index] === option;
+                      const isCorrect = assignment.completed && option === exercise.correct_answer;
+                      const isWrong = assignment.completed && isSelected && option !== exercise.correct_answer;
+                      
+                      return (
+                        <button
+                          key={optIndex}
+                          onClick={() => handleSpellingAnswer(index, option)}
+                          disabled={assignment.completed}
+                          style={{
+                            backgroundColor: isCorrect 
+                              ? 'rgba(16, 185, 129, 0.3)' 
+                              : isWrong 
+                                ? 'rgba(239, 68, 68, 0.3)'
+                                : isSelected 
+                                  ? 'rgba(59, 130, 246, 0.4)'
+                                  : 'rgba(255,255,255,0.1)',
+                            border: isSelected ? '2px solid rgba(255,255,255,0.8)' : '2px solid rgba(255,255,255,0.2)',
+                            color: 'white',
+                            padding: '15px',
+                            borderRadius: '8px',
+                            cursor: assignment.completed ? 'not-allowed' : 'pointer',
+                            fontSize: '16px',
+                            fontWeight: isSelected ? '600' : '500',
+                            textAlign: 'center',
+                            transition: 'all 0.2s ease'
+                          }}
+                        >
+                          {option}
+                          {isCorrect && ' ✓'}
+                          {isWrong && ' ✗'}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Show Correct Answer After Submission */}
+              {assignment.completed && (
+                <div style={{
+                  marginTop: '15px',
+                  padding: '12px',
+                  backgroundColor: spellingAnswers[index]?.toLowerCase() === exercise.correct_answer.toLowerCase()
+                    ? 'rgba(16, 185, 129, 0.2)'
+                    : 'rgba(239, 68, 68, 0.2)',
+                  borderRadius: '8px',
+                  border: '1px solid ' + (spellingAnswers[index]?.toLowerCase() === exercise.correct_answer.toLowerCase()
+                    ? 'rgba(16, 185, 129, 0.3)'
+                    : 'rgba(239, 68, 68, 0.3)'),
+                  fontSize: '14px'
+                }}>
+                  {spellingAnswers[index]?.toLowerCase() === exercise.correct_answer.toLowerCase() 
+                    ? '✅ Correct!' 
+                    : `❌ Correct spelling: ${exercise.correct_answer}`}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+
       {/* Submit Button */}
       {!assignment.completed && (
         <div style={{
