@@ -870,6 +870,18 @@ async def generate_assignment(assignment_data: AssignmentGenerate, current_user=
     if ai_result.get("drag_drop_puzzle"):
         drag_drop_puzzle = DragDropPuzzle(**ai_result["drag_drop_puzzle"])
     
+    learn_to_read_content = None
+    if ai_result.get("learn_to_read_content"):
+        learn_to_read_content = LearnToReadContent(**ai_result["learn_to_read_content"])
+    
+    spelling_words = None
+    if ai_result.get("spelling_words"):
+        spelling_words = [SpellingWord(**w) for w in ai_result["spelling_words"]]
+    
+    spelling_exercises = None
+    if ai_result.get("spelling_exercises"):
+        spelling_exercises = [SpellingExercise(**ex) for ex in ai_result["spelling_exercises"]]
+    
     assignment = Assignment(
         title=f"{assignment_data.subject} - {assignment_data.topic}" + (f" (Level {assignment_data.coding_level})" if assignment_data.coding_level else ""),
         subject=assignment_data.subject,
@@ -880,6 +892,9 @@ async def generate_assignment(assignment_data: AssignmentGenerate, current_user=
         coding_level=assignment_data.coding_level,
         coding_exercises=[CodingExercise(**ex) for ex in ai_result.get("coding_exercises", [])],
         drag_drop_puzzle=drag_drop_puzzle,
+        learn_to_read_content=learn_to_read_content,
+        spelling_exercises=spelling_exercises,
+        spelling_words=spelling_words,
         youtube_url=assignment_data.youtube_url,
         teacher_id=current_user["data"]["id"]
     )
