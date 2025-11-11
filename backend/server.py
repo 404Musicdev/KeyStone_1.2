@@ -110,6 +110,27 @@ class DragDropPuzzle(BaseModel):
     zones: List[DragDropZone]  # Drop zones where items should be placed
     explanation: Optional[str] = None
 
+class InteractiveWordActivity(BaseModel):
+    instruction: str  # e.g., "Click on the word 'cat'"
+    target_word: str  # The word student should click
+    sentence_index: int  # Which sentence contains the word (0-based)
+
+class LearnToReadContent(BaseModel):
+    story: List[str]  # List of 5-7 short sentences
+    activities: List[InteractiveWordActivity]  # Interactive word-click activities
+
+class SpellingWord(BaseModel):
+    word: str
+    example_sentence: str  # Sentence using the word
+
+class SpellingExercise(BaseModel):
+    exercise_type: str  # "typing_test", "fill_blank", "multiple_choice"
+    word: str
+    example_sentence: Optional[str] = None  # For context
+    fill_blank_sentence: Optional[str] = None  # Sentence with ___ for fill-blank
+    multiple_choice_options: Optional[List[str]] = None  # Options for MCQ
+    correct_answer: str  # The correct spelling
+
 class Assignment(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     title: str
