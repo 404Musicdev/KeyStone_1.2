@@ -45,7 +45,9 @@ const AssignmentGenerator = () => {
   const subjects = [
     'Math',
     'Reading',
+    'Learn to Read',
     'Learn to Code',
+    'Spelling',
     'Critical Thinking Skills',
     'Science',
     'History',
