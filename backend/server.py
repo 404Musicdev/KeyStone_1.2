@@ -1134,6 +1134,21 @@ async def submit_assignment(submission: SubmissionRequest, current_user=Depends(
     total_correct = mcq_correct + coding_correct + drag_drop_correct + learn_to_read_correct + spelling_correct
     score = (total_correct / total_questions) * 100 if total_questions > 0 else 0
     
+    # Award points for grades 85% or higher
+    points_earned = 0
+    if score >= 85:
+        points_earned = 5
+        
+        # Create point transaction
+        point_transaction = PointTransaction(
+            student_id=current_user["data"]["id"],
+            points=points_earned,
+            transaction_type="earned",
+            reference_id=student_assignment["assignment_id"],
+            description=f"Earned 5 points for scoring {round(score)}% on assignment"
+        )
+        await db.point_transactions.insert_one(point_transaction.dict())
+    
     # Update student assignment
     await db.student_assignments.update_one(
         {"id": submission.student_assignment_id},
