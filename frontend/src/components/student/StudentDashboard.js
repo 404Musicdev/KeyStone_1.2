@@ -1436,14 +1436,13 @@ const StudentAssignmentView = ({ user, navigate }) => {
                 <h3 style={{ fontSize: '18px', fontWeight: '600' }}>📖 Story</h3>
                 <button
                   onClick={() => speakText(assignment.assignment.learn_to_read_content.story.join(' '))}
-                  disabled={assignment.completed}
                   style={{
                     backgroundColor: 'rgba(16, 185, 129, 0.3)',
                     border: '2px solid rgba(16, 185, 129, 0.5)',
                     color: 'white',
                     padding: '10px 20px',
                     borderRadius: '8px',
-                    cursor: assignment.completed ? 'not-allowed' : 'pointer',
+                    cursor: 'pointer',
                     fontSize: '14px',
                     fontWeight: '500',
                     display: 'flex',
