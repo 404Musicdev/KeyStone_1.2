@@ -802,13 +802,38 @@ const StudentAssignmentView = ({ user, navigate }) => {
   };
 
   const speakText = (text) => {
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel(); // Stop any ongoing speech
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = 0.8; // Slower rate for learning
-      utterance.pitch = 1.0;
-      utterance.volume = 1.0;
-      window.speechSynthesis.speak(utterance);
+    if (!('speechSynthesis' in window)) {
+      alert('Text-to-Speech is not supported in your browser. Please try Chrome, Edge, or Safari.');
+      return;
+    }
+
+    try {
+      // Cancel any ongoing speech
+      window.speechSynthesis.cancel();
+      
+      // Small delay to ensure cancel completes
+      setTimeout(() => {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = 0.8; // Slower rate for learning
+        utterance.pitch = 1.0;
+        utterance.volume = 1.0;
+        utterance.lang = 'en-US'; // Set language explicitly
+        
+        // Add event listeners for debugging
+        utterance.onstart = () => console.log('Speech started');
+        utterance.onend = () => console.log('Speech ended');
+        utterance.onerror = (event) => {
+          console.error('Speech error:', event);
+          if (event.error === 'not-allowed') {
+            alert('Please allow audio permissions in your browser settings.');
+          }
+        };
+        
+        window.speechSynthesis.speak(utterance);
+      }, 100);
+    } catch (error) {
+      console.error('TTS Error:', error);
+      alert('Unable to play text-to-speech. Please check your browser settings.');
     }
   };
 
