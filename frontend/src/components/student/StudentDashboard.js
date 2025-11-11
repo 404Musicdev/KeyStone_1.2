@@ -1449,8 +1449,8 @@ const StudentAssignmentView = ({ user, navigate }) => {
                 <button
                   onClick={() => speakText(assignment.assignment.learn_to_read_content.story.join(' '))}
                   style={{
-                    backgroundColor: 'rgba(16, 185, 129, 0.3)',
-                    border: '2px solid rgba(16, 185, 129, 0.5)',
+                    backgroundColor: isSpeaking ? 'rgba(251, 191, 36, 0.3)' : 'rgba(16, 185, 129, 0.3)',
+                    border: isSpeaking ? '2px solid rgba(251, 191, 36, 0.5)' : '2px solid rgba(16, 185, 129, 0.5)',
                     color: 'white',
                     padding: '10px 20px',
                     borderRadius: '8px',
@@ -1459,10 +1459,11 @@ const StudentAssignmentView = ({ user, navigate }) => {
                     fontWeight: '500',
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '8px'
+                    gap: '8px',
+                    animation: isSpeaking ? 'pulse 1.5s ease-in-out infinite' : 'none'
                   }}
                 >
-                  🔊 Read Story Aloud
+                  {isSpeaking ? '🔊 Reading...' : '🔊 Read Story Aloud'}
                 </button>
               </div>
               
