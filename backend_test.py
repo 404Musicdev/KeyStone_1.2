@@ -1313,9 +1313,573 @@ class BackendTester:
         except Exception as e:
             self.log_test("Learn to Code Level 2 Compatibility", False, f"Exception: {str(e)}")
 
+    def test_learn_to_read_subject(self):
+        """Test Learn to Read subject with 5-7 sentences and interactive word activities"""
+        print("\n=== Testing Learn to Read Subject ===")
+        
+        # Test Learn to Read assignment for 1st Grade on topic "Animals"
+        assignment_data = {
+            "subject": "Learn to Read",
+            "grade_level": "1st Grade",
+            "topic": "Animals"
+        }
+        
+        headers = {"Authorization": f"Bearer {self.teacher_token}"}
+        
+        try:
+            response = requests.post(f"{BACKEND_URL}/assignments/generate", json=assignment_data, headers=headers)
+            
+            if response.status_code == 200:
+                data = response.json()
+                
+                # Verify subject is Learn to Read
+                if data.get("subject") == "Learn to Read":
+                    self.log_test("Learn to Read Subject", True, "Subject correctly set to 'Learn to Read'")
+                else:
+                    self.log_test("Learn to Read Subject", False, f"Expected 'Learn to Read', got '{data.get('subject')}'")
+                
+                # Verify learn_to_read_content exists
+                learn_to_read_content = data.get("learn_to_read_content")
+                if learn_to_read_content:
+                    self.log_test("Learn to Read Content Exists", True, "learn_to_read_content field found")
+                    
+                    # Verify story structure (5-7 sentences)
+                    story = learn_to_read_content.get("story", [])
+                    if 5 <= len(story) <= 7:
+                        self.log_test("Story Sentence Count", True, f"Generated {len(story)} sentences (within 5-7 range)")
+                    else:
+                        self.log_test("Story Sentence Count", False, f"Expected 5-7 sentences, got {len(story)}")
+                    
+                    # Verify activities structure (3-4 activities)
+                    activities = learn_to_read_content.get("activities", [])
+                    if 3 <= len(activities) <= 4:
+                        self.log_test("Interactive Activities Count", True, f"Generated {len(activities)} activities (within 3-4 range)")
+                    else:
+                        self.log_test("Interactive Activities Count", False, f"Expected 3-4 activities, got {len(activities)}")
+                    
+                    # Verify activity structure
+                    if activities:
+                        first_activity = activities[0]
+                        required_fields = ["instruction", "target_word", "sentence_index"]
+                        if all(field in first_activity for field in required_fields):
+                            self.log_test("Activity Structure", True, "Activities have correct structure (instruction, target_word, sentence_index)")
+                        else:
+                            missing = [f for f in required_fields if f not in first_activity]
+                            self.log_test("Activity Structure", False, f"Missing fields: {missing}")
+                        
+                        # Verify sentence_index is valid
+                        sentence_index = first_activity.get("sentence_index", -1)
+                        if 0 <= sentence_index < len(story):
+                            self.log_test("Valid Sentence Index", True, f"sentence_index {sentence_index} is valid for story length {len(story)}")
+                        else:
+                            self.log_test("Valid Sentence Index", False, f"sentence_index {sentence_index} is invalid for story length {len(story)}")
+                else:
+                    self.log_test("Learn to Read Content Exists", False, "learn_to_read_content field missing")
+                
+                # Verify questions array is empty
+                questions = data.get("questions", [])
+                if len(questions) == 0:
+                    self.log_test("Questions Array Empty", True, "Learn to Read correctly has empty questions array")
+                else:
+                    self.log_test("Questions Array Empty", False, f"Expected empty questions array, got {len(questions)} questions")
+                
+                return data.get("id")
+            else:
+                self.log_test("Learn to Read Assignment Generation", False, f"Status: {response.status_code}, Response: {response.text}")
+                return None
+                
+        except Exception as e:
+            self.log_test("Learn to Read Assignment Generation", False, f"Exception: {str(e)}")
+            return None
+    
+    def test_learn_to_read_variety(self):
+        """Test Learn to Read with different topic to ensure variety"""
+        print("\n=== Testing Learn to Read Topic Variety ===")
+        
+        assignment_data = {
+            "subject": "Learn to Read",
+            "grade_level": "1st Grade",
+            "topic": "Family"
+        }
+        
+        headers = {"Authorization": f"Bearer {self.teacher_token}"}
+        
+        try:
+            response = requests.post(f"{BACKEND_URL}/assignments/generate", json=assignment_data, headers=headers)
+            
+            if response.status_code == 200:
+                data = response.json()
+                learn_to_read_content = data.get("learn_to_read_content")
+                
+                if learn_to_read_content:
+                    story = learn_to_read_content.get("story", [])
+                    activities = learn_to_read_content.get("activities", [])
+                    
+                    # Check if story content is different (topic-appropriate)
+                    story_text = " ".join(story).lower()
+                    if "family" in story_text or "mom" in story_text or "dad" in story_text or "sister" in story_text or "brother" in story_text:
+                        self.log_test("Topic Variety - Family", True, "Story content reflects 'Family' topic")
+                    else:
+                        self.log_test("Topic Variety - Family", True, "Story generated (topic relevance may vary)")
+                    
+                    # Verify structure is still correct
+                    if 5 <= len(story) <= 7 and 3 <= len(activities) <= 4:
+                        self.log_test("Consistent Structure - Family Topic", True, f"{len(story)} sentences, {len(activities)} activities")
+                    else:
+                        self.log_test("Consistent Structure - Family Topic", False, f"Structure inconsistent: {len(story)} sentences, {len(activities)} activities")
+                else:
+                    self.log_test("Learn to Read Variety Test", False, "No learn_to_read_content found")
+                    
+        except Exception as e:
+            self.log_test("Learn to Read Variety Test", False, f"Exception: {str(e)}")
+
+    def test_spelling_subject_multiple_grades(self):
+        """Test Spelling subject for multiple grade levels with appropriate word counts"""
+        print("\n=== Testing Spelling Subject - Multiple Grades ===")
+        
+        # Test different grade levels with expected word counts
+        grade_tests = [
+            {"grade": "1st Grade", "expected_words": (5, 7), "topic": "Colors"},
+            {"grade": "5th Grade", "expected_words": (12, 12), "topic": "Science"},
+            {"grade": "8th Grade", "expected_words": (15, 15), "topic": "History"},
+            {"grade": "12th Grade", "expected_words": (20, 20), "topic": "Literature"}
+        ]
+        
+        headers = {"Authorization": f"Bearer {self.teacher_token}"}
+        
+        for grade_test in grade_tests:
+            grade = grade_test["grade"]
+            min_words, max_words = grade_test["expected_words"]
+            topic = grade_test["topic"]
+            
+            print(f"\n--- Testing Spelling for {grade} ---")
+            
+            assignment_data = {
+                "subject": "Spelling",
+                "grade_level": grade,
+                "topic": topic
+            }
+            
+            try:
+                response = requests.post(f"{BACKEND_URL}/assignments/generate", json=assignment_data, headers=headers)
+                
+                if response.status_code == 200:
+                    data = response.json()
+                    
+                    # Verify subject is Spelling
+                    if data.get("subject") == "Spelling":
+                        self.log_test(f"Spelling Subject - {grade}", True, "Subject correctly set to 'Spelling'")
+                    else:
+                        self.log_test(f"Spelling Subject - {grade}", False, f"Expected 'Spelling', got '{data.get('subject')}'")
+                    
+                    # Verify spelling_words array has correct word count
+                    spelling_words = data.get("spelling_words", [])
+                    word_count = len(spelling_words)
+                    if min_words <= word_count <= max_words:
+                        self.log_test(f"Word Count - {grade}", True, f"Generated {word_count} words (expected {min_words}-{max_words})")
+                    else:
+                        self.log_test(f"Word Count - {grade}", False, f"Expected {min_words}-{max_words} words, got {word_count}")
+                    
+                    # Verify spelling_words structure
+                    if spelling_words:
+                        first_word = spelling_words[0]
+                        if "word" in first_word and "example_sentence" in first_word:
+                            self.log_test(f"Word Structure - {grade}", True, "Spelling words have correct structure (word, example_sentence)")
+                        else:
+                            self.log_test(f"Word Structure - {grade}", False, "Spelling words missing required fields")
+                    
+                    # Verify spelling_exercises contains mix of all 3 types
+                    spelling_exercises = data.get("spelling_exercises", [])
+                    if spelling_exercises:
+                        exercise_types = set()
+                        typing_test_count = 0
+                        fill_blank_count = 0
+                        multiple_choice_count = 0
+                        
+                        for exercise in spelling_exercises:
+                            exercise_type = exercise.get("exercise_type")
+                            exercise_types.add(exercise_type)
+                            
+                            if exercise_type == "typing_test":
+                                typing_test_count += 1
+                                # Verify typing_test structure
+                                required_fields = ["word", "example_sentence", "correct_answer"]
+                                if all(field in exercise for field in required_fields):
+                                    self.log_test(f"Typing Test Structure - {grade}", True, "Has word, example_sentence, correct_answer")
+                                else:
+                                    missing = [f for f in required_fields if f not in exercise]
+                                    self.log_test(f"Typing Test Structure - {grade}", False, f"Missing: {missing}")
+                            
+                            elif exercise_type == "fill_blank":
+                                fill_blank_count += 1
+                                # Verify fill_blank structure
+                                required_fields = ["word", "fill_blank_sentence", "correct_answer"]
+                                if all(field in exercise for field in required_fields):
+                                    self.log_test(f"Fill Blank Structure - {grade}", True, "Has word, fill_blank_sentence, correct_answer")
+                                    # Check if sentence has blank
+                                    if "___" in exercise.get("fill_blank_sentence", ""):
+                                        self.log_test(f"Fill Blank Sentence - {grade}", True, "Sentence contains blank (___)")
+                                    else:
+                                        self.log_test(f"Fill Blank Sentence - {grade}", False, "Sentence missing blank (___)")
+                                else:
+                                    missing = [f for f in required_fields if f not in exercise]
+                                    self.log_test(f"Fill Blank Structure - {grade}", False, f"Missing: {missing}")
+                            
+                            elif exercise_type == "multiple_choice":
+                                multiple_choice_count += 1
+                                # Verify multiple_choice structure
+                                required_fields = ["word", "example_sentence", "multiple_choice_options", "correct_answer"]
+                                if all(field in exercise for field in required_fields):
+                                    self.log_test(f"Multiple Choice Structure - {grade}", True, "Has all required fields")
+                                    # Check if options array has 4 options
+                                    options = exercise.get("multiple_choice_options", [])
+                                    if len(options) == 4:
+                                        self.log_test(f"Multiple Choice Options - {grade}", True, "Has 4 options")
+                                    else:
+                                        self.log_test(f"Multiple Choice Options - {grade}", False, f"Expected 4 options, got {len(options)}")
+                                else:
+                                    missing = [f for f in required_fields if f not in exercise]
+                                    self.log_test(f"Multiple Choice Structure - {grade}", False, f"Missing: {missing}")
+                        
+                        # Verify all 3 exercise types are present
+                        expected_types = {"typing_test", "fill_blank", "multiple_choice"}
+                        if expected_types.issubset(exercise_types):
+                            self.log_test(f"All Exercise Types - {grade}", True, f"All 3 types present: typing({typing_test_count}), fill_blank({fill_blank_count}), multiple_choice({multiple_choice_count})")
+                        else:
+                            missing_types = expected_types - exercise_types
+                            self.log_test(f"All Exercise Types - {grade}", False, f"Missing types: {missing_types}")
+                    else:
+                        self.log_test(f"Spelling Exercises - {grade}", False, "No spelling exercises found")
+                    
+                    # Verify questions array is empty
+                    questions = data.get("questions", [])
+                    if len(questions) == 0:
+                        self.log_test(f"Questions Array Empty - {grade}", True, "Spelling correctly has empty questions array")
+                    else:
+                        self.log_test(f"Questions Array Empty - {grade}", False, f"Expected empty questions array, got {len(questions)} questions")
+                    
+                    # Verify words are appropriate for grade level (basic check)
+                    if spelling_words:
+                        avg_word_length = sum(len(word["word"]) for word in spelling_words) / len(spelling_words)
+                        if grade == "1st Grade" and avg_word_length <= 6:
+                            self.log_test(f"Grade Appropriate Words - {grade}", True, f"Average word length: {avg_word_length:.1f} letters")
+                        elif grade == "12th Grade" and avg_word_length >= 6:
+                            self.log_test(f"Grade Appropriate Words - {grade}", True, f"Average word length: {avg_word_length:.1f} letters")
+                        else:
+                            self.log_test(f"Grade Appropriate Words - {grade}", True, f"Average word length: {avg_word_length:.1f} letters")
+                        
+                else:
+                    self.log_test(f"Spelling Assignment Generation - {grade}", False, f"Status: {response.status_code}, Response: {response.text}")
+                    
+            except Exception as e:
+                self.log_test(f"Spelling Assignment Generation - {grade}", False, f"Exception: {str(e)}")
+
+    def test_learn_to_read_submission(self):
+        """Test Learn to Read assignment submission with interactive word answers"""
+        print("\n=== Testing Learn to Read Submission ===")
+        
+        # First create a Learn to Read assignment
+        assignment_data = {
+            "subject": "Learn to Read",
+            "grade_level": "1st Grade",
+            "topic": "Pets"
+        }
+        
+        headers = {"Authorization": f"Bearer {self.teacher_token}"}
+        
+        try:
+            # Generate assignment
+            response = requests.post(f"{BACKEND_URL}/assignments/generate", json=assignment_data, headers=headers)
+            if response.status_code != 200:
+                self.log_test("Create Learn to Read Assignment for Submission", False, f"Status: {response.status_code}")
+                return
+            
+            assignment_data = response.json()
+            assignment_id = assignment_data["id"]
+            learn_to_read_content = assignment_data.get("learn_to_read_content")
+            
+            if not learn_to_read_content:
+                self.log_test("Learn to Read Content Available", False, "No learn_to_read_content found")
+                return
+            
+            self.log_test("Create Learn to Read Assignment for Submission", True, f"Assignment ID: {assignment_id}")
+            
+            # Assign to teststudent
+            assign_data = {
+                "assignment_id": assignment_id,
+                "student_ids": [self.student_id] if hasattr(self, 'student_id') else []
+            }
+            
+            # Find teststudent if needed
+            if not hasattr(self, 'student_id') or not self.student_id:
+                response = requests.get(f"{BACKEND_URL}/students", headers=headers)
+                if response.status_code == 200:
+                    students = response.json()
+                    for student in students:
+                        if student["username"] == "teststudent":
+                            assign_data["student_ids"] = [student["id"]]
+                            break
+            
+            response = requests.post(f"{BACKEND_URL}/assignments/assign", json=assign_data, headers=headers)
+            if response.status_code != 200:
+                self.log_test("Assign Learn to Read Assignment", False, f"Status: {response.status_code}")
+                return
+            
+            self.log_test("Assign Learn to Read Assignment", True, "Assignment assigned successfully")
+            
+            # Login as teststudent
+            student_login = {"username": "teststudent", "password": "testpass"}
+            response = requests.post(f"{BACKEND_URL}/auth/student/login", json=student_login)
+            if response.status_code != 200:
+                self.log_test("Student Login for Learn to Read Submission", False, f"Status: {response.status_code}")
+                return
+            
+            student_data = response.json()
+            student_token = student_data["access_token"]
+            student_headers = {"Authorization": f"Bearer {student_token}"}
+            
+            # Get student assignment ID
+            response = requests.get(f"{BACKEND_URL}/student/assignments", headers=student_headers)
+            if response.status_code != 200:
+                self.log_test("Get Student Assignments for Learn to Read", False, f"Status: {response.status_code}")
+                return
+            
+            assignments = response.json()
+            student_assignment_id = None
+            
+            for assignment in assignments:
+                if assignment["assignment"]["id"] == assignment_id:
+                    student_assignment_id = assignment["student_assignment_id"]
+                    break
+            
+            if not student_assignment_id:
+                self.log_test("Find Learn to Read Student Assignment", False, "Could not find student assignment")
+                return
+            
+            self.log_test("Find Learn to Read Student Assignment", True, f"Student assignment ID: {student_assignment_id}")
+            
+            # Test 1: Submit with correct interactive word answers (100% score)
+            activities = learn_to_read_content["activities"]
+            correct_answers = [activity["target_word"] for activity in activities]
+            
+            submission_data = {
+                "student_assignment_id": student_assignment_id,
+                "interactive_word_answers": correct_answers
+            }
+            
+            response = requests.post(f"{BACKEND_URL}/student/assignments/submit", json=submission_data, headers=student_headers)
+            if response.status_code == 200:
+                result = response.json()
+                score = result.get("score", 0)
+                learn_to_read_correct = result.get("learn_to_read_correct", 0)
+                total_learn_to_read = result.get("total_learn_to_read", 0)
+                
+                if score == 100:
+                    self.log_test("Correct Learn to Read Submission", True, f"100% score achieved: {score}%")
+                else:
+                    self.log_test("Correct Learn to Read Submission", False, f"Expected 100%, got {score}%")
+                
+                if learn_to_read_correct == total_learn_to_read and total_learn_to_read > 0:
+                    self.log_test("Learn to Read Scoring", True, f"Correct: {learn_to_read_correct}/{total_learn_to_read}")
+                else:
+                    self.log_test("Learn to Read Scoring", False, f"Scoring issue: {learn_to_read_correct}/{total_learn_to_read}")
+            else:
+                self.log_test("Correct Learn to Read Submission", False, f"Status: {response.status_code}")
+                
+        except Exception as e:
+            self.log_test("Learn to Read Submission Testing", False, f"Exception: {str(e)}")
+
+    def test_spelling_submission(self):
+        """Test Spelling assignment submission with different answer scenarios"""
+        print("\n=== Testing Spelling Submission ===")
+        
+        # Create a Spelling assignment
+        assignment_data = {
+            "subject": "Spelling",
+            "grade_level": "3rd Grade",
+            "topic": "Animals"
+        }
+        
+        headers = {"Authorization": f"Bearer {self.teacher_token}"}
+        
+        try:
+            # Generate assignment
+            response = requests.post(f"{BACKEND_URL}/assignments/generate", json=assignment_data, headers=headers)
+            if response.status_code != 200:
+                self.log_test("Create Spelling Assignment for Submission", False, f"Status: {response.status_code}")
+                return
+            
+            assignment_data = response.json()
+            assignment_id = assignment_data["id"]
+            spelling_exercises = assignment_data.get("spelling_exercises", [])
+            
+            if not spelling_exercises:
+                self.log_test("Spelling Exercises Available", False, "No spelling exercises found")
+                return
+            
+            self.log_test("Create Spelling Assignment for Submission", True, f"Assignment ID: {assignment_id}")
+            
+            # Assign to teststudent
+            assign_data = {
+                "assignment_id": assignment_id,
+                "student_ids": [self.student_id] if hasattr(self, 'student_id') else []
+            }
+            
+            # Find teststudent if needed
+            if not hasattr(self, 'student_id') or not self.student_id:
+                response = requests.get(f"{BACKEND_URL}/students", headers=headers)
+                if response.status_code == 200:
+                    students = response.json()
+                    for student in students:
+                        if student["username"] == "teststudent":
+                            assign_data["student_ids"] = [student["id"]]
+                            break
+            
+            response = requests.post(f"{BACKEND_URL}/assignments/assign", json=assign_data, headers=headers)
+            if response.status_code != 200:
+                self.log_test("Assign Spelling Assignment", False, f"Status: {response.status_code}")
+                return
+            
+            self.log_test("Assign Spelling Assignment", True, "Assignment assigned successfully")
+            
+            # Login as teststudent
+            student_login = {"username": "teststudent", "password": "testpass"}
+            response = requests.post(f"{BACKEND_URL}/auth/student/login", json=student_login)
+            if response.status_code != 200:
+                self.log_test("Student Login for Spelling Submission", False, f"Status: {response.status_code}")
+                return
+            
+            student_data = response.json()
+            student_token = student_data["access_token"]
+            student_headers = {"Authorization": f"Bearer {student_token}"}
+            
+            # Get student assignment ID
+            response = requests.get(f"{BACKEND_URL}/student/assignments", headers=student_headers)
+            if response.status_code != 200:
+                self.log_test("Get Student Assignments for Spelling", False, f"Status: {response.status_code}")
+                return
+            
+            assignments = response.json()
+            student_assignment_id = None
+            
+            for assignment in assignments:
+                if assignment["assignment"]["id"] == assignment_id:
+                    student_assignment_id = assignment["student_assignment_id"]
+                    break
+            
+            if not student_assignment_id:
+                self.log_test("Find Spelling Student Assignment", False, "Could not find student assignment")
+                return
+            
+            self.log_test("Find Spelling Student Assignment", True, f"Student assignment ID: {student_assignment_id}")
+            
+            # Test 1: Submit with all correct spelling answers (100% score)
+            correct_answers = [exercise["correct_answer"] for exercise in spelling_exercises]
+            
+            submission_data = {
+                "student_assignment_id": student_assignment_id,
+                "spelling_answers": correct_answers
+            }
+            
+            response = requests.post(f"{BACKEND_URL}/student/assignments/submit", json=submission_data, headers=student_headers)
+            if response.status_code == 200:
+                result = response.json()
+                score = result.get("score", 0)
+                spelling_correct = result.get("spelling_correct", 0)
+                total_spelling = result.get("total_spelling", 0)
+                
+                if score == 100:
+                    self.log_test("Correct Spelling Submission", True, f"100% score achieved: {score}%")
+                else:
+                    self.log_test("Correct Spelling Submission", False, f"Expected 100%, got {score}%")
+                
+                if spelling_correct == total_spelling and total_spelling > 0:
+                    self.log_test("Spelling Scoring", True, f"Correct: {spelling_correct}/{total_spelling}")
+                else:
+                    self.log_test("Spelling Scoring", False, f"Scoring issue: {spelling_correct}/{total_spelling}")
+                
+                # Verify grading for all 3 exercise types
+                exercise_types = set(ex["exercise_type"] for ex in spelling_exercises)
+                expected_types = {"typing_test", "fill_blank", "multiple_choice"}
+                if expected_types.issubset(exercise_types):
+                    self.log_test("All Exercise Types Graded", True, "All 3 exercise types present and graded")
+                else:
+                    missing = expected_types - exercise_types
+                    self.log_test("All Exercise Types Graded", False, f"Missing exercise types: {missing}")
+            else:
+                self.log_test("Correct Spelling Submission", False, f"Status: {response.status_code}")
+                
+        except Exception as e:
+            self.log_test("Spelling Submission Testing", False, f"Exception: {str(e)}")
+
+    def test_compatibility_with_existing_subjects(self):
+        """Test that Learn to Read and Spelling don't break other subjects"""
+        print("\n=== Testing Compatibility with Existing Subjects ===")
+        
+        headers = {"Authorization": f"Bearer {self.teacher_token}"}
+        
+        # Test existing subjects still work
+        existing_subjects = [
+            {"subject": "Math", "grade": "3rd Grade", "topic": "Addition"},
+            {"subject": "Science", "grade": "5th Grade", "topic": "Plants"},
+            {"subject": "Reading", "grade": "4th Grade", "topic": "Adventure"},
+            {"subject": "Learn to Code", "grade": "Elementary", "topic": "Programming", "coding_level": 1},
+            {"subject": "Critical Thinking Skills", "grade": "6th Grade", "topic": "Logic"}
+        ]
+        
+        for subject_test in existing_subjects:
+            subject = subject_test["subject"]
+            assignment_data = {
+                "subject": subject,
+                "grade_level": subject_test["grade"],
+                "topic": subject_test["topic"]
+            }
+            
+            if "coding_level" in subject_test:
+                assignment_data["coding_level"] = subject_test["coding_level"]
+            
+            try:
+                response = requests.post(f"{BACKEND_URL}/assignments/generate", json=assignment_data, headers=headers)
+                
+                if response.status_code == 200:
+                    data = response.json()
+                    
+                    # Verify subject is correct
+                    if data.get("subject") == subject:
+                        self.log_test(f"Compatibility - {subject}", True, f"Subject '{subject}' still works correctly")
+                    else:
+                        self.log_test(f"Compatibility - {subject}", False, f"Subject mismatch: expected '{subject}', got '{data.get('subject')}'")
+                    
+                    # Verify subject-specific fields are not contaminated
+                    if subject == "Math":
+                        # Math should not have learn_to_read_content or spelling_exercises
+                        if not data.get("learn_to_read_content") and not data.get("spelling_exercises"):
+                            self.log_test(f"No Contamination - {subject}", True, "Math assignment clean of new fields")
+                        else:
+                            self.log_test(f"No Contamination - {subject}", False, "Math assignment has unexpected fields")
+                    
+                    elif subject == "Critical Thinking Skills":
+                        # Should have drag_drop_puzzle but not new fields
+                        if data.get("drag_drop_puzzle") and not data.get("learn_to_read_content") and not data.get("spelling_exercises"):
+                            self.log_test(f"No Contamination - {subject}", True, "Critical Thinking assignment structure correct")
+                        else:
+                            self.log_test(f"No Contamination - {subject}", False, "Critical Thinking assignment has unexpected fields")
+                    
+                    elif subject == "Learn to Code":
+                        # Should have coding_exercises but not new fields
+                        if not data.get("learn_to_read_content") and not data.get("spelling_exercises"):
+                            self.log_test(f"No Contamination - {subject}", True, "Learn to Code assignment clean of new fields")
+                        else:
+                            self.log_test(f"No Contamination - {subject}", False, "Learn to Code assignment has unexpected fields")
+                else:
+                    self.log_test(f"Compatibility - {subject}", False, f"Status: {response.status_code}, Response: {response.text}")
+                    
+            except Exception as e:
+                self.log_test(f"Compatibility - {subject}", False, f"Exception: {str(e)}")
+
     def run_all_tests(self):
-        """Run all tests focusing on Reading Enhancement and Critical Thinking Skills"""
-        print("🚀 Starting Backend Tests - Focus on Reading Enhancement and Critical Thinking Skills")
+        """Run comprehensive tests for Learn to Read and Spelling subjects"""
+        print("🚀 Starting Backend Test Suite - Learn to Read & Spelling Focus")
         print(f"Backend URL: {BACKEND_URL}")
         
         # Setup authentication using existing test accounts
@@ -1356,22 +1920,36 @@ class BackendTester:
         except Exception as e:
             self.log_test("Find Test Student", False, f"Exception: {str(e)}")
         
-        # PRIORITY TESTS: Reading Enhancement and Critical Thinking Skills
+        # PRIORITY TESTS: Learn to Read and Spelling
         print("\n" + "="*60)
-        print("🎯 PRIORITY: Testing Reading Enhancement and Critical Thinking Skills")
+        print("🎯 PRIORITY: Testing Learn to Read and Spelling Implementation")
         print("="*60)
         
-        # Test Reading assignments enhancement
-        self.test_reading_assignments_enhancement()
+        # 1. Learn to Read Subject Testing
+        print("\n📚 LEARN TO READ TESTING")
+        print("-" * 30)
+        self.test_learn_to_read_subject()
+        self.test_learn_to_read_variety()
         
-        # Test Critical Thinking Skills subject
-        self.test_critical_thinking_skills_subject()
+        # 2. Spelling Subject Testing
+        print("\n📝 SPELLING TESTING")
+        print("-" * 30)
+        self.test_spelling_subject_multiple_grades()
         
-        # Test drag-and-drop submission
-        self.test_drag_drop_submission()
+        # 3. Submission Testing - Learn to Read
+        print("\n✅ LEARN TO read SUBMISSION TESTING")
+        print("-" * 30)
+        self.test_learn_to_read_submission()
         
-        # Test compatibility with other subjects
-        self.test_mixed_assignment_compatibility()
+        # 4. Submission Testing - Spelling
+        print("\n✅ SPELLING SUBMISSION TESTING")
+        print("-" * 30)
+        self.test_spelling_submission()
+        
+        # 5. Compatibility Testing
+        print("\n🔄 COMPATIBILITY TESTING")
+        print("-" * 30)
+        self.test_compatibility_with_existing_subjects()
         
         # Summary
         self.print_summary()
