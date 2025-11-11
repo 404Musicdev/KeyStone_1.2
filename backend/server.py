@@ -1503,6 +1503,39 @@ async def get_all_students_points(current_user=Depends(get_current_user)):
     
     return result
 
+@api_router.post("/teacher/initialize-rewards")
+async def initialize_default_rewards(current_user=Depends(get_current_user)):
+    if current_user["type"] != "teacher":
+        raise HTTPException(status_code=403, detail="Only teachers can initialize rewards")
+    
+    # Check if teacher already has rewards
+    existing_rewards = await db.rewards.find({"teacher_id": current_user["data"]["id"]}).to_list(1)
+    if existing_rewards:
+        return {"message": "Rewards already initialized"}
+    
+    # Create default rewards
+    default_rewards = [
+        {"title": "1 Hour of Game Time", "description": "Play games for 1 hour", "points_cost": 50},
+        {"title": "2 Hours of Game Time", "description": "Play games for 2 hours", "points_cost": 100},
+        {"title": "12oz Coke", "description": "Enjoy a cold 12oz Coke", "points_cost": 250},
+        {"title": "TV at Night", "description": "Watch TV at night for one night", "points_cost": 300},
+        {"title": "One Day Off School", "description": "Take a break! One day off from school", "points_cost": 400}
+    ]
+    
+    rewards_to_insert = []
+    for reward_data in default_rewards:
+        reward = Reward(
+            title=reward_data["title"],
+            description=reward_data["description"],
+            points_cost=reward_data["points_cost"],
+            teacher_id=current_user["data"]["id"]
+        )
+        rewards_to_insert.append(reward.dict())
+    
+    await db.rewards.insert_many(rewards_to_insert)
+    
+    return {"message": "Default rewards initialized successfully", "count": len(rewards_to_insert)}
+
 app.include_router(api_router)
 
 app.add_middleware(
