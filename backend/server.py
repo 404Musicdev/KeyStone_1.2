@@ -1101,6 +1101,8 @@ async def submit_assignment(submission: SubmissionRequest, current_user=Depends(
                 "answers": submission.answers,
                 "coding_answers": submission.coding_answers,
                 "drag_drop_answer": submission.drag_drop_answer,
+                "interactive_word_answers": submission.interactive_word_answers,
+                "spelling_answers": submission.spelling_answers,
                 "score": score,
                 "completed": True,
                 "submitted_at": datetime.now(timezone.utc).isoformat()
@@ -1114,9 +1116,13 @@ async def submit_assignment(submission: SubmissionRequest, current_user=Depends(
         "mcq_correct": mcq_correct,
         "coding_correct": coding_correct,
         "drag_drop_correct": drag_drop_correct,
+        "learn_to_read_correct": learn_to_read_correct,
+        "spelling_correct": spelling_correct,
         "total_mcq": total_mcq,
         "total_coding": total_coding,
         "total_drag_drop": total_drag_drop,
+        "total_learn_to_read": total_learn_to_read,
+        "total_spelling": total_spelling,
         "total_questions": total_questions
     }
 
