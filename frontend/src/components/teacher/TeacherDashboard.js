@@ -7,6 +7,7 @@ import AssignmentGenerator from './AssignmentGenerator';
 import LessonPlanGenerator from './LessonPlanGenerator';
 import Gradebook from './Gradebook';
 import Messaging from './Messaging';
+import RewardsManagement from './RewardsManagement';
 
 const TeacherDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
