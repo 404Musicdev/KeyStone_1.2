@@ -703,6 +703,8 @@ const StudentAssignmentView = ({ user, navigate }) => {
   const [codingAnswers, setCodingAnswers] = useState({});
   const [dragDropAnswer, setDragDropAnswer] = useState({});
   const [draggedItem, setDraggedItem] = useState(null);
+  const [interactiveWordAnswers, setInteractiveWordAnswers] = useState({});
+  const [spellingAnswers, setSpellingAnswers] = useState({});
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
