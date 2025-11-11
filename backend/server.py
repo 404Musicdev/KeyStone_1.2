@@ -142,6 +142,9 @@ class Assignment(BaseModel):
     coding_level: Optional[int] = None  # 1-4 for Learn to Code assignments
     coding_exercises: Optional[List[CodingExercise]] = None
     drag_drop_puzzle: Optional[DragDropPuzzle] = None  # For Critical Thinking Skills assignments
+    learn_to_read_content: Optional[LearnToReadContent] = None  # For Learn to Read assignments
+    spelling_exercises: Optional[List[SpellingExercise]] = None  # For Spelling assignments
+    spelling_words: Optional[List[SpellingWord]] = None  # Word list for reference
     youtube_url: Optional[str] = None
     teacher_id: str
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
