@@ -811,6 +811,7 @@ const StudentAssignmentView = ({ user, navigate }) => {
     try {
       // Cancel any ongoing speech
       window.speechSynthesis.cancel();
+      setIsSpeaking(false);
       
       // Small delay to ensure cancel completes
       setTimeout(() => {
@@ -820,13 +821,22 @@ const StudentAssignmentView = ({ user, navigate }) => {
         utterance.volume = 1.0;
         utterance.lang = 'en-US'; // Set language explicitly
         
-        // Add event listeners for debugging
-        utterance.onstart = () => console.log('Speech started');
-        utterance.onend = () => console.log('Speech ended');
+        // Add event listeners
+        utterance.onstart = () => {
+          console.log('Speech started');
+          setIsSpeaking(true);
+        };
+        utterance.onend = () => {
+          console.log('Speech ended');
+          setIsSpeaking(false);
+        };
         utterance.onerror = (event) => {
           console.error('Speech error:', event);
+          setIsSpeaking(false);
           if (event.error === 'not-allowed') {
             alert('Please allow audio permissions in your browser settings.');
+          } else if (event.error === 'synthesis-unavailable') {
+            alert('Text-to-Speech is currently unavailable. Please try again.');
           }
         };
         
@@ -834,6 +844,7 @@ const StudentAssignmentView = ({ user, navigate }) => {
       }, 100);
     } catch (error) {
       console.error('TTS Error:', error);
+      setIsSpeaking(false);
       alert('Unable to play text-to-speech. Please check your browser settings.');
     }
   };
