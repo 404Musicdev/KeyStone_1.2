@@ -1319,6 +1319,190 @@ async def health_check():
     return {"status": "healthy", "service": "Homeschool Hub API"}
 
 # Include the router in the main app
+# Reward System Routes
+@api_router.get("/rewards", response_model=List[Reward])
+async def get_rewards(current_user=Depends(get_current_user)):
+    # Both teachers and students can view rewards
+    if current_user["type"] == "teacher":
+        rewards = await db.rewards.find({"teacher_id": current_user["data"]["id"]}).to_list(1000)
+    else:
+        # Students see rewards from their teacher
+        student = await db.students.find_one({"id": current_user["data"]["id"]})
+        if not student:
+            raise HTTPException(status_code=404, detail="Student not found")
+        rewards = await db.rewards.find({"teacher_id": student["teacher_id"], "active": True}).to_list(1000)
+    
+    return [Reward(**reward) for reward in rewards]
+
+@api_router.post("/rewards", response_model=Reward)
+async def create_reward(reward_data: RewardCreate, current_user=Depends(get_current_user)):
+    if current_user["type"] != "teacher":
+        raise HTTPException(status_code=403, detail="Only teachers can create rewards")
+    
+    reward = Reward(
+        title=reward_data.title,
+        description=reward_data.description,
+        points_cost=reward_data.points_cost,
+        teacher_id=current_user["data"]["id"]
+    )
+    
+    await db.rewards.insert_one(reward.dict())
+    return reward
+
+@api_router.put("/rewards/{reward_id}", response_model=Reward)
+async def update_reward(reward_id: str, reward_data: RewardCreate, current_user=Depends(get_current_user)):
+    if current_user["type"] != "teacher":
+        raise HTTPException(status_code=403, detail="Only teachers can update rewards")
+    
+    reward = await db.rewards.find_one({"id": reward_id, "teacher_id": current_user["data"]["id"]})
+    if not reward:
+        raise HTTPException(status_code=404, detail="Reward not found")
+    
+    await db.rewards.update_one(
+        {"id": reward_id},
+        {"$set": {
+            "title": reward_data.title,
+            "description": reward_data.description,
+            "points_cost": reward_data.points_cost
+        }}
+    )
+    
+    updated_reward = await db.rewards.find_one({"id": reward_id})
+    return Reward(**updated_reward)
+
+@api_router.delete("/rewards/{reward_id}")
+async def delete_reward(reward_id: str, current_user=Depends(get_current_user)):
+    if current_user["type"] != "teacher":
+        raise HTTPException(status_code=403, detail="Only teachers can delete rewards")
+    
+    result = await db.rewards.delete_one({"id": reward_id, "teacher_id": current_user["data"]["id"]})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Reward not found")
+    
+    return {"message": "Reward deleted successfully"}
+
+@api_router.get("/student/points")
+async def get_student_points(current_user=Depends(get_current_user)):
+    if current_user["type"] != "student":
+        raise HTTPException(status_code=403, detail="Only students can view their points")
+    
+    # Get all transactions
+    transactions = await db.point_transactions.find({"student_id": current_user["data"]["id"]}).to_list(1000)
+    
+    # Calculate total points
+    total_points = sum(t["points"] for t in transactions)
+    
+    # Get redemption history
+    redemptions = await db.reward_redemptions.find({"student_id": current_user["data"]["id"]}).to_list(1000)
+    
+    return {
+        "total_points": total_points,
+        "transactions": [PointTransaction(**t) for t in transactions],
+        "redemptions": [RewardRedemption(**r) for r in redemptions]
+    }
+
+@api_router.post("/student/redeem")
+async def redeem_reward(reward_id: str, current_user=Depends(get_current_user)):
+    if current_user["type"] != "student":
+        raise HTTPException(status_code=403, detail="Only students can redeem rewards")
+    
+    # Get reward
+    reward = await db.rewards.find_one({"id": reward_id, "active": True})
+    if not reward:
+        raise HTTPException(status_code=404, detail="Reward not found or inactive")
+    
+    # Calculate current points
+    transactions = await db.point_transactions.find({"student_id": current_user["data"]["id"]}).to_list(1000)
+    total_points = sum(t["points"] for t in transactions)
+    
+    # Check if student has enough points
+    if total_points < reward["points_cost"]:
+        raise HTTPException(status_code=400, detail=f"Not enough points. You have {total_points}, need {reward['points_cost']}")
+    
+    # Create redemption record
+    redemption = RewardRedemption(
+        student_id=current_user["data"]["id"],
+        reward_id=reward["id"],
+        reward_title=reward["title"],
+        reward_description=reward["description"],
+        points_spent=reward["points_cost"]
+    )
+    await db.reward_redemptions.insert_one(redemption.dict())
+    
+    # Deduct points
+    point_transaction = PointTransaction(
+        student_id=current_user["data"]["id"],
+        points=-reward["points_cost"],
+        transaction_type="redeemed",
+        reference_id=redemption.id,
+        description=f"Redeemed: {reward['title']}"
+    )
+    await db.point_transactions.insert_one(point_transaction.dict())
+    
+    return {
+        "message": "Reward redeemed successfully!",
+        "redemption": redemption,
+        "remaining_points": total_points - reward["points_cost"]
+    }
+
+@api_router.post("/teacher/points")
+async def adjust_student_points(adjustment: ManualPointsAdjustment, current_user=Depends(get_current_user)):
+    if current_user["type"] != "teacher":
+        raise HTTPException(status_code=403, detail="Only teachers can adjust points")
+    
+    # Verify student belongs to teacher
+    student = await db.students.find_one({"id": adjustment.student_id, "teacher_id": current_user["data"]["id"]})
+    if not student:
+        raise HTTPException(status_code=404, detail="Student not found")
+    
+    # Create transaction
+    transaction_type = "manual_add" if adjustment.points > 0 else "manual_subtract"
+    point_transaction = PointTransaction(
+        student_id=adjustment.student_id,
+        points=adjustment.points,
+        transaction_type=transaction_type,
+        description=adjustment.description
+    )
+    await db.point_transactions.insert_one(point_transaction.dict())
+    
+    # Get new total
+    transactions = await db.point_transactions.find({"student_id": adjustment.student_id}).to_list(1000)
+    total_points = sum(t["points"] for t in transactions)
+    
+    return {
+        "message": "Points adjusted successfully",
+        "points_adjusted": adjustment.points,
+        "new_total": total_points
+    }
+
+@api_router.get("/teacher/student-points")
+async def get_all_students_points(current_user=Depends(get_current_user)):
+    if current_user["type"] != "teacher":
+        raise HTTPException(status_code=403, detail="Only teachers can view student points")
+    
+    # Get all students for this teacher
+    students = await db.students.find({"teacher_id": current_user["data"]["id"]}).to_list(1000)
+    
+    result = []
+    for student in students:
+        # Get transactions
+        transactions = await db.point_transactions.find({"student_id": student["id"]}).to_list(1000)
+        total_points = sum(t["points"] for t in transactions)
+        
+        # Get redemptions
+        redemptions = await db.reward_redemptions.find({"student_id": student["id"]}).to_list(1000)
+        
+        result.append({
+            "student_id": student["id"],
+            "student_name": f"{student['first_name']} {student['last_name']}",
+            "username": student["username"],
+            "total_points": total_points,
+            "transactions": [PointTransaction(**t) for t in transactions],
+            "redemptions": [RewardRedemption(**r) for r in redemptions]
+        })
+    
+    return result
+
 app.include_router(api_router)
 
 app.add_middleware(
