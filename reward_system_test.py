@@ -358,8 +358,9 @@ class RewardSystemTester:
                             num_questions_3 = len(questions_3)
                             
                             if num_questions_3 > 0:
-                                # Answer all questions correctly (assuming correct answer is index 0)
-                                answers_3 = [0] * num_questions_3
+                                # Get the actual correct answers for 100% score
+                                correct_answers_list_3 = [q["correct_answer"] for q in questions_3]
+                                answers_3 = correct_answers_list_3
                                 
                                 submission_data_3 = {
                                     "student_assignment_id": student_assignment_id_3,
