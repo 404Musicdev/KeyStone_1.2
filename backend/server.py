@@ -1059,9 +1059,38 @@ async def submit_assignment(submission: SubmissionRequest, current_user=Depends(
             if student_answer == correct_item_id:
                 drag_drop_correct += 1
     
+    # Calculate score for Learn to Read interactive activities
+    learn_to_read_correct = 0
+    total_learn_to_read = 0
+    
+    if assignment.get("learn_to_read_content") and submission.interactive_word_answers:
+        activities = assignment["learn_to_read_content"]["activities"]
+        total_learn_to_read = len(activities)
+        
+        for i, activity in enumerate(activities):
+            if i < len(submission.interactive_word_answers):
+                # Check if student clicked the correct word
+                if submission.interactive_word_answers[i].lower() == activity["target_word"].lower():
+                    learn_to_read_correct += 1
+    
+    # Calculate score for Spelling exercises
+    spelling_correct = 0
+    total_spelling = 0
+    
+    if assignment.get("spelling_exercises") and submission.spelling_answers:
+        total_spelling = len(assignment["spelling_exercises"])
+        
+        for i, exercise in enumerate(assignment["spelling_exercises"]):
+            if i < len(submission.spelling_answers):
+                student_answer = submission.spelling_answers[i].strip().lower()
+                correct_answer = exercise["correct_answer"].strip().lower()
+                
+                if student_answer == correct_answer:
+                    spelling_correct += 1
+    
     # Calculate overall score
-    total_questions = total_mcq + total_coding + total_drag_drop
-    total_correct = mcq_correct + coding_correct + drag_drop_correct
+    total_questions = total_mcq + total_coding + total_drag_drop + total_learn_to_read + total_spelling
+    total_correct = mcq_correct + coding_correct + drag_drop_correct + learn_to_read_correct + spelling_correct
     score = (total_correct / total_questions) * 100 if total_questions > 0 else 0
     
     # Update student assignment
