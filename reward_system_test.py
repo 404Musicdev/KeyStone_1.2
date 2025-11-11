@@ -293,9 +293,12 @@ class RewardSystemTester:
                             num_questions_2 = len(questions_2)
                             
                             if num_questions_2 > 0:
-                                # Answer for ~80% score
-                                correct_answers_2 = max(1, int(num_questions_2 * 0.8))
-                                answers_2 = [0] * correct_answers_2 + [1] * (num_questions_2 - correct_answers_2)
+                                # Get the actual correct answers
+                                correct_answers_list_2 = [q["correct_answer"] for q in questions_2]
+                                
+                                # For 80% score, answer some correctly but get some wrong
+                                num_correct_2 = max(1, int(num_questions_2 * 0.8))
+                                answers_2 = correct_answers_list_2[:num_correct_2] + [3] * (num_questions_2 - num_correct_2)
                                 
                                 submission_data_2 = {
                                     "student_assignment_id": student_assignment_id_2,
