@@ -460,6 +460,25 @@ const StudentHome = ({ user, navigate }) => {
           📊 My Grades
         </button>
         <button
+          onClick={() => navigate('/student/rewards')}
+          style={{
+            background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+            color: 'white',
+            padding: '16px 20px',
+            border: 'none',
+            borderRadius: '12px',
+            cursor: 'pointer',
+            fontSize: '16px',
+            fontWeight: 'bold',
+            textAlign: 'center',
+            transition: 'all 0.3s ease'
+          }}
+          onMouseEnter={(e) => e.target.style.transform = 'translateY(-2px)'}
+          onMouseLeave={(e) => e.target.style.transform = 'translateY(0)'}
+        >
+          🏆 Rewards Store
+        </button>
+        <button
           onClick={() => navigate('/student/messages')}
           style={{
             background: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
