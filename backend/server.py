@@ -518,6 +518,113 @@ async def generate_assignment_with_ai(subject: str, grade_level: str, topic: str
             
             Make the puzzle challenging but appropriate for {grade_level}.
             """
+        elif subject.lower() == "learn to read":
+            prompt = f"""
+            Create a "Learn to Read" mini book for 1st grade students on the topic: {topic}
+            
+            Generate:
+            1. A simple story with EXACTLY 5-7 short sentences (1st grade reading level)
+            2. 3-4 interactive word activities where students click on specific words
+            
+            Requirements:
+            - Use simple, common words appropriate for beginning readers
+            - Short sentences (5-8 words each)
+            - Engaging story about {topic}
+            - Activities should ask students to find and click on specific words in the story
+            
+            Return your response in this EXACT JSON format:
+            {{
+                "learn_to_read_content": {{
+                    "story": [
+                        "First sentence here.",
+                        "Second sentence here.",
+                        "Third sentence here.",
+                        "Fourth sentence here.",
+                        "Fifth sentence here."
+                    ],
+                    "activities": [
+                        {{
+                            "instruction": "Click on the word 'cat'",
+                            "target_word": "cat",
+                            "sentence_index": 0
+                        }},
+                        {{
+                            "instruction": "Find and click the word 'run'",
+                            "target_word": "run",
+                            "sentence_index": 2
+                        }}
+                    ]
+                }},
+                "questions": []
+            }}
+            
+            Make it fun and engaging for 1st graders learning to read!
+            """
+        elif subject.lower() == "spelling":
+            # Determine word count and complexity based on grade level
+            grade_word_count = {
+                "1st Grade": "5-7 simple words",
+                "2nd Grade": "7-9 words",
+                "3rd Grade": "10 words",
+                "4th Grade": "10-12 words",
+                "5th Grade": "12 words",
+                "6th Grade": "12-15 words",
+                "7th Grade": "15 words",
+                "8th Grade": "15 words",
+                "9th Grade": "15-18 words",
+                "10th Grade": "18 words",
+                "11th Grade": "18-20 words",
+                "12th Grade": "20 words"
+            }
+            word_count = grade_word_count.get(grade_level, "10 words")
+            
+            prompt = f"""
+            Create a spelling assignment for {grade_level} students on the topic: {topic}
+            
+            Generate:
+            1. A word list of {word_count} appropriate for {grade_level}
+            2. Mixed exercise types: spelling test (typing), fill-in-the-blank, and multiple choice
+            
+            Requirements:
+            - Words should be grade-appropriate and related to {topic}
+            - Create a mix of all three exercise types
+            - Each word should have an example sentence
+            - For fill-in-blank: Create a sentence with ___ where the spelling word should go
+            - For multiple choice: Provide 4 spelling options (1 correct, 3 incorrect but plausible)
+            - Include 2-3 exercises per word type
+            
+            Return your response in this EXACT JSON format:
+            {{
+                "spelling_words": [
+                    {{"word": "example", "example_sentence": "This is an example sentence."}},
+                    {{"word": "another", "example_sentence": "Here is another word."}}
+                ],
+                "spelling_exercises": [
+                    {{
+                        "exercise_type": "typing_test",
+                        "word": "example",
+                        "example_sentence": "This is an example sentence.",
+                        "correct_answer": "example"
+                    }},
+                    {{
+                        "exercise_type": "fill_blank",
+                        "word": "example",
+                        "fill_blank_sentence": "This is an ___ sentence.",
+                        "correct_answer": "example"
+                    }},
+                    {{
+                        "exercise_type": "multiple_choice",
+                        "word": "example",
+                        "example_sentence": "This is an example sentence.",
+                        "multiple_choice_options": ["example", "exampel", "exampl", "exmple"],
+                        "correct_answer": "example"
+                    }}
+                ],
+                "questions": []
+            }}
+            
+            Make sure words are appropriate for {grade_level} and related to {topic}.
+            """
         else:
             youtube_context = ""
             if youtube_url:
