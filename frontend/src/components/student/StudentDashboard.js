@@ -2096,4 +2096,338 @@ const StudentDashboard = () => {
   );
 };
 
+// Student Rewards Store Component
+const StudentRewards = ({ user }) => {
+  const [rewards, setRewards] = useState([]);
+  const [pointsData, setPointsData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [redeeming, setRedeeming] = useState(null);
+
+  useEffect(() => {
+    fetchRewardsAndPoints();
+  }, []);
+
+  const fetchRewardsAndPoints = async () => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      
+      // Fetch rewards
+      const rewardsResponse = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/rewards`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      
+      // Fetch student points
+      const pointsResponse = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/student/points`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      
+      if (rewardsResponse.ok && pointsResponse.ok) {
+        setRewards(await rewardsResponse.json());
+        setPointsData(await pointsResponse.json());
+      }
+    } catch (error) {
+      console.error('Error fetching rewards:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRedeem = async (rewardId, rewardTitle, pointsCost) => {
+    if (!window.confirm(`Are you sure you want to redeem "${rewardTitle}" for ${pointsCost} points?`)) {
+      return;
+    }
+
+    setRedeeming(rewardId);
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/student/redeem?reward_id=${rewardId}`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        alert(`🎉 ${result.message}\nRemaining Points: ${result.remaining_points}`);
+        fetchRewardsAndPoints(); // Refresh data
+      } else {
+        const error = await response.json();
+        alert(error.detail || 'Failed to redeem reward');
+      }
+    } catch (error) {
+      console.error('Error redeeming reward:', error);
+      alert('Error redeeming reward. Please try again.');
+    } finally {
+      setRedeeming(null);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div style={{ textAlign: 'center', padding: '50px' }}>
+        <div style={{
+          width: '50px',
+          height: '50px',
+          border: '4px solid #e5e7eb',
+          borderTop: '4px solid #3b82f6',
+          borderRadius: '50%',
+          animation: 'spin 1s linear infinite',
+          margin: '0 auto 20px'
+        }}></div>
+        <p style={{ color: '#94a3b8' }}>Loading rewards...</p>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      {/* Header with Points Display */}
+      <div style={{
+        background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+        padding: '40px',
+        borderRadius: '20px',
+        marginBottom: '30px',
+        textAlign: 'center',
+        color: 'white',
+        boxShadow: '0 10px 30px rgba(245, 158, 11, 0.3)'
+      }}>
+        <div style={{ fontSize: '64px', marginBottom: '10px' }}>🏆</div>
+        <h2 style={{ fontSize: '32px', margin: '0 0 10px 0', fontWeight: 'bold' }}>
+          Rewards Store
+        </h2>
+        <div style={{
+          fontSize: '48px',
+          fontWeight: 'bold',
+          marginTop: '20px',
+          textShadow: '2px 2px 4px rgba(0,0,0,0.2)'
+        }}>
+          {pointsData?.total_points || 0} Points
+        </div>
+        <p style={{ fontSize: '16px', opacity: 0.9, marginTop: '10px' }}>
+          💡 Earn 5 points for every assignment with a grade of 85% or higher!
+        </p>
+      </div>
+
+      {/* Available Rewards */}
+      <div style={{ marginBottom: '40px' }}>
+        <h3 style={{ 
+          fontSize: '24px', 
+          marginBottom: '20px',
+          color: '#e5e7eb',
+          fontWeight: 'bold'
+        }}>
+          🎁 Available Rewards
+        </h3>
+
+        {rewards.length === 0 ? (
+          <div style={{
+            textAlign: 'center',
+            padding: '60px 20px',
+            background: 'rgba(255,255,255,0.03)',
+            borderRadius: '12px',
+            color: '#94a3b8'
+          }}>
+            <div style={{ fontSize: '48px', marginBottom: '15px' }}>🎪</div>
+            <p style={{ fontSize: '18px' }}>No rewards available yet!</p>
+            <p style={{ fontSize: '14px', marginTop: '8px' }}>Check back later for awesome rewards!</p>
+          </div>
+        ) : (
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+            gap: '20px'
+          }}>
+            {rewards.map((reward) => {
+              const canAfford = pointsData && pointsData.total_points >= reward.points_cost;
+              const isRedeeming = redeeming === reward.id;
+
+              return (
+                <div key={reward.id} style={{
+                  background: canAfford 
+                    ? 'linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.1) 100%)'
+                    : 'rgba(255,255,255,0.03)',
+                  border: canAfford 
+                    ? '2px solid rgba(16, 185, 129, 0.3)'
+                    : '2px solid rgba(255,255,255,0.1)',
+                  borderRadius: '16px',
+                  padding: '25px',
+                  transition: 'all 0.3s ease',
+                  position: 'relative',
+                  overflow: 'hidden'
+                }}>
+                  {/* Reward Icon based on title */}
+                  <div style={{
+                    fontSize: '48px',
+                    marginBottom: '15px',
+                    textAlign: 'center'
+                  }}>
+                    {reward.title.toLowerCase().includes('game') ? '🎮' :
+                     reward.title.toLowerCase().includes('coke') ? '🥤' :
+                     reward.title.toLowerCase().includes('tv') ? '📺' :
+                     reward.title.toLowerCase().includes('day off') ? '🏖️' : '🎁'}
+                  </div>
+
+                  <h4 style={{
+                    fontSize: '18px',
+                    fontWeight: 'bold',
+                    color: '#e5e7eb',
+                    marginBottom: '8px',
+                    textAlign: 'center'
+                  }}>
+                    {reward.title}
+                  </h4>
+
+                  <p style={{
+                    fontSize: '14px',
+                    color: '#94a3b8',
+                    marginBottom: '20px',
+                    textAlign: 'center',
+                    minHeight: '40px'
+                  }}>
+                    {reward.description}
+                  </p>
+
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    marginBottom: '15px',
+                    padding: '12px',
+                    background: 'rgba(0,0,0,0.2)',
+                    borderRadius: '8px'
+                  }}>
+                    <span style={{ color: '#94a3b8', fontSize: '14px' }}>Cost:</span>
+                    <span style={{
+                      fontSize: '20px',
+                      fontWeight: 'bold',
+                      color: canAfford ? '#10b981' : '#f59e0b'
+                    }}>
+                      {reward.points_cost} pts
+                    </span>
+                  </div>
+
+                  <button
+                    onClick={() => handleRedeem(reward.id, reward.title, reward.points_cost)}
+                    disabled={!canAfford || isRedeeming}
+                    style={{
+                      width: '100%',
+                      padding: '12px',
+                      backgroundColor: canAfford ? '#10b981' : '#6b7280',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '8px',
+                      fontSize: '16px',
+                      fontWeight: 'bold',
+                      cursor: canAfford && !isRedeeming ? 'pointer' : 'not-allowed',
+                      opacity: !canAfford || isRedeeming ? 0.6 : 1,
+                      transition: 'all 0.2s ease'
+                    }}
+                  >
+                    {isRedeeming ? '⏳ Redeeming...' : canAfford ? '🎉 Redeem Now' : '🔒 Need More Points'}
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      {/* Redemption History */}
+      {pointsData && pointsData.redemptions && pointsData.redemptions.length > 0 && (
+        <div style={{ marginBottom: '40px' }}>
+          <h3 style={{ 
+            fontSize: '24px', 
+            marginBottom: '20px',
+            color: '#e5e7eb',
+            fontWeight: 'bold'
+          }}>
+            📜 Your Redemption History
+          </h3>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            {pointsData.redemptions.slice(0, 10).map((redemption) => (
+              <div key={redemption.id} style={{
+                background: 'rgba(16, 185, 129, 0.1)',
+                border: '1px solid rgba(16, 185, 129, 0.2)',
+                borderRadius: '12px',
+                padding: '15px 20px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between'
+              }}>
+                <div>
+                  <div style={{ color: '#e5e7eb', fontSize: '16px', fontWeight: '500' }}>
+                    {redemption.reward_title}
+                  </div>
+                  <div style={{ color: '#94a3b8', fontSize: '13px', marginTop: '4px' }}>
+                    {new Date(redemption.redeemed_at).toLocaleDateString()} at {new Date(redemption.redeemed_at).toLocaleTimeString()}
+                  </div>
+                </div>
+                <div style={{
+                  color: '#10b981',
+                  fontSize: '16px',
+                  fontWeight: 'bold'
+                }}>
+                  -{redemption.points_spent} pts
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Points History */}
+      {pointsData && pointsData.transactions && pointsData.transactions.length > 0 && (
+        <div>
+          <h3 style={{ 
+            fontSize: '24px', 
+            marginBottom: '20px',
+            color: '#e5e7eb',
+            fontWeight: 'bold'
+          }}>
+            💰 Points History
+          </h3>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            {pointsData.transactions.slice(0, 15).map((transaction) => (
+              <div key={transaction.id} style={{
+                background: 'rgba(255,255,255,0.03)',
+                border: '1px solid rgba(255,255,255,0.1)',
+                borderRadius: '12px',
+                padding: '15px 20px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between'
+              }}>
+                <div>
+                  <div style={{ color: '#e5e7eb', fontSize: '14px' }}>
+                    {transaction.transaction_type === 'earned' && '📚 '}
+                    {transaction.transaction_type === 'redeemed' && '🎁 '}
+                    {transaction.transaction_type === 'manual_add' && '➕ '}
+                    {transaction.transaction_type === 'manual_subtract' && '➖ '}
+                    {transaction.description}
+                  </div>
+                  <div style={{ color: '#94a3b8', fontSize: '12px', marginTop: '4px' }}>
+                    {new Date(transaction.created_at).toLocaleDateString()}
+                  </div>
+                </div>
+                <div style={{
+                  color: transaction.points > 0 ? '#10b981' : '#ef4444',
+                  fontSize: '16px',
+                  fontWeight: 'bold'
+                }}>
+                  {transaction.points > 0 ? '+' : ''}{transaction.points} pts
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
 export default StudentDashboard;
