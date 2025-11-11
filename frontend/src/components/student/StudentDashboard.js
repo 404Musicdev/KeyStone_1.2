@@ -827,6 +827,8 @@ const StudentAssignmentView = ({ user, navigate }) => {
     const totalQuestions = assignment.assignment.questions.length;
     const totalCodingExercises = assignment.assignment.coding_exercises?.length || 0;
     const hasDragDropPuzzle = assignment.assignment.drag_drop_puzzle;
+    const hasLearnToRead = assignment.assignment.learn_to_read_content;
+    const hasSpelling = assignment.assignment.spelling_exercises;
     
     // Check if all questions are answered
     if (totalQuestions > 0 && Object.keys(answers).length < totalQuestions) {
@@ -846,6 +848,26 @@ const StudentAssignmentView = ({ user, navigate }) => {
       const filledZones = Object.keys(dragDropAnswer).length;
       if (filledZones < totalZones) {
         alert(`Please complete the drag-and-drop puzzle by placing all items in their correct zones.`);
+        return;
+      }
+    }
+
+    // Check if Learn to Read activities are completed
+    if (hasLearnToRead) {
+      const totalActivities = hasLearnToRead.activities.length;
+      const completedActivities = Object.keys(interactiveWordAnswers).length;
+      if (completedActivities < totalActivities) {
+        alert(`Please complete all ${totalActivities} word activities before submitting.`);
+        return;
+      }
+    }
+
+    // Check if Spelling exercises are completed
+    if (hasSpelling) {
+      const totalSpelling = hasSpelling.length;
+      const completedSpelling = Object.keys(spellingAnswers).length;
+      if (completedSpelling < totalSpelling) {
+        alert(`Please complete all ${totalSpelling} spelling exercises before submitting.`);
         return;
       }
     }
