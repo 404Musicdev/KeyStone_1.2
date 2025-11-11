@@ -12,7 +12,8 @@ import {
   LogOut,
   Menu,
   X,
-  GraduationCap
+  GraduationCap,
+  Award
 } from 'lucide-react';
 
 const Sidebar = ({ isOpen, onToggle }) => {
