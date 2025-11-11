@@ -1469,14 +1469,13 @@ const StudentAssignmentView = ({ user, navigate }) => {
                 }}>
                   <button
                     onClick={() => speakText(sentence)}
-                    disabled={assignment.completed}
                     style={{
                       backgroundColor: 'rgba(59, 130, 246, 0.3)',
                       border: 'none',
                       color: 'white',
                       padding: '8px 12px',
                       borderRadius: '6px',
-                      cursor: assignment.completed ? 'not-allowed' : 'pointer',
+                      cursor: 'pointer',
                       fontSize: '18px',
                       flexShrink: 0
                     }}
