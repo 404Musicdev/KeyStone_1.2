@@ -707,6 +707,7 @@ const StudentAssignmentView = ({ user, navigate }) => {
   const [spellingAnswers, setSpellingAnswers] = useState({});
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
 
   // Debug logging
   console.log('StudentAssignmentView - assignmentId from useParams:', assignmentId);
