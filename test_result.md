@@ -242,6 +242,51 @@ backend:
         agent: "testing"
         comment: "✅ RESOLVED: Created test teacher account (testteacher@example.com) and 3 student accounts (johnstudent, janestudent, teststudent) to fix student login black screen issue. All student authentication endpoints working correctly: POST /api/auth/student/login returns proper tokens and user data. Students can now authenticate and access assignments without black screen. Verified complete authentication workflow including token validation and assignments access. Root cause was no valid student credentials in database - now resolved with test accounts."
 
+  - task: "Implement Learn to Read subject with 5-7 sentence stories and interactive word activities"
+    implemented: true
+    working: true
+    file: "server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Created LearnToReadContent and InteractiveWordActivity models. Added AI prompt generation for 1st grade Learn to Read assignments with 5-7 short sentences and 3-4 interactive word-click activities. Updated Assignment model to include learn_to_read_content field. Updated submission handling for interactive_word_answers with proper grading logic."
+      - working: true
+        agent: "testing"
+        comment: "✅ VERIFIED: Learn to Read subject working perfectly. Tested multiple topics (Animals, Family) - all generate 5-7 sentences and 3-4 interactive activities. Story structure correct with proper sentence indexing. Activities have correct structure (instruction, target_word, sentence_index). Questions array correctly empty. Topic variety working. Submission testing shows 100% score for correct answers and proper partial scoring. All requirements met."
+
+  - task: "Implement Spelling subject with grade-appropriate words and 3 exercise types"
+    implemented: true
+    working: true
+    file: "server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Created SpellingWord and SpellingExercise models. Added AI prompt generation for Spelling assignments with grade-appropriate word counts (1st: 5-7, 5th: 12, 8th: 15, 12th: 20 words). Implemented 3 exercise types: typing_test, fill_blank, multiple_choice. Updated Assignment model to include spelling_words and spelling_exercises fields. Updated submission handling for spelling_answers with proper grading for all exercise types."
+      - working: true
+        agent: "testing"
+        comment: "✅ VERIFIED: Spelling subject working perfectly across all grade levels. Word counts correct: 1st Grade (6 words), 5th Grade (12 words), 8th Grade (15 words), 12th Grade (20 words). All 3 exercise types present with correct structure: typing_test (word, example_sentence, correct_answer), fill_blank (word, fill_blank_sentence with ___, correct_answer), multiple_choice (word, example_sentence, 4 options, correct_answer). Grade-appropriate word complexity scaling correctly. Submission testing shows 100% score for correct answers and proper grading for all exercise types. Questions array correctly empty."
+
+  - task: "Add Learn to Read and Spelling submission grading logic"
+    implemented: true
+    working: true
+    file: "server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Updated submission endpoint to handle interactive_word_answers for Learn to Read (checking target_word matches) and spelling_answers for Spelling (checking correct_answer matches for all exercise types). Added proper scoring calculation including learn_to_read_correct/total_learn_to_read and spelling_correct/total_spelling in response."
+      - working: true
+        agent: "testing"
+        comment: "✅ VERIFIED: Submission grading working perfectly for both subjects. Learn to Read: 100% score for all correct word clicks, proper partial scoring for mixed answers. Spelling: 100% score for all correct spellings, proper grading across all 3 exercise types (typing_test, fill_blank, multiple_choice). Response includes detailed scoring breakdown. Case-insensitive matching working correctly."
+
 frontend:
   - task: "Add Critical Thinking Skills to subject dropdown"
     implemented: true
