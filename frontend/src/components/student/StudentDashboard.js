@@ -792,6 +792,35 @@ const StudentAssignmentView = ({ user, navigate }) => {
     });
   };
 
+  const handleWordClick = (activityIndex, word) => {
+    if (!assignment.completed) {
+      setInteractiveWordAnswers(prev => ({
+        ...prev,
+        [activityIndex]: word
+      }));
+    }
+  };
+
+  const speakText = (text) => {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel(); // Stop any ongoing speech
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 0.8; // Slower rate for learning
+      utterance.pitch = 1.0;
+      utterance.volume = 1.0;
+      window.speechSynthesis.speak(utterance);
+    }
+  };
+
+  const handleSpellingAnswer = (exerciseIndex, answer) => {
+    if (!assignment.completed) {
+      setSpellingAnswers(prev => ({
+        ...prev,
+        [exerciseIndex]: answer
+      }));
+    }
+  };
+
   const handleSubmit = async () => {
     if (!assignment || assignment.completed) return;
 
