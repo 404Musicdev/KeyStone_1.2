@@ -371,10 +371,11 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Learn to Read frontend testing"
-    - "Spelling frontend testing"
+    - "Create Learn to Read and Spelling assignments for frontend testing"
   stuck_tasks:
     - "Implement drag-and-drop UI for Critical Thinking puzzles"
+    - "Learn to Read frontend testing - blocked by missing assignments"
+    - "Spelling frontend testing - blocked by missing assignments"
   test_all: false
   test_priority: "high_first"
 
