@@ -371,8 +371,8 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Learn to Read backend and frontend testing"
-    - "Spelling backend and frontend testing"
+    - "Learn to Read frontend testing"
+    - "Spelling frontend testing"
   stuck_tasks:
     - "Implement drag-and-drop UI for Critical Thinking puzzles"
   test_all: false
