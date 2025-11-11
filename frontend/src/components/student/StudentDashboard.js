@@ -886,6 +886,22 @@ const StudentAssignmentView = ({ user, navigate }) => {
         codingAnswersArray[i] = codingAnswers[i] || '';
       }
 
+      // Prepare Learn to Read answers
+      const learnToReadAnswersArray = [];
+      if (hasLearnToRead) {
+        for (let i = 0; i < hasLearnToRead.activities.length; i++) {
+          learnToReadAnswersArray[i] = interactiveWordAnswers[i] || '';
+        }
+      }
+
+      // Prepare Spelling answers
+      const spellingAnswersArray = [];
+      if (hasSpelling) {
+        for (let i = 0; i < hasSpelling.length; i++) {
+          spellingAnswersArray[i] = spellingAnswers[i] || '';
+        }
+      }
+
       const token = localStorage.getItem('token');
       const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/student/assignments/submit`, {
         method: 'POST',
@@ -897,7 +913,9 @@ const StudentAssignmentView = ({ user, navigate }) => {
           student_assignment_id: assignmentId,
           answers: answersArray.length > 0 ? answersArray : null,
           coding_answers: codingAnswersArray.length > 0 ? codingAnswersArray : null,
-          drag_drop_answer: hasDragDropPuzzle ? dragDropAnswer : null
+          drag_drop_answer: hasDragDropPuzzle ? dragDropAnswer : null,
+          interactive_word_answers: learnToReadAnswersArray.length > 0 ? learnToReadAnswersArray : null,
+          spelling_answers: spellingAnswersArray.length > 0 ? spellingAnswersArray : null
         })
       });
 
