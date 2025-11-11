@@ -176,6 +176,45 @@ class SubmissionRequest(BaseModel):
     interactive_word_answers: Optional[List[str]] = None  # Learn to Read word clicks
     spelling_answers: Optional[List[str]] = None  # Spelling exercise answers
 
+# Reward System Models
+class Reward(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    title: str
+    description: str
+    points_cost: int
+    teacher_id: str
+    active: bool = True
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class PointTransaction(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    student_id: str
+    points: int  # positive for earning, negative for spending
+    transaction_type: str  # "earned", "manual_add", "manual_subtract", "redeemed"
+    reference_id: Optional[str] = None  # assignment_id or redemption_id
+    description: str
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class RewardRedemption(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    student_id: str
+    reward_id: str
+    reward_title: str
+    reward_description: str
+    points_spent: int
+    redeemed_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    status: str = "approved"  # Auto-approved
+
+class RewardCreate(BaseModel):
+    title: str
+    description: str
+    points_cost: int
+
+class ManualPointsAdjustment(BaseModel):
+    student_id: str
+    points: int  # positive to add, negative to subtract
+    description: str
+
 # Lesson Plan Models
 class LessonPlanGenerate(BaseModel):
     subject: str
