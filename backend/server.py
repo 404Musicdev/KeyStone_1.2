@@ -152,8 +152,9 @@ class Assignment(BaseModel):
     coding_exercises: Optional[List[CodingExercise]] = None
     drag_drop_puzzle: Optional[DragDropPuzzle] = None  # For Critical Thinking Skills assignments
     learn_to_read_content: Optional[LearnToReadContent] = None  # For Learn to Read assignments
-    spelling_exercises: Optional[List[SpellingExercise]] = None  # For Spelling assignments
-    spelling_words: Optional[List[SpellingWord]] = None  # Word list for reference
+    spelling_type: Optional[str] = None  # "practice" or "test"
+    spelling_word_list_id: Optional[str] = None  # Reference to SpellingWordList
+    spelling_words: Optional[List[str]] = None  # The actual words for this assignment
     youtube_url: Optional[str] = None
     teacher_id: str
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
