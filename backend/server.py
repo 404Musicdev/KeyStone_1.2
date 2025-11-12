@@ -1548,6 +1548,85 @@ async def initialize_default_rewards(current_user=Depends(get_current_user)):
     
     return {"message": "Default rewards initialized successfully", "count": len(rewards_to_insert)}
 
+# Spelling Word List Routes
+@api_router.get("/spelling-word-lists", response_model=List[SpellingWordList])
+async def get_spelling_word_lists(current_user=Depends(get_current_user)):
+    if current_user["type"] != "teacher":
+        raise HTTPException(status_code=403, detail="Only teachers can view word lists")
+    
+    word_lists = await db.spelling_word_lists.find({"teacher_id": current_user["data"]["id"]}).to_list(1000)
+    return [SpellingWordList(**wl) for wl in word_lists]
+
+@api_router.post("/spelling-word-lists", response_model=SpellingWordList)
+async def create_spelling_word_list(word_list_data: SpellingWordListCreate, current_user=Depends(get_current_user)):
+    if current_user["type"] != "teacher":
+        raise HTTPException(status_code=403, detail="Only teachers can create word lists")
+    
+    if len(word_list_data.words) != 10:
+        raise HTTPException(status_code=400, detail="Word list must contain exactly 10 words")
+    
+    # Deactivate any existing active word lists for this student
+    await db.spelling_word_lists.update_many(
+        {"student_id": word_list_data.student_id, "active": True},
+        {"$set": {"active": False}}
+    )
+    
+    word_list = SpellingWordList(
+        teacher_id=current_user["data"]["id"],
+        student_id=word_list_data.student_id,
+        name=word_list_data.name,
+        words=word_list_data.words
+    )
+    
+    await db.spelling_word_lists.insert_one(word_list.dict())
+    return word_list
+
+@api_router.put("/spelling-word-lists/{word_list_id}", response_model=SpellingWordList)
+async def update_spelling_word_list(word_list_id: str, word_list_data: SpellingWordListCreate, current_user=Depends(get_current_user)):
+    if current_user["type"] != "teacher":
+        raise HTTPException(status_code=403, detail="Only teachers can update word lists")
+    
+    if len(word_list_data.words) != 10:
+        raise HTTPException(status_code=400, detail="Word list must contain exactly 10 words")
+    
+    word_list = await db.spelling_word_lists.find_one({"id": word_list_id, "teacher_id": current_user["data"]["id"]})
+    if not word_list:
+        raise HTTPException(status_code=404, detail="Word list not found")
+    
+    await db.spelling_word_lists.update_one(
+        {"id": word_list_id},
+        {"$set": {
+            "name": word_list_data.name,
+            "words": word_list_data.words,
+            "student_id": word_list_data.student_id
+        }}
+    )
+    
+    updated_list = await db.spelling_word_lists.find_one({"id": word_list_id})
+    return SpellingWordList(**updated_list)
+
+@api_router.delete("/spelling-word-lists/{word_list_id}")
+async def delete_spelling_word_list(word_list_id: str, current_user=Depends(get_current_user)):
+    if current_user["type"] != "teacher":
+        raise HTTPException(status_code=403, detail="Only teachers can delete word lists")
+    
+    result = await db.spelling_word_lists.delete_one({"id": word_list_id, "teacher_id": current_user["data"]["id"]})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Word list not found")
+    
+    return {"message": "Word list deleted successfully"}
+
+@api_router.get("/student/{student_id}/spelling-word-list", response_model=SpellingWordList)
+async def get_student_active_word_list(student_id: str, current_user=Depends(get_current_user)):
+    if current_user["type"] != "teacher":
+        raise HTTPException(status_code=403, detail="Only teachers can view student word lists")
+    
+    word_list = await db.spelling_word_lists.find_one({"student_id": student_id, "active": True})
+    if not word_list:
+        raise HTTPException(status_code=404, detail="No active word list for this student")
+    
+    return SpellingWordList(**word_list)
+
 app.include_router(api_router)
 
 app.add_middleware(
