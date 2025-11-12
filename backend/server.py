@@ -82,6 +82,8 @@ class AssignmentGenerate(BaseModel):
     topic: str
     coding_level: Optional[int] = None  # 1-4 for Learn to Code assignments
     youtube_url: Optional[str] = None
+    spelling_type: Optional[str] = None  # "practice" or "test" for Spelling assignments
+    student_ids: Optional[List[str]] = None  # For spelling, need to know which students
 
 class Question(BaseModel):
     question: str
