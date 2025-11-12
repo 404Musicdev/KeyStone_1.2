@@ -174,7 +174,8 @@ class StudentAssignment(BaseModel):
     coding_answers: Optional[List[str]] = None  # Student's code submissions
     drag_drop_answer: Optional[dict] = None  # Student's drag-drop answer {zone_id: item_id}
     interactive_word_answers: Optional[List[str]] = None  # Words clicked in Learn to Read
-    spelling_answers: Optional[List[str]] = None  # Student's spelling answers
+    spelling_practice_answers: Optional[dict] = None  # {word: [attempt1, attempt2, attempt3]}
+    spelling_test_answers: Optional[List[str]] = None  # List of spellings for test
     score: Optional[float] = None
     completed: bool = False
 
