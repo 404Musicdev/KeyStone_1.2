@@ -1052,7 +1052,8 @@ async def get_student_assignment_by_id(student_assignment_id: str, current_user=
         "coding_answers": student_assignment.get("coding_answers", []),
         "drag_drop_answer": student_assignment.get("drag_drop_answer", {}),
         "interactive_word_answers": student_assignment.get("interactive_word_answers", []),
-        "spelling_answers": student_assignment.get("spelling_answers", [])
+        "spelling_practice_answers": student_assignment.get("spelling_practice_answers", {}),
+        "spelling_test_answers": student_assignment.get("spelling_test_answers", [])
     }
 
 @api_router.post("/student/assignments/submit")
