@@ -904,6 +904,60 @@ async def generate_assignment(assignment_data: AssignmentGenerate, current_user=
     
     return assignment
 
+@api_router.post("/assignments/spelling/create-and-assign")
+async def create_and_assign_spelling(assignment_data: AssignmentGenerate, current_user=Depends(get_current_user)):
+    if current_user["type"] != "teacher":
+        raise HTTPException(status_code=403, detail="Only teachers can create spelling assignments")
+    
+    if not assignment_data.student_ids or len(assignment_data.student_ids) == 0:
+        raise HTTPException(status_code=400, detail="Must specify at least one student")
+    
+    if not assignment_data.spelling_type or assignment_data.spelling_type not in ["practice", "test"]:
+        raise HTTPException(status_code=400, detail="spelling_type must be 'practice' or 'test'")
+    
+    created_assignments = []
+    
+    for student_id in assignment_data.student_ids:
+        # Get student's active word list
+        word_list = await db.spelling_word_lists.find_one({"student_id": student_id, "active": True})
+        if not word_list:
+            continue  # Skip students without word lists
+        
+        # Create assignment for this student
+        assignment = Assignment(
+            title=f"Spelling {assignment_data.spelling_type.capitalize()} - {assignment_data.topic}",
+            subject="Spelling",
+            grade_level=assignment_data.grade_level,
+            topic=assignment_data.topic,
+            questions=[],
+            spelling_type=assignment_data.spelling_type,
+            spelling_word_list_id=word_list["id"],
+            spelling_words=word_list["words"],
+            teacher_id=current_user["data"]["id"]
+        )
+        
+        # Save assignment
+        await db.assignments.insert_one(assignment.dict())
+        
+        # Create student assignment
+        student_assignment = StudentAssignment(
+            assignment_id=assignment.id,
+            student_id=student_id,
+            teacher_id=current_user["data"]["id"]
+        )
+        await db.student_assignments.insert_one(student_assignment.dict())
+        
+        created_assignments.append({
+            "student_id": student_id,
+            "assignment_id": assignment.id,
+            "student_assignment_id": student_assignment.id
+        })
+    
+    return {
+        "message": f"Created {len(created_assignments)} spelling assignments",
+        "assignments": created_assignments
+    }
+
 @api_router.post("/assignments/assign")
 async def assign_assignment(assign_data: AssignmentAssign, current_user=Depends(get_current_user)):
     if current_user["type"] != "teacher":
