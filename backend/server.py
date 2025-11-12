@@ -119,17 +119,26 @@ class LearnToReadContent(BaseModel):
     story: List[str]  # List of 5-7 short sentences
     activities: List[InteractiveWordActivity]  # Interactive word-click activities
 
-class SpellingWord(BaseModel):
-    word: str
-    example_sentence: str  # Sentence using the word
+class SpellingWordList(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    teacher_id: str
+    student_id: str
+    name: str  # e.g., "Week 1 Words"
+    words: List[str]  # List of 10 spelling words
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    active: bool = True
 
-class SpellingExercise(BaseModel):
-    exercise_type: str  # "typing_test", "fill_blank", "multiple_choice"
+class SpellingWordListCreate(BaseModel):
+    student_id: str
+    name: str
+    words: List[str]
+
+class SpellingPracticeWord(BaseModel):
     word: str
-    example_sentence: Optional[str] = None  # For context
-    fill_blank_sentence: Optional[str] = None  # Sentence with ___ for fill-blank
-    multiple_choice_options: Optional[List[str]] = None  # Options for MCQ
-    correct_answer: str  # The correct spelling
+    attempts: int = 3  # Student writes it 3 times
+
+class SpellingTestWord(BaseModel):
+    word: str  # Student types it once after hearing it
 
 class Assignment(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
