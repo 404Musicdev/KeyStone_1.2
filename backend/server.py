@@ -1185,7 +1185,8 @@ async def submit_assignment(submission: SubmissionRequest, current_user=Depends(
                 "coding_answers": submission.coding_answers,
                 "drag_drop_answer": submission.drag_drop_answer,
                 "interactive_word_answers": submission.interactive_word_answers,
-                "spelling_answers": submission.spelling_answers,
+                "spelling_practice_answers": submission.spelling_practice_answers,
+                "spelling_test_answers": submission.spelling_test_answers,
                 "score": score,
                 "completed": True,
                 "submitted_at": datetime.now(timezone.utc).isoformat()
