@@ -185,7 +185,8 @@ class SubmissionRequest(BaseModel):
     coding_answers: Optional[List[str]] = None  # Code answers
     drag_drop_answer: Optional[dict] = None  # Drag-drop answer {zone_id: item_id}
     interactive_word_answers: Optional[List[str]] = None  # Learn to Read word clicks
-    spelling_answers: Optional[List[str]] = None  # Spelling exercise answers
+    spelling_practice_answers: Optional[dict] = None  # Spelling practice (3 attempts per word)
+    spelling_test_answers: Optional[List[str]] = None  # Spelling test answers
 
 # Reward System Models
 class Reward(BaseModel):
