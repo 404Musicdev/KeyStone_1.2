@@ -1129,19 +1129,31 @@ async def submit_assignment(submission: SubmissionRequest, current_user=Depends(
                 if submission.interactive_word_answers[i].lower() == activity["target_word"].lower():
                     learn_to_read_correct += 1
     
-    # Calculate score for Spelling exercises
+    # Calculate score for NEW Spelling Practice/Test
     spelling_correct = 0
     total_spelling = 0
     
-    if assignment.get("spelling_exercises") and submission.spelling_answers:
-        total_spelling = len(assignment["spelling_exercises"])
+    if assignment.get("spelling_type") == "practice" and submission.spelling_practice_answers:
+        # Practice: Each word attempted 3 times, all 3 must be correct
+        words = assignment.get("spelling_words", [])
+        total_spelling = len(words)
         
-        for i, exercise in enumerate(assignment["spelling_exercises"]):
-            if i < len(submission.spelling_answers):
-                student_answer = submission.spelling_answers[i].strip().lower()
-                correct_answer = exercise["correct_answer"].strip().lower()
-                
-                if student_answer == correct_answer:
+        for word in words:
+            if word in submission.spelling_practice_answers:
+                attempts = submission.spelling_practice_answers[word]
+                # All 3 attempts must match the word exactly
+                if len(attempts) == 3 and all(attempt.strip().lower() == word.lower() for attempt in attempts):
+                    spelling_correct += 1
+    
+    elif assignment.get("spelling_type") == "test" and submission.spelling_test_answers:
+        # Test: Each word attempted once
+        words = assignment.get("spelling_words", [])
+        total_spelling = len(words)
+        
+        for i, word in enumerate(words):
+            if i < len(submission.spelling_test_answers):
+                student_answer = submission.spelling_test_answers[i].strip().lower()
+                if student_answer == word.lower():
                     spelling_correct += 1
     
     # Calculate overall score
