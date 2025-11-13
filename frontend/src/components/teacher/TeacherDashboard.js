@@ -8,6 +8,7 @@ import LessonPlanGenerator from './LessonPlanGenerator';
 import Gradebook from './Gradebook';
 import Messaging from './Messaging';
 import RewardsManagement from './RewardsManagement';
+import SpellingWordLists from './SpellingWordLists';
 
 const TeacherDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
