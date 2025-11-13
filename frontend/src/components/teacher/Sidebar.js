@@ -13,7 +13,8 @@ import {
   Menu,
   X,
   GraduationCap,
-  Award
+  Award,
+  SpellCheck
 } from 'lucide-react';
 
 const Sidebar = ({ isOpen, onToggle }) => {
