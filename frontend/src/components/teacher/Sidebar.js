@@ -28,6 +28,7 @@ const Sidebar = ({ isOpen, onToggle }) => {
     { icon: FileText, label: 'Assignments', path: '/teacher/assignments' },
     { icon: BookOpen, label: 'Lesson Plans', path: '/teacher/lesson-plans' },
     { icon: BarChart3, label: 'Gradebook', path: '/teacher/gradebook' },
+    { icon: SpellCheck, label: 'Spelling Words', path: '/teacher/spelling-words' },
     { icon: Award, label: 'Rewards', path: '/teacher/rewards' },
     { icon: MessageSquare, label: 'Messages', path: '/teacher/messages' },
   ];
