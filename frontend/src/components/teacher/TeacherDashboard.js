@@ -26,6 +26,7 @@ const TeacherDashboard = () => {
             <Route path="lesson-plans" element={<LessonPlanGenerator />} />
             <Route path="gradebook" element={<Gradebook />} />
             <Route path="rewards" element={<RewardsManagement />} />
+            <Route path="spelling-words" element={<SpellingWordLists />} />
             <Route path="messages" element={<Messaging />} />
           </Routes>
         </div>
