@@ -264,6 +264,57 @@ const AssignmentGenerator = () => {
                     </Select>
                   </div>
                 )}
+
+                {formData.subject === 'Spelling' && (
+                  <div className="space-y-2">
+                    <Label className="text-slate-300">Spelling Type</Label>
+                    <Select 
+                      value={formData.spelling_type} 
+                      onValueChange={(value) => setFormData({...formData, spelling_type: value})}
+                    >
+                      <SelectTrigger className="bg-slate-800 border-slate-600 text-white">
+                        <SelectValue placeholder="Select spelling type" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-slate-800 border-slate-700">
+                        <SelectItem value="practice" className="text-white hover:bg-slate-700">
+                          ✏️ Practice (Write each word 3 times)
+                        </SelectItem>
+                        <SelectItem value="test" className="text-white hover:bg-slate-700">
+                          🎯 Test (Spell each word once)
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+
+                {formData.subject === 'Spelling' && (
+                  <div className="space-y-2">
+                    <Label className="text-slate-300">Select Students (Required for Spelling)</Label>
+                    <div className="bg-slate-800 border border-slate-600 rounded-lg p-4 max-h-48 overflow-y-auto">
+                      {students.length === 0 ? (
+                        <p className="text-slate-400 text-sm">No students found</p>
+                      ) : (
+                        <div className="space-y-2">
+                          {students.map(student => (
+                            <div key={student.id} className="flex items-center space-x-2">
+                              <Checkbox
+                                checked={selectedStudents.includes(student.id)}
+                                onCheckedChange={() => handleStudentToggle(student.id)}
+                                className="border-slate-500"
+                              />
+                              <label className="text-sm text-white cursor-pointer">
+                                {student.first_name} {student.last_name} (@{student.username})
+                              </label>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                    <p className="text-xs text-slate-400">
+                      Note: Each student must have an active word list assigned
+                    </p>
+                  </div>
+                )}
                 
                 <div className="space-y-2">
                   <Label className="text-slate-300">Grade Level</Label>
