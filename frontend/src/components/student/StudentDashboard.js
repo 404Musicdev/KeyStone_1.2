@@ -1005,7 +1005,7 @@ const StudentAssignmentView = ({ user, navigate }) => {
         }
       }
 
-      // Prepare Spelling answers
+      // Prepare Spelling answers (OLD format)
       const spellingAnswersArray = [];
       if (hasSpelling) {
         for (let i = 0; i < hasSpelling.length; i++) {
@@ -1026,7 +1026,9 @@ const StudentAssignmentView = ({ user, navigate }) => {
           coding_answers: codingAnswersArray.length > 0 ? codingAnswersArray : null,
           drag_drop_answer: hasDragDropPuzzle ? dragDropAnswer : null,
           interactive_word_answers: learnToReadAnswersArray.length > 0 ? learnToReadAnswersArray : null,
-          spelling_answers: spellingAnswersArray.length > 0 ? spellingAnswersArray : null
+          spelling_answers: spellingAnswersArray.length > 0 ? spellingAnswersArray : null,
+          spelling_practice_answers: assignment.assignment.spelling_type === 'practice' ? spellingPracticeAnswers : null,
+          spelling_test_answers: assignment.assignment.spelling_type === 'test' ? spellingTestAnswers : null
         })
       });
 
