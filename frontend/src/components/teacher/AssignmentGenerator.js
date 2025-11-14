@@ -39,7 +39,8 @@ const AssignmentGenerator = () => {
     grade_level: '',
     topic: '',
     coding_level: null,
-    youtube_url: ''
+    youtube_url: '',
+    spelling_type: ''
   });
 
   const subjects = [
