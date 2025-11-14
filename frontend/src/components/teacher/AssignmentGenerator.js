@@ -113,15 +113,41 @@ const AssignmentGenerator = () => {
       toast.error('Please select a coding level');
       return;
     }
+
+    if (formData.subject === 'Spelling' && !formData.spelling_type) {
+      toast.error('Please select spelling type (Practice or Test)');
+      return;
+    }
+
+    if (formData.subject === 'Spelling' && selectedStudents.length === 0) {
+      toast.error('Please select at least one student for spelling assignment');
+      return;
+    }
     
     setGenerating(true);
     
     try {
-      const response = await axios.post(`${API_BASE}/assignments/generate`, formData);
-      setGeneratedAssignment(response.data);
-      setAssignments([response.data, ...assignments]);
-      setShowAssignDialog(true);
-      toast.success('Assignment generated successfully!');
+      // Handle Spelling assignments differently
+      if (formData.subject === 'Spelling') {
+        const response = await axios.post(`${API_BASE}/assignments/spelling/create-and-assign`, {
+          subject: 'Spelling',
+          spelling_type: formData.spelling_type,
+          student_ids: selectedStudents,
+          topic: formData.topic,
+          grade_level: formData.grade_level
+        });
+        
+        toast.success(`Spelling assignments created for ${response.data.assignments.length} student(s)`);
+        setSelectedStudents([]);
+        setFormData({ subject: '', grade_level: '', topic: '', coding_level: null, youtube_url: '', spelling_type: '' });
+        fetchAssignments();
+      } else {
+        const response = await axios.post(`${API_BASE}/assignments/generate`, formData);
+        setGeneratedAssignment(response.data);
+        setAssignments([response.data, ...assignments]);
+        setShowAssignDialog(true);
+        toast.success('Assignment generated successfully!');
+      }
     } catch (error) {
       console.error('Error generating assignment:', error);
       toast.error(error.response?.data?.detail || 'Failed to generate assignment');
