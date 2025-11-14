@@ -884,6 +884,29 @@ const StudentAssignmentView = ({ user, navigate }) => {
     }
   };
 
+  const handleSpellingPracticeAnswer = (word, attemptIndex, value) => {
+    if (!assignment.completed) {
+      setSpellingPracticeAnswers(prev => {
+        const wordAttempts = prev[word] || ['', '', ''];
+        wordAttempts[attemptIndex] = value;
+        return {
+          ...prev,
+          [word]: wordAttempts
+        };
+      });
+    }
+  };
+
+  const handleSpellingTestAnswer = (wordIndex, value) => {
+    if (!assignment.completed) {
+      setSpellingTestAnswers(prev => {
+        const newAnswers = [...prev];
+        newAnswers[wordIndex] = value;
+        return newAnswers;
+      });
+    }
+  };
+
   const handleSubmit = async () => {
     if (!assignment || assignment.completed) return;
 
