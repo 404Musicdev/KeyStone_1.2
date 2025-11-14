@@ -958,6 +958,31 @@ const StudentAssignmentView = ({ user, navigate }) => {
       }
     }
 
+    // Check if NEW Spelling Practice is completed
+    if (assignment.assignment.spelling_type === 'practice' && assignment.assignment.spelling_words) {
+      const totalWords = assignment.assignment.spelling_words.length;
+      const completedWords = Object.keys(spellingPracticeAnswers).filter(word => {
+        const attempts = spellingPracticeAnswers[word] || [];
+        return attempts.every(a => a.trim() !== '');
+      }).length;
+      
+      if (completedWords < totalWords) {
+        alert(`Please write all ${totalWords} words 3 times each before submitting.`);
+        return;
+      }
+    }
+
+    // Check if NEW Spelling Test is completed
+    if (assignment.assignment.spelling_type === 'test' && assignment.assignment.spelling_words) {
+      const totalWords = assignment.assignment.spelling_words.length;
+      const completedWords = spellingTestAnswers.filter(a => a && a.trim() !== '').length;
+      
+      if (completedWords < totalWords) {
+        alert(`Please spell all ${totalWords} words before submitting.`);
+        return;
+      }
+    }
+
     setSubmitting(true);
     
     try {
