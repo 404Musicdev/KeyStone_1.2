@@ -1635,7 +1635,214 @@ const StudentAssignmentView = ({ user, navigate }) => {
         </div>
       )}
 
-      {/* Spelling Section */}
+      {/* NEW Spelling Practice Section */}
+      {assignment.assignment.spelling_type === 'practice' && assignment.assignment.spelling_words && (
+        <div style={{ marginBottom: '30px' }}>
+          <h2 style={{ 
+            fontSize: '20px', 
+            marginBottom: '20px',
+            color: '#e5e7eb'
+          }}>
+            ✏️ Spelling Practice - Write Each Word 3 Times
+          </h2>
+          
+          {assignment.assignment.spelling_words.map((word, wordIndex) => {
+            const attempts = spellingPracticeAnswers[word] || ['', '', ''];
+            const allCorrect = assignment.completed && attempts.every(a => a.toLowerCase() === word.toLowerCase());
+            const anyWrong = assignment.completed && attempts.some(a => a.toLowerCase() !== word.toLowerCase());
+            
+            return (
+              <div key={wordIndex} style={{
+                background: '#1e40af',
+                padding: '25px',
+                borderRadius: '12px',
+                marginBottom: '20px',
+                color: '#f8fafc'
+              }}>
+                <div style={{ 
+                  fontSize: '24px', 
+                  fontWeight: 'bold',
+                  marginBottom: '20px',
+                  textAlign: 'center',
+                  color: '#f59e0b'
+                }}>
+                  Word {wordIndex + 1}: {word}
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '15px' }}>
+                  {[0, 1, 2].map((attemptIndex) => (
+                    <div key={attemptIndex}>
+                      <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', color: '#94a3b8' }}>
+                        Attempt {attemptIndex + 1}
+                      </label>
+                      <input
+                        type="text"
+                        value={attempts[attemptIndex]}
+                        onChange={(e) => handleSpellingPracticeAnswer(word, attemptIndex, e.target.value)}
+                        disabled={assignment.completed}
+                        placeholder={`Write "${word}"`}
+                        style={{
+                          width: '100%',
+                          padding: '12px',
+                          backgroundColor: 'rgba(0,0,0,0.3)',
+                          border: assignment.completed
+                            ? (attempts[attemptIndex].toLowerCase() === word.toLowerCase() 
+                                ? '2px solid rgba(16, 185, 129, 0.5)' 
+                                : '2px solid rgba(239, 68, 68, 0.5)')
+                            : '1px solid rgba(248, 250, 252, 0.2)',
+                          borderRadius: '8px',
+                          color: 'white',
+                          fontSize: '16px'
+                        }}
+                      />
+                    </div>
+                  ))}
+                </div>
+
+                {assignment.completed && (
+                  <div style={{
+                    marginTop: '15px',
+                    padding: '12px',
+                    backgroundColor: allCorrect 
+                      ? 'rgba(16, 185, 129, 0.2)' 
+                      : 'rgba(239, 68, 68, 0.2)',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                    textAlign: 'center'
+                  }}>
+                    {allCorrect ? '✅ Perfect! All 3 attempts correct!' : '❌ Check your spelling - all 3 must match exactly'}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* NEW Spelling Test Section */}
+      {assignment.assignment.spelling_type === 'test' && assignment.assignment.spelling_words && (
+        <div style={{ marginBottom: '30px' }}>
+          <h2 style={{ 
+            fontSize: '20px', 
+            marginBottom: '20px',
+            color: '#e5e7eb'
+          }}>
+            🎯 Spelling Test - Listen and Spell Each Word
+          </h2>
+          
+          <div style={{
+            background: '#1e40af',
+            padding: '30px',
+            borderRadius: '12px',
+            color: '#f8fafc'
+          }}>
+            <p style={{ 
+              fontSize: '16px', 
+              marginBottom: '25px',
+              textAlign: 'center',
+              color: '#94a3b8'
+            }}>
+              Click the 🔊 button to hear each word, then type the spelling below.
+            </p>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              {assignment.assignment.spelling_words.map((word, wordIndex) => {
+                const studentAnswer = spellingTestAnswers[wordIndex] || '';
+                const isCorrect = assignment.completed && studentAnswer.toLowerCase() === word.toLowerCase();
+                const isWrong = assignment.completed && studentAnswer && studentAnswer.toLowerCase() !== word.toLowerCase();
+                
+                return (
+                  <div key={wordIndex} style={{
+                    backgroundColor: 'rgba(0,0,0,0.2)',
+                    padding: '20px',
+                    borderRadius: '10px',
+                    border: assignment.completed
+                      ? (isCorrect 
+                          ? '2px solid rgba(16, 185, 129, 0.5)' 
+                          : isWrong 
+                            ? '2px solid rgba(239, 68, 68, 0.5)'
+                            : '1px solid rgba(255,255,255,0.1)')
+                      : '1px solid rgba(255,255,255,0.1)'
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '12px' }}>
+                      <div style={{
+                        backgroundColor: 'rgba(248, 250, 252, 0.2)',
+                        padding: '8px 16px',
+                        borderRadius: '8px',
+                        fontSize: '16px',
+                        fontWeight: 'bold',
+                        minWidth: '80px',
+                        textAlign: 'center'
+                      }}>
+                        Word {wordIndex + 1}
+                      </div>
+                      
+                      <button
+                        onClick={() => speakText(word)}
+                        style={{
+                          backgroundColor: 'rgba(16, 185, 129, 0.3)',
+                          border: '2px solid rgba(16, 185, 129, 0.5)',
+                          color: 'white',
+                          padding: '10px 20px',
+                          borderRadius: '8px',
+                          cursor: 'pointer',
+                          fontSize: '14px',
+                          fontWeight: 'bold',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px'
+                        }}
+                      >
+                        🔊 Hear Word
+                      </button>
+
+                      {assignment.completed && (
+                        <div style={{
+                          marginLeft: 'auto',
+                          fontSize: '24px'
+                        }}>
+                          {isCorrect ? '✅' : isWrong ? '❌' : ''}
+                        </div>
+                      )}
+                    </div>
+
+                    <input
+                      type="text"
+                      value={studentAnswer}
+                      onChange={(e) => handleSpellingTestAnswer(wordIndex, e.target.value)}
+                      disabled={assignment.completed}
+                      placeholder="Type the spelling here..."
+                      style={{
+                        width: '100%',
+                        padding: '15px',
+                        backgroundColor: 'rgba(0,0,0,0.3)',
+                        border: '1px solid rgba(248, 250, 252, 0.2)',
+                        borderRadius: '8px',
+                        color: 'white',
+                        fontSize: '18px'
+                      }}
+                    />
+
+                    {assignment.completed && isWrong && (
+                      <div style={{
+                        marginTop: '12px',
+                        padding: '10px',
+                        backgroundColor: 'rgba(239, 68, 68, 0.2)',
+                        borderRadius: '8px',
+                        fontSize: '14px'
+                      }}>
+                        Correct spelling: <strong>{word}</strong>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* OLD Spelling Section (keep for backwards compatibility) */}
       {assignment.assignment.spelling_exercises && assignment.assignment.spelling_exercises.length > 0 && (
         <div style={{ marginBottom: '30px' }}>
           <h2 style={{ 
